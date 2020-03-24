@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
+from IPython.core import debugger as ipdb
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -16,6 +17,8 @@ D = {'photoz': '4199.csv', 'coadd': '4213.csv', 'cosmos': '4378.csv'}
 
 
 def get_cosmos(apply_cuts):
+    """Load the COSMOS catalogue to have spectra."""
+
     cosmos = pd.read_csv(str(data_in / D['cosmos']), comment='#')
     cosmos = cosmos.set_index('paudm_id')
     cosmos = cosmos[0 < cosmos.r50]
@@ -26,11 +29,30 @@ def get_cosmos(apply_cuts):
 
     return cosmos
 
+def get_cfhtls(apply_cuts):
+    """Load the CFHTls catalogue."""
+
+    path = '/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/input/deep2.h5'
+    df = pd.read_hdf(path, 'cat')
+
+    # It seems this catalogue already had z-spec quality cuts applied.
+    if apply_cuts:
+        df = df[df.magi < 22.5]
+
+    return df
+
+
 def get_indexp(inds_touse, NB_bands):
-    path = Path('/nfs/astro/eriksen/deepz/input/fa/comb_v7.parquet')
+    # COSMOS field
+#    path = Path('/nfs/astro/eriksen/deepz/input/fa/comb_v7.parquet')
+
+    # W3 field
+    path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/input/fa/fa_w3deep2_v1.pq')
 
     df_fa = pd.read_parquet(path)
     df_fa = df_fa.set_index('ref_id')
+
+    df_fa = df_fa.loc[inds_touse]
 
     # Way less than 1% exposures missed.
     df_fa = df_fa[df_fa.nr < 10]
@@ -39,18 +61,16 @@ def get_indexp(inds_touse, NB_bands):
     df_fa = df_fa.reset_index().set_index(['ref_id', 'band', 'nr'])
 
     X = df_fa.to_xarray()
-    
-    X = X.sel(ref_id=inds_touse)
     X = X.sel(band=NB_bands)
     
     return X.flux.values, X.flux_error.values
 
-def paus(bands, apply_cuts=True, test_bb='subaru_i'):
+def paus(bands, field, apply_cuts=True, test_bb='subaru_i'):
     # COSMOS
 #    galcat_path = '/nfs/astro/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
 
     # W3
-    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/input/w3_memba944.h5'
+    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/input/w3_memba941.h5'
 
 
     galcat = pd.read_hdf(galcat_path, 'cat')
@@ -61,8 +81,17 @@ def paus(bands, apply_cuts=True, test_bb='subaru_i'):
     sub = sub.loc[~np.isnan(sub.flux[bands]).any(1)]
 
     # Overlap between the two catalogues ...
-    cosmos = get_cosmos(apply_cuts)
-    touse = cosmos.index & sub.index
+    if field == 'COSMOS':
+        get_parent = get_cosmos
+    else:
+        get_parent = get_cfhtls
+
+
+    parent_cat = get_parent(apply_cuts)
+
+
+    touse = parent_cat.index & sub.index
+
 
     # Here we are not actually using the flux, but a flux
     # ratio..
@@ -88,7 +117,7 @@ def paus(bands, apply_cuts=True, test_bb='subaru_i'):
     fmes[isnan] = 0
 
     flux = torch.Tensor(flux)
-    zbin = torch.tensor(cosmos.loc[touse].zspec.values / 0.001).round().type(torch.long)
+    zbin = torch.tensor(parent_cat.loc[touse].zspec.values / 0.001).round().type(torch.long)
 
     print('# Galaxies', len(flux))
     assert len(flux) == len(zbin), 'Inconsisten number of galaxies'
