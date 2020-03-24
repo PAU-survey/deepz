@@ -45,11 +45,17 @@ def get_indexp(inds_touse, NB_bands):
     
     return X.flux.values, X.flux_error.values
 
-def paus(apply_cuts=True):
-    galcat_path = '/nfs/astro/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
+def paus(bands, apply_cuts=True, test_bb='subaru_i'):
+    # COSMOS
+#    galcat_path = '/nfs/astro/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
+
+    # W3
+    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/input/w3_memba944.h5'
+
+
     galcat = pd.read_hdf(galcat_path, 'cat')
 
-    sub = galcat.loc[~np.isnan(galcat.flux.subaru_i)]
+    sub = galcat.loc[~np.isnan(galcat.flux[test_bb])]
 
     # Here we only use galaxies where all bands are observed.
     sub = sub.loc[~np.isnan(sub.flux[bands]).any(1)]
@@ -63,11 +69,11 @@ def paus(apply_cuts=True):
     flux_df = sub.loc[touse]
     
     flux = flux_df.flux[bands].values
-    flux_err = flux_df.flux_err[bands].values
+    flux_error = flux_df.flux_error[bands].values
     
     norm = flux[:, -2]
     flux = torch.Tensor(flux / norm[:, None])
-    flux_err = torch.Tensor(flux_err / norm[:, None])
+    flux_error = torch.Tensor(flux_error / norm[:, None])
 
     # The individual exposures.
     fmes, emes = get_indexp(touse, NB)
@@ -93,5 +99,4 @@ def paus(apply_cuts=True):
     # uint8 tensor.
     ref_id = torch.Tensor(flux_df.index.values)
     
-    return flux, flux_err, fmes, vinv, isnan, zbin, ref_id
-    #return flux, flux_err, zbin, ref_id
+    return flux, flux_error, fmes, vinv, isnan, zbin, ref_id
