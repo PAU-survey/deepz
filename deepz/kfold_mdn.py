@@ -75,7 +75,7 @@ def train(ifold, use_mdn):
 
     path_base = '/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/pretrain/v1_{}_'+part+'.pt'
 
-    enc, dec, net_pz = utils.get_nets(path_base, use_mdn, pretrain)
+    enc, dec, net_pz = utils.get_nets(path_base, use_mdn, pretrain, Nbands=len(bands))
     train_dl, test_dl, _ = get_loaders(ifold)
     K = (enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha)
 
