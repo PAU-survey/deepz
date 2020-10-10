@@ -31,22 +31,38 @@ import paus_sexp as paus_data
 
 #pretrain = True #False
 alpha = 0.8
-Ntrain = 8000 #'all'
-Ntrain = 100 #'all'
+#Ntrain = 8000 #'all'
+Ntrain = 'all' #100 #'all'
 verpretrain = 3
 
-import paus_sexp as paus_data
-flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus()
+field = 'W3'
+field = 'cosmos'
+
+if field == 'cosmos':
+    # Just because of using some old files.
+    NB = ['NB{}'.format(x) for x in 455+10*np.arange(40)]
+
+    BB = ['cfht_u', 'subaru_B', 'subaru_V', 'subaru_r', 'subaru_i', 'subaru_z']
+    test_bb = 'subaru_i'
+elif field == 'W3':
+    NB = ['pau_nb{}'.format(x) for x in 455+10*np.arange(40)]
+    BB = [f'cfht_{x}' for x in 'ugriz']
+    test_bb = 'cfht_i' 
+
+bands = NB + BB
+
+flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus(bands, field, test_bb=test_bb)
 
 
 #model_dir = Path('/nfs/astro/eriksen/deepz/encmodels_data')
-
-version = 2
+version = 7
+#output_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/models') / str(version)
 output_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux') / str(version)
+
 
 # Other values collided with importing the code in a notebook...
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
-inds_all = np.loadtxt('/cephfs/pic.es/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
+inds_all = np.loadtxt('/nfs/astro/eriksen/deepz/inds/inds_large_v1.txt')
 
 
 
@@ -73,7 +89,7 @@ def get_loaders(ifold, inds):
     ds_train = sub(ix_train)
     ds_test = sub(ix_test)
 
-    train_dl = DataLoader(ds_train, batch_size=500, shuffle=True)
+    train_dl = DataLoader(ds_train, batch_size=100, shuffle=True)
     test_dl = DataLoader(ds_test, batch_size=100)
     
     return train_dl, test_dl, zbin[ix_test]
@@ -90,19 +106,14 @@ def train(ifold, **config):
     pretrain = config['pretrain']
 
     part = 'mdn' if use_mdn else 'normal'
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v16_{}_'+part+'.pt'
-    #path_base = f'/nfs/astro/eriksen/deepz/redux/5/pretrain_fsps_{part}'+'_{}.pt'
-    
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v23_{}_'+part+'.pt'
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v16_{}_'+part+'.pt'
-#/nfs/astro/eriksen/deepz/redux/pretrain/1
-
     # Where to find the pretrained files.
-    path_base = f'/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
+    path_base = f'/nfs/astro/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
+
+#    path_base = '/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/pretrain/v1_{}_'+part+'.pt'
 
     inds = inds_all[config['catnr']][:len(flux)]
     
-    enc, dec, net_pz = utils.get_nets(path_base, use_mdn, pretrain)
+    enc, dec, net_pz = utils.get_nets(path_base, use_mdn, pretrain, Nbands=len(bands))
     train_dl, test_dl, _ = get_loaders(ifold, inds)
     K = (enc, dec, net_pz, train_dl, test_dl, use_mdn, config['alpha'], config['Nexp'], \
          config['keep_last'])
@@ -139,7 +150,7 @@ def pz_fold(ifold, inds, out_fmt, use_mdn):
     
     # Loading the networks...
     net_base_path = out_fmt.format(ifold=ifold, net='{}')
-    enc, dec, net_pz = utils.get_nets(str(net_base_path), use_mdn)
+    enc, dec, net_pz = utils.get_nets(str(net_base_path), use_mdn, Nbands=len(bands))
     enc.eval(), dec.eval(), net_pz.eval()
     
     _, test_dl, zbin_test = get_loaders(ifold, inds)
@@ -220,55 +231,38 @@ import trainer_sexp
 
 #model_dir = Path('models/v7')
 # Where we store the models based on the data...
-version = 7
-sim = 'fsps'
+version = 2
+#sim = 'fsps'
 
-def gen_conf():
-    for catnr in range(10):
-        for keep_last in [True]:
-            for alpha in [0.8]:
-#[0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
-                yield catnr, keep_last, alpha
+#model_dir = Path('/nfs/astro/eriksen/deepz/redux/train') / str(version)
+model_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/models') / str(version)
 
-# This code for running different configurations has been moved out into a notebook.
-if True: #True: #False: #False: #False: #True: #False:
-    #verpretrain = 3
-    #Ntrain = 8000
-    #catnr = 0
+pretrain = True #False if verpretrain == 'no' else True
+use_mdn = True
+keep_last = True
 
-    use_mdn = True
-    model_dir = Path('/cephs/pic.es/astro/scratch/eriksen/deepz/redux/train') / str(version)
+config = {'verpretrain': verpretrain, 'Ntrain': Ntrain, 'catnr': catnr, 'use_mdn': use_mdn,
+          'Ntrain': Ntrain, 'pretrain': pretrain, 'keep_last': keep_last}
 
-    verpretrain = 8
-    Ntrain = 'all'
-    keep_last = False
+config['Nexp'] = 0
+config['alpha'] = alpha
 
-    for catnr, keep_last, alpha in gen_conf():
-           #for Ntrain in ['all']:
-        pretrain = False if verpretrain == 'no' else True
-        config = {'verpretrain': verpretrain, 'Ntrain': Ntrain, 'catnr': catnr, 'use_mdn': use_mdn,
-                  'Ntrain': Ntrain, 'pretrain': pretrain, 'keep_last': keep_last}
+    #    config['output_dir'] = output_dir
+out_fmt = 'pre{verpretrain}_alpha{alpha}_keep{keep_last}_catnr{catnr}'.format(**config)
+out_fmt = '{net}_'+out_fmt+'_ifold{ifold}.pt'
+out_fmt = str(model_dir / out_fmt)
 
-        config['Nexp'] = 0
-        config['alpha'] = alpha
- 
-            #    config['output_dir'] = output_dir
-        out_fmt = 'pre{verpretrain}_alpha{alpha}_keep{keep_last}_catnr{catnr}'.format(**config)
-        out_fmt = '{net}_'+out_fmt+'_ifold{ifold}.pt'
-        out_fmt = str(model_dir / out_fmt)
+config['out_fmt'] = out_fmt
 
-        config['out_fmt'] = out_fmt
+print('To store at:')
+print(out_fmt)
 
-        print('To store at:')
-        print(out_fmt)
+#train_all(**config) 
 
-        train_all(**config) 
+pz = photoz_all(**config)
+pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
-        pz = photoz_all(**config)
-        pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
+sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
+print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
 
-        sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
-        print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
-
-    #cat_out = str(output_dir / f'pzcat_{catnr}_mdn.csv') #'/nfs/pic.es/user/e/eriksen/papers/deepz/sims/cats/pzcat_v65_mdn.csv'
-    #pz.to_csv(cat_out)
+#ipdb.set_tace()

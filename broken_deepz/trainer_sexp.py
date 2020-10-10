@@ -12,9 +12,6 @@ from torch.utils.data import TensorDataset, DataLoader
 
 import utils
 
-# Hack, remember to remove.
-use_enc = False
-
 def smoother(log_pz, kappa=0.15):
     """Functionality for smoothing the p(z)."""
     
@@ -73,9 +70,6 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha):
            
             # Testing training augmentation.            
             feat = enc(Bcoadd)
-            if not use_enc:
-                feat = 0.*feat
-
             Binput = torch.cat([Bcoadd, feat], 1)
             
             if not use_mdn:
@@ -121,9 +115,6 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha):
             Bflux = Bflux.cuda()
             feat = enc(Bflux)
             
-            if not use_enc:
-                feat = 0.*feat
-
             Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, 1)
             Binput = torch.cat([Bcoadd, feat], 1)
             
