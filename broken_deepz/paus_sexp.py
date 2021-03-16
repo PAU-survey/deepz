@@ -64,7 +64,6 @@ def get_indexp(inds_touse, NB_bands, field):
 
     X = df_fa.to_xarray()
 
-    ipdb.set_trace()
 
     X = X.sel(band=NB_bands)
     
@@ -72,14 +71,17 @@ def get_indexp(inds_touse, NB_bands, field):
 
 def paus(bands, field, apply_cuts=True, test_bb='subaru_i'):
     # COSMOS
+    field = field.lower()
+
     if field == 'cosmos':
         galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
         galcat = pd.read_hdf(galcat_path, 'cat')
         galcat = galcat.rename(columns={'flux_err': 'flux_error'})
-    elif field.lower() == 'w3':
+    elif field == 'w3':
         galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/input/w3_memba941_v3.h5'
         galcat = pd.read_hdf(galcat_path, 'cat')
-
+    else:
+        raise ValueError(f'No such field: {field}') 
 
     sub = galcat.loc[~np.isnan(galcat.flux[test_bb])]
 
@@ -87,7 +89,7 @@ def paus(bands, field, apply_cuts=True, test_bb='subaru_i'):
     sub = sub.loc[~np.isnan(sub.flux[bands]).any(1)]
 
     # Overlap between the two catalogues ...
-    if field == 'COSMOS':
+    if field == 'cosmos':
         get_parent = get_cosmos
     else:
         get_parent = get_cfhtls

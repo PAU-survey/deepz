@@ -220,7 +220,7 @@ import trainer_sexp
 
 #model_dir = Path('models/v7')
 # Where we store the models based on the data...
-version = 7
+version = 9
 sim = 'fsps'
 
 def gen_conf():
@@ -237,11 +237,13 @@ if True: #True: #False: #False: #False: #True: #False:
     #catnr = 0
 
     use_mdn = True
-    model_dir = Path('/cephs/pic.es/astro/scratch/eriksen/deepz/redux/train') / str(version)
+    model_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/train') / str(version)
 
     verpretrain = 8
     Ntrain = 'all'
     keep_last = False
+
+    label = 'march11'
 
     for catnr, keep_last, alpha in gen_conf():
            #for Ntrain in ['all']:
@@ -253,8 +255,8 @@ if True: #True: #False: #False: #False: #True: #False:
         config['alpha'] = alpha
  
             #    config['output_dir'] = output_dir
-        out_fmt = 'pre{verpretrain}_alpha{alpha}_keep{keep_last}_catnr{catnr}'.format(**config)
-        out_fmt = '{net}_'+out_fmt+'_ifold{ifold}.pt'
+#        out_fmt = 'pre{verpretrain}_alpha{alpha}_keep{keep_last}_catnr{catnr}'.format(**config)
+        out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
         out_fmt = str(model_dir / out_fmt)
 
         config['out_fmt'] = out_fmt
@@ -270,5 +272,13 @@ if True: #True: #False: #False: #False: #True: #False:
         sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
         print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
 
+        fname = f'{label}'+'_catnr{catnr}.csv'.format(**config)
+        path_out = model_dir / fname
+
+        pz.to_csv(path_out) 
+
+        # By now we only want to run one catalogue.
+
+        break
     #cat_out = str(output_dir / f'pzcat_{catnr}_mdn.csv') #'/nfs/pic.es/user/e/eriksen/papers/deepz/sims/cats/pzcat_v65_mdn.csv'
     #pz.to_csv(cat_out)

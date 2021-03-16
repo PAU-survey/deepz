@@ -26,10 +26,11 @@ def get_cosmos(apply_cuts):
 
     return cosmos
 
-def get_indexp(inds_touse, NB_bands):
-    path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input/fa/comb_v7.parquet')
+def get_indexp(inds_touse, NB_bands, indexp_path):
+# Testing Lumus.
+#    path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input/fa/comb_v7.parquet')
 
-    df_fa = pd.read_parquet(path)
+    df_fa = pd.read_parquet(indexp_path)
     df_fa = df_fa.set_index('ref_id')
 
     # Way less than 1% exposures missed.
@@ -46,7 +47,11 @@ def get_indexp(inds_touse, NB_bands):
     return X.flux.values, X.flux_error.values
 
 def paus(apply_cuts=True):
-    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
+# Testing Lumus.
+#    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
+    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
+    indexp_path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/fa_v8.pq')
+
     galcat = pd.read_hdf(galcat_path, 'cat')
 
     sub = galcat.loc[~np.isnan(galcat.flux.subaru_i)]
@@ -70,7 +75,7 @@ def paus(apply_cuts=True):
     flux_err = torch.Tensor(flux_err / norm[:, None])
 
     # The individual exposures.
-    fmes, emes = get_indexp(touse, NB)
+    fmes, emes = get_indexp(touse, NB, indexp_path)
     #fmes = np.nan_to_num(fmes, copy=False)
     #emes = np.nan_to_num(emes, copy=False)
     fmes = torch.Tensor(fmes / norm[:,None,None])

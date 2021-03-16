@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
+from IPython.core import debugger as ipdb
 import time
 import numpy as np
 import pandas as pd
@@ -46,6 +47,15 @@ def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True):
     if rm:
         coadd = coadd[touse]
 
+    # For debugging...
+    if np.isnan(coadd.cpu().numpy()).sum():
+        fpr = np.isnan(coadd.cpu().numpy()).sum(1).nonzero()[0][0]
+        orig_ind = touse.nonzero().flatten()[fpr].item()
+        band = np.isnan(coadd[fpr].cpu().numpy()).nonzero()[0][0]
+
+
+        ipdb.set_trace()
+
     return coadd, touse
 
 def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha):
@@ -71,7 +81,7 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha):
             # Testing training augmentation.            
             feat = enc(Bcoadd)
             Binput = torch.cat([Bcoadd, feat], 1)
-            
+           
             if not use_mdn:
                 log_pz = net_pz(Binput)
                 bz_rand = smoother(log_pz)
@@ -93,12 +103,12 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha):
                 _, loss = net_pz.loss(Binput, Bz)
                 
                 #loss = loss_function(log_pz, Bzbin.cuda())
+
                 
             loss.backward()
             optimizer.step()    
             L.append(loss.item())
 
-        #print('time', time.time() - t1)
         if i == 0 or i % 20:
             continue
             

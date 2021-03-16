@@ -62,7 +62,7 @@ output_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux') / str(vers
 
 # Other values collided with importing the code in a notebook...
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
-inds_all = np.loadtxt('/nfs/astro/eriksen/deepz/inds/inds_large_v1.txt')
+inds_all = np.loadtxt('/cephfs/pic.es/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
 
 
 
@@ -107,7 +107,7 @@ def train(ifold, **config):
 
     part = 'mdn' if use_mdn else 'normal'
     # Where to find the pretrained files.
-    path_base = f'/nfs/astro/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
+    path_base = f'/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
 
 #    path_base = '/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/pretrain/v1_{}_'+part+'.pt'
 
@@ -231,11 +231,11 @@ import trainer_sexp
 
 #model_dir = Path('models/v7')
 # Where we store the models based on the data...
-version = 2
+version = 7
 #sim = 'fsps'
 
 #model_dir = Path('/nfs/astro/eriksen/deepz/redux/train') / str(version)
-model_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz_wide/models') / str(version)
+model_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/models') / str(version)
 
 pretrain = True #False if verpretrain == 'no' else True
 use_mdn = True
@@ -257,7 +257,7 @@ config['out_fmt'] = out_fmt
 print('To store at:')
 print(out_fmt)
 
-#train_all(**config) 
+train_all(**config) 
 
 pz = photoz_all(**config)
 pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
