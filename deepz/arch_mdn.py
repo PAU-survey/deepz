@@ -1,4 +1,18 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Created at 
+
+# =============================================================================
+# DOCS
+# =============================================================================
+
+"""arc_mdn
+"""
+
+# =============================================================================
+# IMPORTS
+# =============================================================================
 
 import torch
 from torch import nn
@@ -6,6 +20,17 @@ import torch.nn.functional as F
 from torch.distributions import Normal
 
 class Network(nn.Module):
+    """[Summary]
+
+    :param [ParamName]: [ParamDescription], defaults to [DefaultParamVal]
+    :type [ParamName]: [ParamType](, optional)
+
+    :raises [ErrorType]: [ErrorDescription]
+
+    :return: [ReturnDescription]
+    :rtype: [ReturnType]
+    """
+
     def __init__(self, Nbands, fr=0.2):
         super().__init__()
         
@@ -43,6 +68,17 @@ class Network(nn.Module):
         return x
     
 class MDNNetwork(nn.Module):
+    """[Summary]
+
+    :param [ParamName]: [ParamDescription], defaults to [DefaultParamVal]
+    :type [ParamName]: [ParamType](, optional)
+
+    :raises [ErrorType]: [ErrorDescription]
+
+    :return: [ReturnDescription]
+    :rtype: [ReturnType]
+    """
+
     def __init__(self, Nbands, fr=0.02):
         super().__init__()
         

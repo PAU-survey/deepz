@@ -1,5 +1,18 @@
 #!/usr/bin/env python
-# coding: utf-8
+# -*- coding: utf-8 -*-
+
+# Created at 
+
+# =============================================================================
+# DOCS
+# =============================================================================
+
+"""train_data
+"""
+
+# =============================================================================
+# IMPORTS
+# =============================================================================
 
 from IPython.core import debugger as ipdb
 import os
@@ -18,21 +31,30 @@ import torch
 #assert torch.__version__.startswith('1.0'), 'For some reason the code fails badly on newer PyTorch versions.'
 
 
-from torch import optim, nn
+from torch import optim
 from pathlib import Path
 from torch.utils.data import TensorDataset, DataLoader
 from matplotlib import pyplot as plt
 
-#import arch_mdn
-#import paus_data
+# import arch_mdn
+# import paus_data
 import utils
 
 import paus_sexp as paus_data
 
-#pretrain = True #False
+# pretrain = True #False
+"""Constants
+"""
+#: alpha
 alpha = 0.8
+
+#: train set size
 Ntrain = 8000 #'all'
+
+#: train set size
 Ntrain = 100 #'all'
+
+#: verpretrain
 verpretrain = 3
 
 import paus_sexp as paus_data
@@ -49,8 +71,6 @@ catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
 inds_all = np.loadtxt('/cephfs/pic.es/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
 
 
-
-# In[6]:
 def get_loaders(ifold, inds):
     """Get loaders for specific fold."""
     
@@ -79,12 +99,11 @@ def get_loaders(ifold, inds):
     return train_dl, test_dl, zbin[ix_test]
 
 
-# In[7]:
 import trainer_alpha
-import var_networks
 
 def train(ifold, **config):
-    """Train the networks for one fold."""
+    """Train the networks for one fold.
+    """
     
     verpretrain = config['verpretrain']
     pretrain = config['pretrain']

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
-import sys
 import numpy as np
 import torch
 import var_networks

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>arch_mdn module &mdash; deepz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="paus_sexp module" href="paus_sexp.html" />
+    <link rel="prev" title="deepz" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> deepz
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">arch_mdn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="paus_sexp.html">paus_sexp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trainer_sexp.html">trainer_sexp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="var_networks.html">var_networks module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">deepz</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">deepz</a> &raquo;</li>
+      <li>arch_mdn module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/arch_mdn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-arch_mdn">
+<span id="arch-mdn-module"></span><h1>arch_mdn module<a class="headerlink" href="#module-arch_mdn" title="Permalink to this headline">¶</a></h1>
+<p>arc_mdn</p>
+<dl class="py class">
+<dt id="arch_mdn.Conv">
+<em class="property">class </em><code class="sig-prename descclassname">arch_mdn.</code><code class="sig-name descname">Conv</code><a class="reference internal" href="_modules/arch_mdn.html#Conv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch_mdn.Conv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Convolutional neural network.</p>
+<dl class="py method">
+<dt id="arch_mdn.Conv.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arch_mdn.html#Conv.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch_mdn.Conv.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="arch_mdn.Conv.training">
+<code class="sig-name descname">training</code><a class="headerlink" href="#arch_mdn.Conv.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="arch_mdn.MDNNetwork">
+<em class="property">class </em><code class="sig-prename descclassname">arch_mdn.</code><code class="sig-name descname">MDNNetwork</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Nbands</span></em>, <em class="sig-param"><span class="n">fr</span><span class="o">=</span><span class="default_value">0.02</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arch_mdn.html#MDNNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch_mdn.MDNNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>[Summary]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>[</strong><strong>ParamName</strong><strong>]</strong> (<em>[</em><em>ParamType</em><em>]</em><em>(</em><em>, </em><em>optional</em><em>)</em>) – [ParamDescription], defaults to [DefaultParamVal]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>[</strong><strong>ErrorType</strong><strong>]</strong> – [ErrorDescription]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>[ReturnDescription]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>[ReturnType]</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="arch_mdn.MDNNetwork.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arch_mdn.html#MDNNetwork.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch_mdn.MDNNetwork.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="arch_mdn.MDNNetwork.get_dist">
+<code class="sig-name descname">get_dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arch_mdn.html#MDNNetwork.get_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch_mdn.MDNNetwork.get_dist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="arch_mdn.MDNNetwork.loss">
+<code class="sig-name descname">loss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arch_mdn.html#MDNNetwork.loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch_mdn.MDNNetwork.loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the logarithmic probability.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="arch_mdn.MDNNetwork.training">
+<code class="sig-name descname">training</code><a class="headerlink" href="#arch_mdn.MDNNetwork.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="arch_mdn.Network">
+<em class="property">class </em><code class="sig-prename descclassname">arch_mdn.</code><code class="sig-name descname">Network</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Nbands</span></em>, <em class="sig-param"><span class="n">fr</span><span class="o">=</span><span class="default_value">0.2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arch_mdn.html#Network"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch_mdn.Network" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>[Summary]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>[</strong><strong>ParamName</strong><strong>]</strong> (<em>[</em><em>ParamType</em><em>]</em><em>(</em><em>, </em><em>optional</em><em>)</em>) – [ParamDescription], defaults to [DefaultParamVal]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>[</strong><strong>ErrorType</strong><strong>]</strong> – [ErrorDescription]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>[ReturnDescription]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>[ReturnType]</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="arch_mdn.Network.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/arch_mdn.html#Network.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#arch_mdn.Network.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="arch_mdn.Network.training">
+<code class="sig-name descname">training</code><a class="headerlink" href="#arch_mdn.Network.training" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="deepz" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="paus_sexp.html" class="btn btn-neutral float-right" title="paus_sexp module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Martin B. Eriksen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
