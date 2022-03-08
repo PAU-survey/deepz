@@ -1,20 +1,6 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
-# Created at 
-
-# =============================================================================
-# DOCS
-# =============================================================================
-
-"""trainer_alpha
-"""
-
-# =============================================================================
-# IMPORTS
-# =============================================================================
-
-from IPython.core import debugger as ipdb
 import time
 import numpy as np
 import pandas as pd
@@ -25,6 +11,9 @@ from torch import nn, optim
 from torch.utils.data import TensorDataset, DataLoader
 
 import utils
+
+# Hack, remember to remove.
+use_enc = False
 
 def smoother(log_pz, kappa=0.15):
     """Functionality for smoothing the p(z)."""
@@ -40,72 +29,14 @@ def smoother(log_pz, kappa=0.15):
     
     return bz_rand
 
-
-def mask_entries(fmes, Nexp=1):
-    """Mask single exposure entries, removing a fixed number of
-       exposure, but keeping at least one.
-    """
-
-    # Remove a fixed number of exposures.
-    R = torch.rand(size=fmes.shape, device=fmes.device)
-
-    # So we only remove actual measurements.
-    ismes = (fmes != 0).type(torch.float)
-    R = R * ismes
-
-    torm = R == R.max(2)[0][:,:,None]
-
-    tofewexp = (ismes.sum(2) <= Nexp)
-    torm[tofewexp] = 0
-
-    mask = (~torm) & (fmes != 0)
-    mask = mask.to(torch.float)
-
-    return mask
-
-def mask_alpha(fmes, isnan, alpha, keep_last):
-
-    inp = alpha*torch.ones_like(fmes)
-    mask_rand = torch.bernoulli(inp)
-    ismes = (fmes != 0).type(torch.float)
-
-    # Code for having at least one measurement. Could possible
-    # be more elegant, but it was not easy to find a good
-    # solution.
-    if keep_last:
-        R = torch.rand(size=fmes.shape, device=fmes.device)
-        selone = (R == R.max(2)[0][:,:,None])
-
-        missing = (0 == (mask_rand*ismes).sum(2))
-        tokeep = selone*missing[:,:,None]
-        tokeep = tokeep.to(torch.float)
-
-        mask = mask_rand*ismes + tokeep
-        assert (mask < 2).all(), 'Internal error. Someone broke the code' 
-        assert not (mask.sum(2) == 0).any(), 'Internal error.'
-    else:
-        mask = mask_rand*ismes 
-
-    return mask
-
-
-
-def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True, Nexp=0, 
-              keep_last=False):
+def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True):
     """Get the coadded fluxes, using only a fraction of the
        individual exposures.
     """
-
-    assert not Nexp, 'Deleted option'   
+    
     inp = alpha*torch.ones_like(fmes)
-#    mask = (~isnan).type(torch.float)
-#    mask *= torch.bernoulli(inp)
-    mask = mask_alpha(fmes, isnan, alpha, keep_last)
-
-
-#    ipdb.set_trace()
-
-
+    mask = (~isnan).type(torch.float)
+    mask *= torch.bernoulli(inp)
 
     weight = vinv * mask
     norm = weight.sum(2)
@@ -120,7 +51,7 @@ def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True, Nexp=0,
 
     return coadd, touse
 
-def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nexp, keep_last):
+def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha):
     loss_function = nn.CrossEntropyLoss()
     for i in range(N):
 #        print('i', i)
@@ -136,12 +67,15 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nex
                 continue
 
             optimizer.zero_grad()
-            Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=alpha, Nexp=Nexp, \
-                                      keep_last=keep_last)
+
+            Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha)
             Bzbin = Bzbin[touse]
            
             # Testing training augmentation.            
             feat = enc(Bcoadd)
+            if not use_enc:
+                feat = 0.*feat
+
             Binput = torch.cat([Bcoadd, feat], 1)
             
             if not use_mdn:
@@ -187,7 +121,10 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nex
             Bflux = Bflux.cuda()
             feat = enc(Bflux)
             
-            Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=1)
+            if not use_enc:
+                feat = 0.*feat
+
+            Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, 1)
             Binput = torch.cat([Bcoadd, feat], 1)
             
             
