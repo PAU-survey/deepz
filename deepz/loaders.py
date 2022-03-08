@@ -18,7 +18,7 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader
 
 
-# When use the function get_loader:
+# Use
 # train_dl, test_dl, zbin_ix_test = loaders.get_loaders(ifold, inds, data, Ntrain)
 
 def get_loaders(ifold, inds, data, Ntrain):
