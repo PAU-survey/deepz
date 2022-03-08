@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>trainer_alpha module &mdash; deepz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>trainer_alpha module &mdash; DEEPz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -12,7 +13,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -25,7 +25,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> deepz
+            <a href="index.html" class="icon icon-home"> DEEPz
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -35,13 +35,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html">loaders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="paus_sexp.html">paus_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">trainer_alpha module</a></li>
@@ -58,7 +57,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">deepz</a>
+          <a href="index.html">DEEPz</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -77,39 +76,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-trainer_alpha">
+  <section id="module-trainer_alpha">
 <span id="trainer-alpha-module"></span><h1>trainer_alpha module<a class="headerlink" href="#module-trainer_alpha" title="Permalink to this headline">¶</a></h1>
+<p>trainer_alpha</p>
 <dl class="py function">
 <dt id="trainer_alpha.get_coadd">
-<code class="sig-prename descclassname">trainer_alpha.</code><code class="sig-name descname">get_coadd</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">fmes</span></em>, <em class="sig-param"><span class="n">vinv</span></em>, <em class="sig-param"><span class="n">isnan</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.8</span></em>, <em class="sig-param"><span class="n">rm</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">Nexp</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">keep_last</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#get_coadd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trainer_alpha.get_coadd" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">trainer_alpha.</span></code><code class="sig-name descname"><span class="pre">get_coadd</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vinv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isnan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nexp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_last</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#get_coadd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_alpha.get_coadd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the coadded fluxes, using only a fraction of the
 individual exposures.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="trainer_alpha.mask_alpha">
-<code class="sig-prename descclassname">trainer_alpha.</code><code class="sig-name descname">mask_alpha</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fmes</span></em>, <em class="sig-param"><span class="n">isnan</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">keep_last</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#mask_alpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trainer_alpha.mask_alpha" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">trainer_alpha.</span></code><code class="sig-name descname"><span class="pre">mask_alpha</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isnan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_last</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#mask_alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_alpha.mask_alpha" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt id="trainer_alpha.mask_entries">
-<code class="sig-prename descclassname">trainer_alpha.</code><code class="sig-name descname">mask_entries</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fmes</span></em>, <em class="sig-param"><span class="n">Nexp</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#mask_entries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trainer_alpha.mask_entries" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">trainer_alpha.</span></code><code class="sig-name descname"><span class="pre">mask_entries</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nexp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#mask_entries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_alpha.mask_entries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask single exposure entries, removing a fixed number of
 exposure, but keeping at least one.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="trainer_alpha.smoother">
-<code class="sig-prename descclassname">trainer_alpha.</code><code class="sig-name descname">smoother</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log_pz</span></em>, <em class="sig-param"><span class="n">kappa</span><span class="o">=</span><span class="default_value">0.15</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#smoother"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trainer_alpha.smoother" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">trainer_alpha.</span></code><code class="sig-name descname"><span class="pre">smoother</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_pz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#smoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_alpha.smoother" title="Permalink to this definition">¶</a></dt>
 <dd><p>Functionality for smoothing the p(z).</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="trainer_alpha.train">
-<code class="sig-prename descclassname">trainer_alpha.</code><code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">optimizer</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">enc</span></em>, <em class="sig-param"><span class="n">dec</span></em>, <em class="sig-param"><span class="n">net_pz</span></em>, <em class="sig-param"><span class="n">train_dl</span></em>, <em class="sig-param"><span class="n">test_dl</span></em>, <em class="sig-param"><span class="n">use_mdn</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">Nexp</span></em>, <em class="sig-param"><span class="n">keep_last</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trainer_alpha.train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">trainer_alpha.</span></code><code class="sig-name descname"><span class="pre">train</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_pz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mdn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nexp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_last</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_alpha.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_alpha.train" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
+</section>
 
 
            </div>
@@ -122,7 +122,7 @@ exposure, but keeping at least one.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Martin B. Eriksen.</p>
+    <p>&#169; Copyright 2022, Martin Eriksen.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

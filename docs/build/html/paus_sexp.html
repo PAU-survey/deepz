@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>paus_sexp module &mdash; deepz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>paus_sexp module &mdash; DEEPz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
@@ -12,12 +13,11 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="train_data module" href="train_data.html" />
-    <link rel="prev" title="arch_mdn module" href="arch_mdn.html" /> 
+    <link rel="prev" title="local_settings module" href="local_settings.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -25,7 +25,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> deepz
+            <a href="index.html" class="icon icon-home"> DEEPz
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -35,13 +35,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html">loaders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">paus_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
@@ -58,7 +57,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">deepz</a>
+          <a href="index.html">DEEPz</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -77,7 +76,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-paus_sexp">
+  <section id="module-paus_sexp">
 <span id="paus-sexp-module"></span><h1>paus_sexp module<a class="headerlink" href="#module-paus_sexp" title="Permalink to this headline">¶</a></h1>
 <p>This paper focuses on the data from the Cosmological Evolution Survey 
 <a class="reference external" href="https://cosmos.astro.caltech.edu/">(COSMOS)</a>,  field1 where we have PAUS 
@@ -107,7 +106,7 @@ several times (3-10) from different overlapping exposures. The coadded fluxes ar
 produced using inverse variance weighting of the individual measurements.</p>
 <dl class="py function">
 <dt id="paus_sexp.get_cosmos">
-<code class="sig-prename descclassname">paus_sexp.</code><code class="sig-name descname">get_cosmos</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">apply_cuts</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_cosmos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paus_sexp.get_cosmos" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">paus_sexp.</span></code><code class="sig-name descname"><span class="pre">get_cosmos</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_cuts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_cosmos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.get_cosmos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Preprocessing on cosmos data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -127,7 +126,7 @@ data, such that: r50 &gt; 0.</p>
 
 <dl class="py function">
 <dt id="paus_sexp.get_indexp">
-<code class="sig-prename descclassname">paus_sexp.</code><code class="sig-name descname">get_indexp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inds_touse</span></em>, <em class="sig-param"><span class="n">NB_bands</span></em>, <em class="sig-param"><span class="n">indexp_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_indexp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paus_sexp.get_indexp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">paus_sexp.</span></code><code class="sig-name descname"><span class="pre">get_indexp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inds_touse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NB_bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_indexp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.get_indexp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flow and flow error of the sources of interest.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -150,14 +149,18 @@ between COSMOS and subaru catalogues with nr &lt; 10.</p>
 
 <dl class="py function">
 <dt id="paus_sexp.paus">
-<code class="sig-prename descclassname">paus_sexp.</code><code class="sig-name descname">paus</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">apply_cuts</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#paus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#paus_sexp.paus" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">paus_sexp.</span></code><code class="sig-name descname"><span class="pre">paus</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_cuts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">galcat_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#paus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.paus" title="Permalink to this definition">¶</a></dt>
 <dd><p>PAUS data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>apply_cuts</strong> (<em>bool</em>) – true if you want to apply constraints on conf and i_auto, 
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>apply_cuts</strong> (<em>bool</em>) – true if you want to apply constraints on conf and i_auto, 
 such that the cosmos data complies with: 3 &lt;= conf &lt;= 5 and i_auto &lt; 22.5. 
 Otherwise, if False, then only apply constraint on column r50 of the cosmos 
-data, such that: r50 &gt; 0.</p>
+data, such that: r50 &gt; 0.</p></li>
+<li><p><strong>galcat_path</strong> (<em>str</em>) – coadd_v8.h5</p></li>
+<li><p><strong>indexp_path</strong> (<em>str</em>) – fa_v8.pq</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>flux, flux_err, fmes, vinv, isnan, zbin, ref_id.</p>
@@ -168,20 +171,20 @@ data, such that: r50 &gt; 0.</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="arch_mdn.html" class="btn btn-neutral float-left" title="arch_mdn module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="local_settings.html" class="btn btn-neutral float-left" title="local_settings module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="train_data.html" class="btn btn-neutral float-right" title="train_data module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Martin B. Eriksen.</p>
+    <p>&#169; Copyright 2022, Martin Eriksen.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

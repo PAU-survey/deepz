@@ -16,113 +16,100 @@
 
 from IPython.core import debugger as ipdb
 import os
-import time
+
 import numpy as np
 import pandas as pd
 from itertools import chain
-import os
+
 import sys
-
-#sys.path.append('..')
-#sys.path.append('../var')
-sys.path.append('../code')
-
+import time
+import trainer_alpha
 import torch
-#assert torch.__version__.startswith('1.0'), 'For some reason the code fails badly on newer PyTorch versions.'
-
-
 from torch import optim
-from pathlib import Path
 from torch.utils.data import TensorDataset, DataLoader
-from matplotlib import pyplot as plt
 
-# import arch_mdn
-# import paus_data
+import os
+from pathlib import Path
+import paus_sexp as paus_data
+
+from matplotlib import pyplot as plt
 import utils
 
-import paus_sexp as paus_data
+import local_settings
+import loaders
 
+sys.path.append('../code')
 # pretrain = True #False
+
 """Constants
 """
-#: alpha
+# alpha
 alpha = 0.8
 
-#: train set size
-Ntrain = 8000 #'all'
+# train set size
+Ntrain = 8000 #'all'   # Ntrain would have to be an input in the get_loaders function.
 
-#: train set size
+# train set size
 Ntrain = 100 #'all'
 
-#: verpretrain
+# verpretrain
 verpretrain = 3
 
-import paus_sexp as paus_data
-flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus()
-
-
-#model_dir = Path('/nfs/astro/eriksen/deepz/encmodels_data')
+# paus data
+galcat_path = local_settings.galcat_path
+indexp_path = local_settings.indexp_path
+data = paus_data.paus(True, galcat_path, indexp_path)
+flux, flux_err, fmes, vinv, isnan, zbin, ref_id = data
 
 version = 2
-output_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux') / str(version)
+output_dir = Path(local_settings.redux_path) / str(version)
 
 # Other values collided with importing the code in a notebook...
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
-inds_all = np.loadtxt('/cephfs/pic.es/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
+inds_all = np.loadtxt(local_settings.inds_large_v1_path)
 
 
-def get_loaders(ifold, inds):
-    """Get loaders for specific fold."""
-    
-    def sub(ix):
-        ds = TensorDataset(flux[ix].cuda(), fmes[ix].cuda(), vinv[ix].cuda(), isnan[ix].cuda(), zbin[ix].cuda())
-        
-        return ds
-    
-    ix_train = torch.ByteTensor(1*(inds != ifold))
-    ix_test = torch.ByteTensor(1*(inds == ifold))
 
-    # Here we deterministically remove galaxies.
-    if not Ntrain == 'all':
-        # You *don't* need to use a different number because of the folds.
-        Nsel = int(Ntrain)
-        
-        ix_train[Nsel:] = 0
-        
-
-    ds_train = sub(ix_train)
-    ds_test = sub(ix_test)
-
-    train_dl = DataLoader(ds_train, batch_size=500, shuffle=True)
-    test_dl = DataLoader(ds_test, batch_size=100)
-    
-    return train_dl, test_dl, zbin[ix_test]
-
-
-import trainer_alpha
-
-def train(ifold, **config):
+def train(pretrain_v_path, ifold, **config):
     """Train the networks for one fold.
+
+    :param pretrain_v_path: 
+
+    :type pretrain_v_path: 
+
+    :param ifold: ---
+
+    :type ifold:--
+
+    :param config:
+
+    :type config:
+
+    :return:
+
+    :rtype:
+
     """
-    
+    #: verpretrain: is the version pretrain
     verpretrain = config['verpretrain']
+
+    #: pretrain is pretrain
     pretrain = config['pretrain']
 
+    # part is ?
     part = 'mdn' if use_mdn else 'normal'
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v16_{}_'+part+'.pt'
-    #path_base = f'/nfs/astro/eriksen/deepz/redux/5/pretrain_fsps_{part}'+'_{}.pt'
-    
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v23_{}_'+part+'.pt'
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v16_{}_'+part+'.pt'
-#/nfs/astro/eriksen/deepz/redux/pretrain/1
 
     # Where to find the pretrained files.
-    path_base = f'/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
+    path_base = pretrain_v_path + f'{verpretrain}' + '_{}_' + part + '.pt'
 
+    # Indices of the selected sources with flow information and 
+    # ¿¿¿config['catnr']???.
     inds = inds_all[config['catnr']][:len(flux)]
     
+    #
     enc, dec, net_pz = utils.get_nets(path_base, use_mdn, pretrain)
-    train_dl, test_dl, _ = get_loaders(ifold, inds)
+    train_dl, test_dl, _ = loaders.get_loaders(ifold, inds, data, Ntrain)
+
     K = (enc, dec, net_pz, train_dl, test_dl, use_mdn, config['alpha'], config['Nexp'], \
          config['keep_last'])
 
@@ -145,8 +132,6 @@ def train(ifold, **config):
     trainer_alpha.train(optimizer, 200, *K)
     
     return enc, dec, net_pz
-
-# In[8]:
 
 
 def pz_fold(ifold, inds, out_fmt, use_mdn):
@@ -232,8 +217,6 @@ def photoz_all(**config):
 
     return df
 
-
-# In[16]:
 
 import trainer_sexp
 

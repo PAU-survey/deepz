@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>utils &mdash; deepz  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>utils &mdash; DEEPz  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -12,7 +12,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -23,7 +22,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> deepz
+            <a href="../index.html" class="icon icon-home"> DEEPz
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -33,11 +32,8 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../example.html">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">deepz</a></li>
 </ul>
 
@@ -47,7 +43,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">deepz</a>
+          <a href="../index.html">DEEPz</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -85,12 +81,42 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span><span class="p">,</span> <span class="n">DataLoader</span>
 
 <div class="viewcode-block" id="get_nets"><a class="viewcode-back" href="../utils.html#utils.get_nets">[docs]</a><span class="k">def</span> <span class="nf">get_nets</span><span class="p">(</span><span class="n">path_base</span><span class="p">,</span> <span class="n">use_mdn</span><span class="p">,</span> <span class="n">pretrain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">Nbands</span><span class="o">=</span><span class="mi">46</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Initialize networks.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Initialize networks.? si se inicializa por qué hay un </span>
+<span class="sd">    parámetro pretrain?</span>
+
+<span class="sd">    :param path_base: ?</span>
+
+<span class="sd">    :type path_base: ?</span>
+
+<span class="sd">    :param use_mdn: Is a boolean. If is True, ...?</span>
+<span class="sd">    </span>
+<span class="sd">    :type use_mdm: boolean</span>
+
+<span class="sd">    :param pretrain: Boolean, if is True then the networks have been </span>
+<span class="sd">    trained.</span>
+
+<span class="sd">    :type pretrain:</span>
+
+<span class="sd">    :param Nbands: The total number of bands is 46 by default.</span>
+
+<span class="sd">    :type Nbands: int</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
+    <span class="c1">#: Nfeat is </span>
     <span class="n">Nfeat</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="c1">#: Nl is </span>
     <span class="n">Nl</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="c1">#: kwds</span>
     <span class="n">kwds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Nfeat&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;Nl&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;Nbands&#39;</span><span class="p">:</span> <span class="n">Nbands</span><span class="p">}</span>
+
+    <span class="c1">#: enc encoder</span>
     <span class="n">enc</span> <span class="o">=</span> <span class="n">var_networks</span><span class="o">.</span><span class="n">Encoder</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+    <span class="c1">#: dec, is decoder</span>
     <span class="n">dec</span> <span class="o">=</span> <span class="n">var_networks</span><span class="o">.</span><span class="n">Decoder</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
    
     <span class="k">if</span> <span class="n">use_mdn</span><span class="p">:</span>
@@ -111,29 +137,6 @@
     <span class="k">return</span> <span class="n">enc</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">net_pz</span></div>
 
 
-<div class="viewcode-block" id="get_loaders"><a class="viewcode-back" href="../utils.html#utils.get_loaders">[docs]</a><span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="n">ifold</span><span class="p">,</span> <span class="n">inds</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get loaders for specific fold.&quot;&quot;&quot;</span>
-    
-    <span class="n">flux</span><span class="p">,</span> <span class="n">flux_err</span><span class="p">,</span> <span class="n">fmes</span><span class="p">,</span> <span class="n">vinv</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">zbin</span><span class="p">,</span> <span class="n">ref_id</span> <span class="o">=</span> <span class="n">data</span>
-    
-    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="n">ix</span><span class="p">):</span>
-        <span class="n">ds</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">flux</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">fmes</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">vinv</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> \
-                           <span class="n">isnan</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">zbin</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">())</span>
-        
-        <span class="k">return</span> <span class="n">ds</span>
-    
-    <span class="n">ix_train</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ByteTensor</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">inds</span> <span class="o">!=</span> <span class="n">ifold</span><span class="p">))</span>
-    <span class="n">ix_test</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ByteTensor</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">inds</span> <span class="o">==</span> <span class="n">ifold</span><span class="p">))</span>
-    
-    <span class="n">ds_train</span> <span class="o">=</span> <span class="n">sub</span><span class="p">(</span><span class="n">ix_train</span><span class="p">)</span>
-    <span class="n">ds_test</span> <span class="o">=</span> <span class="n">sub</span><span class="p">(</span><span class="n">ix_test</span><span class="p">)</span>
-
-
-    <span class="n">train_dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">ds_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">test_dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">ds_test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="n">train_dl</span><span class="p">,</span> <span class="n">test_dl</span><span class="p">,</span> <span class="n">zbin</span><span class="p">[</span><span class="n">ix_test</span><span class="p">]</span></div>
-
 
 <div class="viewcode-block" id="all_inds"><a class="viewcode-back" href="../utils.html#utils.all_inds">[docs]</a><span class="k">def</span> <span class="nf">all_inds</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Load a matrix with all the indices.&quot;&quot;&quot;</span>
@@ -153,7 +156,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Martin B. Eriksen.</p>
+    <p>&#169; Copyright 2022, Martin Eriksen.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

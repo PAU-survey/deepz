@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>var_networks &mdash; deepz  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>var_networks &mdash; DEEPz  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
@@ -12,7 +12,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
@@ -23,7 +22,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> deepz
+            <a href="../index.html" class="icon icon-home"> DEEPz
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -33,11 +32,8 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../example.html">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">deepz</a></li>
 </ul>
 
@@ -47,7 +43,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">deepz</a>
+          <a href="../index.html">DEEPz</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -72,7 +68,17 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
 <div class="viewcode-block" id="Encoder"><a class="viewcode-back" href="../var_networks.html#var_networks.Encoder">[docs]</a><span class="k">class</span> <span class="nc">Encoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Encoder network.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Encoder network.</span>
+<span class="sd">    objects belonging to this class have the following attributes:</span>
+
+<span class="sd">    - Nfeat:</span>
+<span class="sd">    </span>
+<span class="sd">    - Nl: Number of linear layers</span>
+
+<span class="sd">    - Nbands: Number of narrow and broad bands</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Nfeat</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">Nl</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">Nbands</span><span class="o">=</span><span class="mi">46</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -94,7 +100,12 @@
         <span class="k">return</span> <span class="n">x</span></div></div>
     
 <div class="viewcode-block" id="Decoder"><a class="viewcode-back" href="../var_networks.html#var_networks.Decoder">[docs]</a><span class="k">class</span> <span class="nc">Decoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Decoder network.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Decoder network.</span>
+<span class="sd">    Puede ser que el autoencoder no sea el reflejo del </span>
+<span class="sd">    encoder?. Hacer dibujo.</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Nfeat</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">Nl</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">Nbands</span><span class="o">=</span><span class="mi">46</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -123,7 +134,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2022, Martin B. Eriksen.</p>
+    <p>&#169; Copyright 2022, Martin Eriksen.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

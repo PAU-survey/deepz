@@ -44,8 +44,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
+import local_settings
 
-data_in = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input')
+data_in = local_settings.data_in_path
 
 NB = ['NB{}'.format(x) for x in 455+10*np.arange(40)]
 BB = ['cfht_u', 'subaru_B', 'subaru_V', 'subaru_r', 'subaru_i', 'subaru_z']
@@ -118,7 +119,11 @@ def get_indexp(inds_touse, NB_bands, indexp_path):
     
     return X.flux.values, X.flux_error.values
 
-def paus(apply_cuts=True):
+
+galcat_path = local_settings.galcat_path
+indexp_path = local_settings.indexp_path
+
+def paus(apply_cuts, galcat_path, indexp_path):
     """PAUS data
 
     :param apply_cuts: true if you want to apply constraints on conf and i_auto, 
@@ -128,6 +133,14 @@ def paus(apply_cuts=True):
 
     :type apply_cuts: bool
 
+    :param galcat_path: coadd_v8.h5
+
+    :type galcat_path: str
+
+    :param indexp_path: fa_v8.pq
+
+    :type indexp_path: str
+
     :return: flux, flux_err, fmes, vinv, isnan, zbin, ref_id.
 
     :rtype: tensor, tensor, tensor, tensor, array, tensor, tensor
@@ -135,8 +148,8 @@ def paus(apply_cuts=True):
 
     # Testing Lumus.
     # galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
-    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
-    indexp_path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/fa_v8.pq')
+    # galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
+    # indexp_path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/fa_v8.pq')
 
     galcat = pd.read_hdf(galcat_path, 'cat')
 

@@ -4,7 +4,17 @@
 from torch import nn
 
 class Encoder(nn.Module):
-    """Encoder network."""
+    """Encoder network.
+    objects belonging to this class have the following attributes:
+
+    - Nfeat:
+    
+    - Nl: Number of linear layers
+
+    - Nbands: Number of narrow and broad bands
+    
+    
+    """
     
     def __init__(self, Nfeat=10, Nl=10, Nbands=46):
         super().__init__()
@@ -26,7 +36,12 @@ class Encoder(nn.Module):
         return x
     
 class Decoder(nn.Module):
-    """Decoder network."""
+    """Decoder network.
+    Puede ser que el autoencoder no sea el reflejo del 
+    encoder?. Hacer dibujo.
+    
+    
+    """
     
     def __init__(self, Nfeat=10, Nl=10, Nbands=46):
         super().__init__()
