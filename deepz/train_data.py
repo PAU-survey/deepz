@@ -56,9 +56,11 @@ Ntrain = 100 #'all'
 verpretrain = 3
 
 # paus data
-galcat_path = local_settings.galcat_path
-indexp_path = local_settings.indexp_path
-data = paus_data.paus(True, galcat_path, indexp_path)
+df_galcat = local_settings.galcat
+df_cosmos = local_settings.cosmos
+df_fa = local_settings.df_fa
+
+data = paus_data.paus(True, df_galcat, df_fa, df_cosmos)
 flux, flux_err, fmes, vinv, isnan, zbin, ref_id = data
 
 version = 2

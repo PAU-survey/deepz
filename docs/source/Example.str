@@ -1,0 +1,18 @@
+Example
+=======
+
+Install
+*******
+
+- conda install -c anaconda pytables (pd.read_hdf)
+- conda install -c conda-forge fastparquet (pd.read_parquet)
+
+Config
+******
+
+
+Run
+***
+When you stay in the enviorentment with the library necesary specific in requeriments.txt you can run deepz as follow: 
+
+- python train_data.py

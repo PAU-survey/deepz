@@ -46,16 +46,14 @@ import pandas as pd
 import torch
 import local_settings
 
-data_in = local_settings.data_in_path
+
 
 NB = ['NB{}'.format(x) for x in 455+10*np.arange(40)]
 BB = ['cfht_u', 'subaru_B', 'subaru_V', 'subaru_r', 'subaru_i', 'subaru_z']
 bands = NB + BB
 
-D = {'photoz': '4199.csv', 'coadd': '4213.csv', 'cosmos': '4378.csv'}
 
-
-def get_cosmos(apply_cuts):
+def get_cosmos(apply_cuts, cosmos):
     """Preprocessing on cosmos data 
 
     :param apply_cuts: true if you want to apply constraints on conf and i_auto, 
@@ -69,7 +67,7 @@ def get_cosmos(apply_cuts):
 
     :rtype: Pandas DataFrame
     """
-    cosmos = pd.read_csv(str(data_in / D['cosmos']), comment='#')
+
     cosmos = cosmos.set_index('paudm_id')
     cosmos = cosmos[0 < cosmos.r50]
     
@@ -79,7 +77,7 @@ def get_cosmos(apply_cuts):
 
     return cosmos
 
-def get_indexp(inds_touse, NB_bands, indexp_path):
+def get_indexp(inds_touse, NB_bands, df_fa):
     """Flow and flow error of the sources of interest.
 
     :param inds_touse: Common sources between COSMOS and Subaru.
@@ -103,7 +101,6 @@ def get_indexp(inds_touse, NB_bands, indexp_path):
     # Testing Lumus.
     # path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input/fa/comb_v7.parquet')
 
-    df_fa = pd.read_parquet(indexp_path)
     df_fa = df_fa.set_index('ref_id')
 
     # Way less than 1% exposures missed.
@@ -120,10 +117,7 @@ def get_indexp(inds_touse, NB_bands, indexp_path):
     return X.flux.values, X.flux_error.values
 
 
-galcat_path = local_settings.galcat_path
-indexp_path = local_settings.indexp_path
-
-def paus(apply_cuts, galcat_path, indexp_path):
+def paus(apply_cuts, galcat, df_fa, df_cosmos):
     """PAUS data
 
     :param apply_cuts: true if you want to apply constraints on conf and i_auto, 
@@ -146,19 +140,12 @@ def paus(apply_cuts, galcat_path, indexp_path):
     :rtype: tensor, tensor, tensor, tensor, array, tensor, tensor
     """
 
-    # Testing Lumus.
-    # galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
-    # galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
-    # indexp_path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/fa_v8.pq')
-
-    galcat = pd.read_hdf(galcat_path, 'cat')
-
     sub = galcat.loc[~np.isnan(galcat.flux.subaru_i)]
     # Here we only use galaxies where all bands are observed.
     sub = sub.loc[~np.isnan(sub.flux[bands]).any(1)]
 
     # Overlap between the two catalogues ...
-    cosmos = get_cosmos(apply_cuts)
+    cosmos = get_cosmos(apply_cuts, df_cosmos)
     touse = cosmos.index & sub.index
 
     # Here we are not actually using the flux, but a flux ratio..
@@ -172,14 +159,14 @@ def paus(apply_cuts, galcat_path, indexp_path):
     flux_err = torch.Tensor(flux_err / norm[:, None])
 
     # The individual exposures.
-    fmes, emes = get_indexp(touse, NB, indexp_path)
+    fmes, emes = get_indexp(touse, NB, df_fa)
     #fmes = np.nan_to_num(fmes, copy=False)
     #emes = np.nan_to_num(emes, copy=False)
     fmes = torch.Tensor(fmes / norm[:, None, None])
     emes = torch.Tensor(emes / norm[:, None, None])
     
     vinv = 1. / emes.pow(2)
-    isnan = np.isnan(vinv)
+    isnan = np.isnan(vinv).type(torch.bool)
     vinv[isnan] = 0
     fmes[isnan] = 0
 
@@ -188,8 +175,6 @@ def paus(apply_cuts, galcat_path, indexp_path):
 
     print('# Galaxies', len(flux))
     assert len(flux) == len(zbin), 'Inconsistent number of galaxies'
-    
-    print('here..')
     
     # Test, this makes a difference when selecting with a PyTorch
     # uint8 tensor.

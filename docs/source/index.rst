@@ -10,6 +10,7 @@ Welcome to DEEPz's documentation!
    :maxdepth: 2
    :caption: Contents:
    
+   Example
    modules
 
 
