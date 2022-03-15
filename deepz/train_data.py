@@ -148,7 +148,7 @@ def pz_fold(ifold, inds, out_fmt, use_mdn):
     enc, dec, net_pz = utils.get_nets(str(net_base_path), use_mdn)
     enc.eval(), dec.eval(), net_pz.eval()
     
-    _, test_dl, zbin_test = get_loaders(ifold, inds)
+    _, test_dl, zbin_test = loaders.get_loaders(ifold, inds, data, Ntrain)
 
    
     assert isinstance(inds, torch.Tensor), 'This is required...'
@@ -180,7 +180,7 @@ def pz_fold(ifold, inds, out_fmt, use_mdn):
     return part
 
 
-def train_all(**config):
+def train_all(pretrain_v_path, **config):
     """Train all the folds."""
    
     out_fmt = config['out_fmt']
@@ -192,7 +192,7 @@ def train_all(**config):
             
         print('Running for:', ifold)
         t1 = time.time()
-        enc, dec, net_pz = train(ifold, **config)
+        enc, dec, net_pz = train(pretrain_v_path, ifold, **config)
         enc.eval()
         dec.eval()
         net_pz.train()
@@ -241,7 +241,7 @@ if True: #True: #False: #False: #False: #True: #False:
     #catnr = 0
 
     use_mdn = True
-    model_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/train') / str(version)
+    model_dir = Path('/data/astro/scratch/idazaper/deepz/redux/train') / str(version)
 
     verpretrain = 8
     Ntrain = 'all'
@@ -268,7 +268,9 @@ if True: #True: #False: #False: #False: #True: #False:
         print('To store at:')
         print(out_fmt)
 
-        train_all(**config) 
+        path = '/data/astro/scratch/idazaper/deepz/'
+        pretrain_v_path = os.path.join(path, 'redux/pretrain/v')
+        train_all(pretrain_v_path, **config) 
 
         pz = photoz_all(**config)
         pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
