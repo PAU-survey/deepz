@@ -39,10 +39,10 @@ def get_loaders(ifold, inds, data, Ntrain):
 
     :type ifold: ?
 
-    :param inds: Indices of the selected sources with flow information and 
+    :param inds: Indices of the selected sources with flux information and 
                  ¿¿¿config['catnr']???.
 
-    :type inds: Numpy array
+    :type inds: tensor
 
     :param data: paus data
 
@@ -70,8 +70,8 @@ def get_loaders(ifold, inds, data, Ntrain):
         
         return ds
     
-    ix_train = torch.ByteTensor(1*(inds != ifold))
-    ix_test = torch.ByteTensor(1*(inds == ifold))
+    ix_train = 1*(inds != ifold).type(torch.bool)
+    ix_test = 1*(inds == ifold).type(torch.bool)
 
     # Here we deterministically remove galaxies.
     if not Ntrain == 'all':

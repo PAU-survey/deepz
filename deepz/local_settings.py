@@ -17,6 +17,8 @@
 
 import os
 import pandas as pd
+import numpy as np
+from pathlib import Path
 
 # =============================================================================
 # CONFIGURATIONS
@@ -50,6 +52,26 @@ indexp_path = os.path.join(path, 'input/lumus/fa_v8.pq')
 df_fa = pd.read_parquet(indexp_path)
 
 #################
+# config        #
+#################
+
+#: verpretrain: is the version pretrain
+#verpretrain = config['verpretrain']
+
+#: pretrain is pretrain, (boolean)
+#pretrain = config['pretrain']
+
+#: part
+#part = 'mdn' if config['use_mdn'] else 'normal'
+
+#config = {'verpretrain': verpretrain, 'Ntrain': Ntrain, 'catnr': catnr, 'use_mdn': use_mdn,
+#                  'Ntrain': Ntrain, 'pretrain': pretrain, 'keep_last': keep_last}
+
+
+
+
+
+#################
 # train_data.py #
 #################
 
@@ -59,7 +81,14 @@ redux_path = os.path.join(path, 'redux')
 # ndarray: Data read from the text file.
 #: inds/inds_large_v1.txt
 inds_large_v1_path = os.path.join(path, 'inds/inds_large_v1.txt')
+#: inds_all
+inds_all = np.loadtxt(inds_large_v1_path)
 
 #: /redux/pretrain/v
-pretrain_v_path = os.path.join(path, 'redux/pretrain/v')
+pretrain_v = os.path.join(path, 'redux/pretrain/v')
 
+
+
+#: Ouput
+version = 2
+output_dir = Path(redux_path) / str(version)
