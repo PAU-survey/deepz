@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>paus_sexp &mdash; DEEPz  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <title>paus_sexp &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -32,8 +34,11 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../example.html">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">deepz</a></li>
 </ul>
 
@@ -110,16 +115,14 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">local_settings</span>
 
-<span class="n">data_in</span> <span class="o">=</span> <span class="n">local_settings</span><span class="o">.</span><span class="n">data_in_path</span>
+
 
 <span class="n">NB</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;NB</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="mi">455</span><span class="o">+</span><span class="mi">10</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">40</span><span class="p">)]</span>
 <span class="n">BB</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cfht_u&#39;</span><span class="p">,</span> <span class="s1">&#39;subaru_B&#39;</span><span class="p">,</span> <span class="s1">&#39;subaru_V&#39;</span><span class="p">,</span> <span class="s1">&#39;subaru_r&#39;</span><span class="p">,</span> <span class="s1">&#39;subaru_i&#39;</span><span class="p">,</span> <span class="s1">&#39;subaru_z&#39;</span><span class="p">]</span>
 <span class="n">bands</span> <span class="o">=</span> <span class="n">NB</span> <span class="o">+</span> <span class="n">BB</span>
 
-<span class="n">D</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;photoz&#39;</span><span class="p">:</span> <span class="s1">&#39;4199.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;coadd&#39;</span><span class="p">:</span> <span class="s1">&#39;4213.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;cosmos&#39;</span><span class="p">:</span> <span class="s1">&#39;4378.csv&#39;</span><span class="p">}</span>
 
-
-<div class="viewcode-block" id="get_cosmos"><a class="viewcode-back" href="../paus_sexp.html#paus_sexp.get_cosmos">[docs]</a><span class="k">def</span> <span class="nf">get_cosmos</span><span class="p">(</span><span class="n">apply_cuts</span><span class="p">):</span>
+<div class="viewcode-block" id="get_cosmos"><a class="viewcode-back" href="../paus_sexp.html#paus_sexp.get_cosmos">[docs]</a><span class="k">def</span> <span class="nf">get_cosmos</span><span class="p">(</span><span class="n">apply_cuts</span><span class="p">,</span> <span class="n">cosmos</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Preprocessing on cosmos data </span>
 
 <span class="sd">    :param apply_cuts: true if you want to apply constraints on conf and i_auto, </span>
@@ -133,7 +136,7 @@
 
 <span class="sd">    :rtype: Pandas DataFrame</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">cosmos</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data_in</span> <span class="o">/</span> <span class="n">D</span><span class="p">[</span><span class="s1">&#39;cosmos&#39;</span><span class="p">]),</span> <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
+
     <span class="n">cosmos</span> <span class="o">=</span> <span class="n">cosmos</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;paudm_id&#39;</span><span class="p">)</span>
     <span class="n">cosmos</span> <span class="o">=</span> <span class="n">cosmos</span><span class="p">[</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">cosmos</span><span class="o">.</span><span class="n">r50</span><span class="p">]</span>
     
@@ -143,7 +146,7 @@
 
     <span class="k">return</span> <span class="n">cosmos</span></div>
 
-<div class="viewcode-block" id="get_indexp"><a class="viewcode-back" href="../paus_sexp.html#paus_sexp.get_indexp">[docs]</a><span class="k">def</span> <span class="nf">get_indexp</span><span class="p">(</span><span class="n">inds_touse</span><span class="p">,</span> <span class="n">NB_bands</span><span class="p">,</span> <span class="n">indexp_path</span><span class="p">):</span>
+<div class="viewcode-block" id="get_indexp"><a class="viewcode-back" href="../paus_sexp.html#paus_sexp.get_indexp">[docs]</a><span class="k">def</span> <span class="nf">get_indexp</span><span class="p">(</span><span class="n">inds_touse</span><span class="p">,</span> <span class="n">NB_bands</span><span class="p">,</span> <span class="n">df_fa</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Flow and flow error of the sources of interest.</span>
 
 <span class="sd">    :param inds_touse: Common sources between COSMOS and Subaru.</span>
@@ -167,7 +170,6 @@
     <span class="c1"># Testing Lumus.</span>
     <span class="c1"># path = Path(&#39;/cephfs/pic.es/astro/scratch/eriksen/deepz/input/fa/comb_v7.parquet&#39;)</span>
 
-    <span class="n">df_fa</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="n">indexp_path</span><span class="p">)</span>
     <span class="n">df_fa</span> <span class="o">=</span> <span class="n">df_fa</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;ref_id&#39;</span><span class="p">)</span>
 
     <span class="c1"># Way less than 1% exposures missed.</span>
@@ -184,10 +186,7 @@
     <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">flux_error</span><span class="o">.</span><span class="n">values</span></div>
 
 
-<span class="n">galcat_path</span> <span class="o">=</span> <span class="n">local_settings</span><span class="o">.</span><span class="n">galcat_path</span>
-<span class="n">indexp_path</span> <span class="o">=</span> <span class="n">local_settings</span><span class="o">.</span><span class="n">indexp_path</span>
-
-<div class="viewcode-block" id="paus"><a class="viewcode-back" href="../paus_sexp.html#paus_sexp.paus">[docs]</a><span class="k">def</span> <span class="nf">paus</span><span class="p">(</span><span class="n">apply_cuts</span><span class="p">,</span> <span class="n">galcat_path</span><span class="p">,</span> <span class="n">indexp_path</span><span class="p">):</span>
+<div class="viewcode-block" id="paus"><a class="viewcode-back" href="../paus_sexp.html#paus_sexp.paus">[docs]</a><span class="k">def</span> <span class="nf">paus</span><span class="p">(</span><span class="n">apply_cuts</span><span class="p">,</span> <span class="n">galcat</span><span class="p">,</span> <span class="n">df_fa</span><span class="p">,</span> <span class="n">df_cosmos</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;PAUS data</span>
 
 <span class="sd">    :param apply_cuts: true if you want to apply constraints on conf and i_auto, </span>
@@ -210,19 +209,12 @@
 <span class="sd">    :rtype: tensor, tensor, tensor, tensor, array, tensor, tensor</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Testing Lumus.</span>
-    <span class="c1"># galcat_path = &#39;/cephfs/pic.es/astro/scratch/eriksen/deepz/input/cosmos_pau_matched_v2.h5&#39;</span>
-    <span class="c1"># galcat_path = &#39;/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5&#39;</span>
-    <span class="c1"># indexp_path = Path(&#39;/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/fa_v8.pq&#39;)</span>
-
-    <span class="n">galcat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">galcat_path</span><span class="p">,</span> <span class="s1">&#39;cat&#39;</span><span class="p">)</span>
-
     <span class="n">sub</span> <span class="o">=</span> <span class="n">galcat</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">galcat</span><span class="o">.</span><span class="n">flux</span><span class="o">.</span><span class="n">subaru_i</span><span class="p">)]</span>
     <span class="c1"># Here we only use galaxies where all bands are observed.</span>
     <span class="n">sub</span> <span class="o">=</span> <span class="n">sub</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sub</span><span class="o">.</span><span class="n">flux</span><span class="p">[</span><span class="n">bands</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="mi">1</span><span class="p">)]</span>
 
     <span class="c1"># Overlap between the two catalogues ...</span>
-    <span class="n">cosmos</span> <span class="o">=</span> <span class="n">get_cosmos</span><span class="p">(</span><span class="n">apply_cuts</span><span class="p">)</span>
+    <span class="n">cosmos</span> <span class="o">=</span> <span class="n">get_cosmos</span><span class="p">(</span><span class="n">apply_cuts</span><span class="p">,</span> <span class="n">df_cosmos</span><span class="p">)</span>
     <span class="n">touse</span> <span class="o">=</span> <span class="n">cosmos</span><span class="o">.</span><span class="n">index</span> <span class="o">&amp;</span> <span class="n">sub</span><span class="o">.</span><span class="n">index</span>
 
     <span class="c1"># Here we are not actually using the flux, but a flux ratio..</span>
@@ -236,14 +228,14 @@
     <span class="n">flux_err</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">flux_err</span> <span class="o">/</span> <span class="n">norm</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>
 
     <span class="c1"># The individual exposures.</span>
-    <span class="n">fmes</span><span class="p">,</span> <span class="n">emes</span> <span class="o">=</span> <span class="n">get_indexp</span><span class="p">(</span><span class="n">touse</span><span class="p">,</span> <span class="n">NB</span><span class="p">,</span> <span class="n">indexp_path</span><span class="p">)</span>
+    <span class="n">fmes</span><span class="p">,</span> <span class="n">emes</span> <span class="o">=</span> <span class="n">get_indexp</span><span class="p">(</span><span class="n">touse</span><span class="p">,</span> <span class="n">NB</span><span class="p">,</span> <span class="n">df_fa</span><span class="p">)</span>
     <span class="c1">#fmes = np.nan_to_num(fmes, copy=False)</span>
     <span class="c1">#emes = np.nan_to_num(emes, copy=False)</span>
     <span class="n">fmes</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">fmes</span> <span class="o">/</span> <span class="n">norm</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
     <span class="n">emes</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">emes</span> <span class="o">/</span> <span class="n">norm</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
     
     <span class="n">vinv</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">emes</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">isnan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vinv</span><span class="p">)</span>
+    <span class="n">isnan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">vinv</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
     <span class="n">vinv</span><span class="p">[</span><span class="n">isnan</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">fmes</span><span class="p">[</span><span class="n">isnan</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -252,8 +244,6 @@
 
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;# Galaxies&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">flux</span><span class="p">))</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">zbin</span><span class="p">),</span> <span class="s1">&#39;Inconsistent number of galaxies&#39;</span>
-    
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;here..&#39;</span><span class="p">)</span>
     
     <span class="c1"># Test, this makes a difference when selecting with a PyTorch</span>
     <span class="c1"># uint8 tensor.</span>

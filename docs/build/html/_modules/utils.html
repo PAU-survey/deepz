@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>utils &mdash; DEEPz  documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <title>utils &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -32,8 +34,11 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../example.html">Example</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules.html">deepz</a></li>
 </ul>
 
@@ -81,8 +86,7 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span><span class="p">,</span> <span class="n">DataLoader</span>
 
 <div class="viewcode-block" id="get_nets"><a class="viewcode-back" href="../utils.html#utils.get_nets">[docs]</a><span class="k">def</span> <span class="nf">get_nets</span><span class="p">(</span><span class="n">path_base</span><span class="p">,</span> <span class="n">use_mdn</span><span class="p">,</span> <span class="n">pretrain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">Nbands</span><span class="o">=</span><span class="mi">46</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Initialize networks.? si se inicializa por qué hay un </span>
-<span class="sd">    parámetro pretrain?</span>
+    <span class="sd">&quot;&quot;&quot;Initialize networks.</span>
 
 <span class="sd">    :param path_base: ?</span>
 
@@ -92,16 +96,13 @@
 <span class="sd">    </span>
 <span class="sd">    :type use_mdm: boolean</span>
 
-<span class="sd">    :param pretrain: Boolean, if is True then the networks have been </span>
-<span class="sd">    trained.</span>
+<span class="sd">    :param pretrain: Boolean, if is True then the networks have been trained.</span>
 
 <span class="sd">    :type pretrain:</span>
 
 <span class="sd">    :param Nbands: The total number of bands is 46 by default.</span>
 
 <span class="sd">    :type Nbands: int</span>
-<span class="sd">    </span>
-<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="c1">#: Nfeat is </span>
@@ -139,10 +140,11 @@
 
 
 <div class="viewcode-block" id="all_inds"><a class="viewcode-back" href="../utils.html#utils.all_inds">[docs]</a><span class="k">def</span> <span class="nf">all_inds</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Load a matrix with all the indices.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Load a matrix with all the indices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <span class="c1">#    index_path = &#39;/nfs/pic.es/user/e/eriksen/papers/deepz/redux/inds_large_v1.txt&#39;</span>
-    <span class="n">index_path</span> <span class="o">=</span> <span class="s1">&#39;/nfs/astro/eriksen/deepz/inds/inds_large_v1.txt&#39;</span>
+    <span class="n">index_path</span> <span class="o">=</span> <span class="s1">&#39;/nfs/astro/idazaper/deepz/inds/inds_large_v1.txt&#39;</span>
     <span class="n">inds_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">index_path</span><span class="p">)</span>
     <span class="n">inds_all</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">inds_all</span><span class="p">)</span>
     

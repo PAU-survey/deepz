@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>var_networks module &mdash; DEEPz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>var_networks module &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -34,14 +36,18 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loaders.html">loaders module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="paus_sexp.html">paus_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_funct.html">train_funct module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trainer_sexp.html">trainer_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
@@ -76,17 +82,16 @@
            <div itemprop="articleBody">
              
   <section id="module-var_networks">
-<span id="var-networks-module"></span><h1>var_networks module<a class="headerlink" href="#module-var_networks" title="Permalink to this headline">¶</a></h1>
+<span id="var-networks-module"></span><h1>var_networks module<a class="headerlink" href="#module-var_networks" title="Permalink to this headline"></a></h1>
+<p>Networks</p>
 <dl class="py class">
-<dt id="var_networks.Decoder">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">var_networks.</span></code><code class="sig-name descname"><span class="pre">Decoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Nfeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nbands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">46</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_networks.html#Decoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_networks.Decoder" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="var_networks.Decoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">var_networks.</span></span><span class="sig-name descname"><span class="pre">Decoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Nfeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nbands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">46</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_networks.html#Decoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_networks.Decoder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Decoder network.
-Puede ser que el autoencoder no sea el reflejo del 
-encoder?. Hacer dibujo.</p>
+<p>Decoder network.</p>
 <dl class="py method">
-<dt id="var_networks.Decoder.forward">
-<code class="sig-name descname"><span class="pre">forward</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_networks.html#Decoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_networks.Decoder.forward" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="var_networks.Decoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_networks.html#Decoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_networks.Decoder.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
@@ -99,15 +104,15 @@ registered hooks while the latter silently ignores them.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="var_networks.Decoder.training">
-<code class="sig-name descname"><span class="pre">training</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#var_networks.Decoder.training" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="var_networks.Decoder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#var_networks.Decoder.training" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="var_networks.Encoder">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">var_networks.</span></code><code class="sig-name descname"><span class="pre">Encoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Nfeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nbands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">46</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_networks.html#Encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_networks.Encoder" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="var_networks.Encoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">var_networks.</span></span><span class="sig-name descname"><span class="pre">Encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Nfeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Nbands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">46</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_networks.html#Encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_networks.Encoder" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Encoder network.
 objects belonging to this class have the following attributes:</p>
@@ -117,8 +122,8 @@ objects belonging to this class have the following attributes:</p>
 <li><p>Nbands: Number of narrow and broad bands</p></li>
 </ul>
 <dl class="py method">
-<dt id="var_networks.Encoder.forward">
-<code class="sig-name descname"><span class="pre">forward</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_networks.html#Encoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_networks.Encoder.forward" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="var_networks.Encoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/var_networks.html#Encoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#var_networks.Encoder.forward" title="Permalink to this definition"></a></dt>
 <dd><p>Defines the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
@@ -131,8 +136,8 @@ registered hooks while the latter silently ignores them.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="var_networks.Encoder.training">
-<code class="sig-name descname"><span class="pre">training</span></code><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#var_networks.Encoder.training" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="var_networks.Encoder.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#var_networks.Encoder.training" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

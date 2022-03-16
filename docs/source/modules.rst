@@ -9,6 +9,7 @@ deepz
    local_settings
    paus_sexp
    train_data
+   train_funct
    trainer_alpha
    trainer_sexp
    utils

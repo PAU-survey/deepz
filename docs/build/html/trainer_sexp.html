@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>trainer_sexp module &mdash; DEEPz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>trainer_sexp module &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -35,14 +37,18 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loaders.html">loaders module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="paus_sexp.html">paus_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_funct.html">train_funct module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">trainer_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
@@ -77,23 +83,23 @@
            <div itemprop="articleBody">
              
   <section id="module-trainer_sexp">
-<span id="trainer-sexp-module"></span><h1>trainer_sexp module<a class="headerlink" href="#module-trainer_sexp" title="Permalink to this headline">¶</a></h1>
+<span id="trainer-sexp-module"></span><h1>trainer_sexp module<a class="headerlink" href="#module-trainer_sexp" title="Permalink to this headline"></a></h1>
 <dl class="py function">
-<dt id="trainer_sexp.get_coadd">
-<code class="sig-prename descclassname"><span class="pre">trainer_sexp.</span></code><code class="sig-name descname"><span class="pre">get_coadd</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vinv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isnan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_sexp.html#get_coadd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_sexp.get_coadd" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="trainer_sexp.get_coadd">
+<span class="sig-prename descclassname"><span class="pre">trainer_sexp.</span></span><span class="sig-name descname"><span class="pre">get_coadd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vinv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isnan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_sexp.html#get_coadd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_sexp.get_coadd" title="Permalink to this definition"></a></dt>
 <dd><p>Get the coadded fluxes, using only a fraction of the
 individual exposures.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="trainer_sexp.smoother">
-<code class="sig-prename descclassname"><span class="pre">trainer_sexp.</span></code><code class="sig-name descname"><span class="pre">smoother</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_pz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_sexp.html#smoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_sexp.smoother" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="trainer_sexp.smoother">
+<span class="sig-prename descclassname"><span class="pre">trainer_sexp.</span></span><span class="sig-name descname"><span class="pre">smoother</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_pz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.15</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_sexp.html#smoother"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_sexp.smoother" title="Permalink to this definition"></a></dt>
 <dd><p>Functionality for smoothing the p(z).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="trainer_sexp.train">
-<code class="sig-prename descclassname"><span class="pre">trainer_sexp.</span></code><code class="sig-name descname"><span class="pre">train</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_pz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mdn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_sexp.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_sexp.train" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="trainer_sexp.train">
+<span class="sig-prename descclassname"><span class="pre">trainer_sexp.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">net_pz</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mdn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trainer_sexp.html#train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trainer_sexp.train" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>

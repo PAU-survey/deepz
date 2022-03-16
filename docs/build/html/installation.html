@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>deepz &mdash; DEEPz  documentation</title>
+  <title>Installation &mdash; DEEPz  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="arch_mdn module" href="arch_mdn.html" />
-    <link rel="prev" title="Example" href="example.html" /> 
+    <link rel="next" title="Example" href="example.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,21 +40,12 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">deepz</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="loaders.html">loaders module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="paus_sexp.html">paus_sexp module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="train_funct.html">train_funct module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="trainer_sexp.html">trainer_sexp module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="var_networks.html">var_networks module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#git-lab">Git lab</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">deepz</a></li>
 </ul>
 
         </div>
@@ -71,9 +62,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>deepz</li>
+      <li>Installation</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -81,30 +72,30 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="deepz">
-<h1>deepz<a class="headerlink" href="#deepz" title="Permalink to this headline"></a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="loaders.html">loaders module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="paus_sexp.html">paus_sexp module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="train_data.html">train_data module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="train_funct.html">train_funct module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trainer_sexp.html">trainer_sexp module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="var_networks.html">var_networks module</a></li>
-</ul>
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
+<section id="git-lab">
+<h2>Git lab<a class="headerlink" href="#git-lab" title="Permalink to this headline"></a></h2>
+<p>As the package has not been published on PyPi yet, it can not be install using pip.</p>
+<p>For now, the suggested method is to clone the repository
+<a class="reference external" href="git&#64;github.com:PAU-survey/deepz.git">here</a>.
+Then create a virtual environment with the requirements this can be done with conda, by running:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda env create --file environment.yml
+</pre></div>
 </div>
+<p>Then activate the virtual environment:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>conda activate deepz
+</pre></div>
+</div>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="example.html" class="btn btn-neutral float-left" title="Example" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="arch_mdn.html" class="btn btn-neutral float-right" title="arch_mdn module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="example.html" class="btn btn-neutral float-right" title="Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>loaders module &mdash; DEEPz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>loaders module &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -35,14 +37,18 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">loaders module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="paus_sexp.html">paus_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_funct.html">train_funct module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trainer_sexp.html">trainer_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
@@ -77,11 +83,11 @@
            <div itemprop="articleBody">
              
   <section id="module-loaders">
-<span id="loaders-module"></span><h1>loaders module<a class="headerlink" href="#module-loaders" title="Permalink to this headline">¶</a></h1>
+<span id="loaders-module"></span><h1>loaders module<a class="headerlink" href="#module-loaders" title="Permalink to this headline"></a></h1>
 <p>load of data</p>
 <dl class="py function">
-<dt id="loaders.get_loaders">
-<code class="sig-prename descclassname"><span class="pre">loaders.</span></code><code class="sig-name descname"><span class="pre">get_loaders</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ntrain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loaders.html#get_loaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loaders.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="loaders.get_loaders">
+<span class="sig-prename descclassname"><span class="pre">loaders.</span></span><span class="sig-name descname"><span class="pre">get_loaders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ntrain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loaders.html#get_loaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loaders.get_loaders" title="Permalink to this definition"></a></dt>
 <dd><p>Get loaders for specific fold.</p>
 <blockquote>
 <div><p>First, it generates two tensors with the indices of the 
@@ -99,7 +105,7 @@ the train set is given the plus parameter shuffle=True.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ifold</strong> – <p>?</p>
 </p></li>
-<li><p><strong>inds</strong> (<em>Numpy array</em>) – Indices of the selected sources with flow information and 
+<li><p><strong>inds</strong> (<em>tensor</em>) – Indices of the selected sources with flux information and 
 ¿¿¿config[‘catnr’]???.</p></li>
 <li><p><strong>data</strong> – paus data</p></li>
 </ul>

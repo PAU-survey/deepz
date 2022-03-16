@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>paus_sexp module &mdash; DEEPz  documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <title>paus_sexp module &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -35,14 +37,18 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loaders.html">loaders module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">paus_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_funct.html">train_funct module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="trainer_sexp.html">trainer_sexp module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
@@ -77,7 +83,7 @@
            <div itemprop="articleBody">
              
   <section id="module-paus_sexp">
-<span id="paus-sexp-module"></span><h1>paus_sexp module<a class="headerlink" href="#module-paus_sexp" title="Permalink to this headline">¶</a></h1>
+<span id="paus-sexp-module"></span><h1>paus_sexp module<a class="headerlink" href="#module-paus_sexp" title="Permalink to this headline"></a></h1>
 <p>This paper focuses on the data from the Cosmological Evolution Survey 
 <a class="reference external" href="https://cosmos.astro.caltech.edu/">(COSMOS)</a>,  field1 where we have PAUS 
 observations and there are abundant spectroscopic measurements. Our fiducial 
@@ -105,8 +111,8 @@ light, since this is considered statistically optimal. A given galaxy is observe
 several times (3-10) from different overlapping exposures. The coadded fluxes are 
 produced using inverse variance weighting of the individual measurements.</p>
 <dl class="py function">
-<dt id="paus_sexp.get_cosmos">
-<code class="sig-prename descclassname"><span class="pre">paus_sexp.</span></code><code class="sig-name descname"><span class="pre">get_cosmos</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_cuts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_cosmos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.get_cosmos" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="paus_sexp.get_cosmos">
+<span class="sig-prename descclassname"><span class="pre">paus_sexp.</span></span><span class="sig-name descname"><span class="pre">get_cosmos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_cuts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_cosmos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.get_cosmos" title="Permalink to this definition"></a></dt>
 <dd><p>Preprocessing on cosmos data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -125,8 +131,8 @@ data, such that: r50 &gt; 0.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="paus_sexp.get_indexp">
-<code class="sig-prename descclassname"><span class="pre">paus_sexp.</span></code><code class="sig-name descname"><span class="pre">get_indexp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inds_touse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NB_bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_indexp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.get_indexp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="paus_sexp.get_indexp">
+<span class="sig-prename descclassname"><span class="pre">paus_sexp.</span></span><span class="sig-name descname"><span class="pre">get_indexp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inds_touse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NB_bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_fa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_indexp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.get_indexp" title="Permalink to this definition"></a></dt>
 <dd><p>Flow and flow error of the sources of interest.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -148,8 +154,8 @@ between COSMOS and subaru catalogues with nr &lt; 10.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="paus_sexp.paus">
-<code class="sig-prename descclassname"><span class="pre">paus_sexp.</span></code><code class="sig-name descname"><span class="pre">paus</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_cuts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">galcat_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indexp_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#paus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.paus" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="paus_sexp.paus">
+<span class="sig-prename descclassname"><span class="pre">paus_sexp.</span></span><span class="sig-name descname"><span class="pre">paus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_cuts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">galcat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_fa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_cosmos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#paus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.paus" title="Permalink to this definition"></a></dt>
 <dd><p>PAUS data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

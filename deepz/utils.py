@@ -16,27 +16,8 @@ print('loaded path', arch_mdn.__file__)
 
 from torch.utils.data import TensorDataset, DataLoader
 
-############SACAR ESTE PATH_BASE
-#: verpretrain: is the version pretrain
-#verpretrain = config['verpretrain']
-
-#: pretrain is pretrain, (boolean)
-#pretrain = config['pretrain']
-
-#: part
-#part = 'mdn' if config['use_mdn'] else 'normal'
-# Where to find the pretrained files.
-#path_base = pretrain_v_path + f'{verpretrain}' + '_{}_' + part + '.pt'
-
-
-#######EN TRAIN_DATA LA FUNCION pz_fold USA
-
-#net_base_path = config['out_fmt'].format(ifold=ifold, net='{}')
-#str(net_base_path)
-
 def get_nets(path_base, use_mdn, pretrain=True, Nbands=46):
-    """Initialize networks.? si se inicializa por qué hay un 
-    parámetro pretrain?
+    """Initialize networks.
 
     :param path_base: ?
 
@@ -46,16 +27,13 @@ def get_nets(path_base, use_mdn, pretrain=True, Nbands=46):
     
     :type use_mdm: boolean
 
-    :param pretrain: Boolean, if is True then the networks have been 
-    trained.
+    :param pretrain: Boolean, if is True then the networks have been trained.
 
     :type pretrain:
 
     :param Nbands: The total number of bands is 46 by default.
 
     :type Nbands: int
-    
-    
     """
     
     #: Nfeat is 
@@ -93,7 +71,8 @@ def get_nets(path_base, use_mdn, pretrain=True, Nbands=46):
 
 
 def all_inds():
-    """Load a matrix with all the indices."""
+    """Load a matrix with all the indices.
+    """
 
 #    index_path = '/nfs/pic.es/user/e/eriksen/papers/deepz/redux/inds_large_v1.txt'
     index_path = '/nfs/astro/idazaper/deepz/inds/inds_large_v1.txt'

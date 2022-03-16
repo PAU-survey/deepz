@@ -1,5 +1,18 @@
 #!/usr/bin/env python
-# encoding: UTF8
+# -*- coding: utf-8 -*-
+
+# Created at 
+
+# =============================================================================
+# DOCS
+# =============================================================================
+
+"""Networks
+"""
+
+# =============================================================================
+# IMPORTS
+# =============================================================================
 
 from torch import nn
 
@@ -37,10 +50,6 @@ class Encoder(nn.Module):
     
 class Decoder(nn.Module):
     """Decoder network.
-    Puede ser que el autoencoder no sea el reflejo del 
-    encoder?. Hacer dibujo.
-    
-    
     """
     
     def __init__(self, Nfeat=10, Nl=10, Nbands=46):
