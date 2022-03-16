@@ -42,11 +42,11 @@ flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus()
 #model_dir = Path('/nfs/astro/eriksen/deepz/encmodels_data')
 
 version = 2
-output_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux') / str(version)
+output_dir = Path('/data/astro/scratch/eriksen/deepz/redux') / str(version)
 
 # Other values collided with importing the code in a notebook...
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
-inds_all = np.loadtxt('/cephfs/pic.es/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
+inds_all = np.loadtxt('/data/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
 
 
 
@@ -98,7 +98,7 @@ def train(ifold, **config):
 #/nfs/astro/eriksen/deepz/redux/pretrain/1
 
     # Where to find the pretrained files.
-    path_base = f'/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
+    path_base = f'/data/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
 
     inds = inds_all[config['catnr']][:len(flux)]
     
@@ -237,7 +237,7 @@ if True: #True: #False: #False: #False: #True: #False:
     #catnr = 0
 
     use_mdn = True
-    model_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/train') / str(version)
+    model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
 
     verpretrain = 8
     Ntrain = 'all'

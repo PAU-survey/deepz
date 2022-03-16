@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import torch
 
-data_in = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input')
+data_in = Path('/data/astro/scratch/eriksen/deepz/input')
 
 NB = ['NB{}'.format(x) for x in 455+10*np.arange(40)]
 BB = ['cfht_u', 'subaru_B', 'subaru_V', 'subaru_r', 'subaru_i', 'subaru_z']
@@ -49,8 +49,8 @@ def get_indexp(inds_touse, NB_bands, indexp_path):
 def paus(apply_cuts=True):
 # Testing Lumus.
 #    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/cosmos_pau_matched_v2.h5'
-    galcat_path = '/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
-    indexp_path = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/input/lumus/fa_v8.pq')
+    galcat_path = '/data/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
+    indexp_path = Path('/data/astro/scratch/eriksen/deepz/input/lumus/fa_v8.pq')
 
     galcat = pd.read_hdf(galcat_path, 'cat')
 
