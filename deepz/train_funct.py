@@ -109,6 +109,9 @@ def train(ifold, data, **config):
 
 def pz_fold(ifold, inds, data, **config):
     """Estimate the photo-z for one fold.
+       to predict photometric redshifts receives both the 
+       encoded latent variables and the original input flux 
+       ratios. 
 
     :param ifold: id of a sample
 
@@ -121,16 +124,12 @@ def pz_fold(ifold, inds, data, **config):
     :param data: Paus data
     
     :type data: tensors
-    
-    :param Ntrain: train size
-    
-    :type Ntrain: int
 
     :param config: This parameter has several conf of the train.
 
     :type config: dictionary
 
-    :return: Dataframe with  photo and spec redshifts and id
+    :return: Dataframe with photo and spec redshifts and id
 
     :rtype: DataFrame
 
@@ -167,7 +166,8 @@ def pz_fold(ifold, inds, data, **config):
     zs_fold = 0.001*zbin_test.type(torch.float)
 
     
-    refid_fold = ref_id[1*(inds == ifold).type(torch.bool)]
+    #refid_fold = ref_id[1*(inds == ifold).type(torch.bool)]
+    refid_fold = ref_id[inds == ifold]
     print(zb_fold.shape, zs_fold.shape, refid_fold.shape)
     D = {'zs': zs_fold, 'zb': zb_fold, 'ref_id': refid_fold}
     

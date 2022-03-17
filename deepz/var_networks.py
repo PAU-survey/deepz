@@ -7,7 +7,12 @@
 # DOCS
 # =============================================================================
 
-"""Networks
+"""Autoencoder: a type of unsupervised neural network whose intent is to reduce 
+    noise and extract features without knowing the redshift, making it possible 
+    to train it with a larger dataset. We input the flux ratios by dividing on 
+    the i-band flux. In the first step, the encoder maps raw information into a 
+    lower dimensionality feature space, whereas the second step attempts to map 
+    it to the original input data in the original dimensions.
 """
 
 # =============================================================================

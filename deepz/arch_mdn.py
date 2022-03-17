@@ -68,7 +68,12 @@ class Network(nn.Module):
         return x
     
 class MDNNetwork(nn.Module):
-    """[Summary]
+    """We feed the galaxy flux ratios and the autoencoder features 
+       into the photo-z network. Here the layers follow the same 
+       structure as the autoencoder, but with 1 per cent dropout 
+       after all linear layers. This network is a mixture density 
+       network and describe the redshift distribution as a linear 
+       mixture of 10 normal distributions.
 
     :param [ParamName]: [ParamDescription], defaults to [DefaultParamVal]
     :type [ParamName]: [ParamType](, optional)

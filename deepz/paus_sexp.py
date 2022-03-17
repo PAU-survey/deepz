@@ -166,7 +166,9 @@ def paus(apply_cuts, galcat, df_fa, df_cosmos):
     emes = torch.Tensor(emes / norm[:, None, None])
     
     vinv = 1. / emes.pow(2)
-    isnan = np.isnan(vinv).type(torch.bool)
+    #isnan = np.isnan(vinv).type(torch.bool)
+    isnan = np.isnan(vinv)
+    
     vinv[isnan] = 0
     fmes[isnan] = 0
 

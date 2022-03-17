@@ -70,8 +70,10 @@ def get_loaders(ifold, inds, data, Ntrain):
         
         return ds
     
-    ix_train = 1*(inds != ifold).type(torch.bool)
-    ix_test = 1*(inds == ifold).type(torch.bool)
+    #ix_train = 1*(inds != ifold).type(torch.bool)
+    #ix_test = 1*(inds == ifold).type(torch.bool)
+    ix_train = torch.ByteTensor(1*(inds != ifold))
+    ix_test = torch.ByteTensor(1*(inds == ifold))
 
     # Here we deterministically remove galaxies.
     if not Ntrain == 'all':
