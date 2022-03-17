@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>loaders &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> DEEPz
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">deepz</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DEEPz</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>loaders</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for loaders</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Created at </span>
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># DOCS</span>
+<span class="c1"># =============================================================================</span>
+
+<span class="sd">&quot;&quot;&quot;load of data</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># IMPORTS</span>
+<span class="c1"># =============================================================================</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+
+
+<span class="c1"># Use</span>
+<span class="c1"># train_dl, test_dl, zbin_ix_test = loaders.get_loaders(ifold, inds, data, Ntrain)</span>
+
+<div class="viewcode-block" id="get_loaders"><a class="viewcode-back" href="../loaders.html#loaders.get_loaders">[docs]</a><span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="n">ifold</span><span class="p">,</span> <span class="n">inds</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">Ntrain</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get loaders for specific fold.</span>
+
+<span class="sd">        First, it generates two tensors with the indices of the </span>
+<span class="sd">        sources to be selected for the train and test sets. In </span>
+<span class="sd">        particular, the tensor of indices of the train set is </span>
+<span class="sd">        equal to zero when it exceeds the size of Ntrain.</span>
+
+<span class="sd">        Then, using DataLoader, a PyTorch class that is a Python </span>
+<span class="sd">        interable, map-style data sets are entered to define the </span>
+<span class="sd">        train and test sets based on the index tensors and batch size </span>
+<span class="sd">        (batch_size_train=500 and batch_size_test=100), in particular, </span>
+<span class="sd">        the train set is given the plus parameter shuffle=True.</span>
+
+<span class="sd">    :param ifold: ?</span>
+
+<span class="sd">    :type ifold: ?</span>
+
+<span class="sd">    :param inds: Indices of the selected sources with flux information and </span>
+<span class="sd">                 ¿¿¿config[&#39;catnr&#39;]???.</span>
+
+<span class="sd">    :type inds: tensor</span>
+
+<span class="sd">    :param data: paus data</span>
+
+<span class="sd">    :dtype data: tensors</span>
+
+<span class="sd">    :return: Tensors train_dl, test_dl, zbin[ix_test]</span>
+
+<span class="sd">    :rtype: PyTorch tensors</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">flux</span><span class="p">,</span> <span class="n">flux_err</span><span class="p">,</span> <span class="n">fmes</span><span class="p">,</span> <span class="n">vinv</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">zbin</span><span class="p">,</span> <span class="n">ref_id</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span>  <span class="n">fmes</span><span class="p">,</span> <span class="n">vinv</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">zbin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate a sample dataset.</span>
+
+<span class="sd">        :param ix: Index tensor.</span>
+
+<span class="sd">        :type ix: tensor of type 8-bit integer</span>
+
+<span class="sd">        :return: Dataset with information of flows.</span>
+
+<span class="sd">        :rtype: map-style dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">flux</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">fmes</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">vinv</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">isnan</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">zbin</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">.</span><span class="n">cuda</span><span class="p">())</span>
+        
+        <span class="k">return</span> <span class="n">ds</span>
+    
+    <span class="n">ix_train</span> <span class="o">=</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">inds</span> <span class="o">!=</span> <span class="n">ifold</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="n">ix_test</span> <span class="o">=</span> <span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">inds</span> <span class="o">==</span> <span class="n">ifold</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+    <span class="c1"># Here we deterministically remove galaxies.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Ntrain</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="c1"># You *don&#39;t* need to use a different number because of the folds.</span>
+        <span class="n">Nsel</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">Ntrain</span><span class="p">)</span>
+        
+        <span class="n">ix_train</span><span class="p">[</span><span class="n">Nsel</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+        
+    <span class="c1"># sub-samples</span>
+    <span class="n">ds_train</span> <span class="o">=</span> <span class="n">sub</span><span class="p">(</span><span class="n">ix_train</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">fmes</span><span class="p">,</span> <span class="n">vinv</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">zbin</span><span class="p">)</span>
+    <span class="n">ds_test</span> <span class="o">=</span> <span class="n">sub</span><span class="p">(</span><span class="n">ix_test</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">fmes</span><span class="p">,</span> <span class="n">vinv</span><span class="p">,</span> <span class="n">isnan</span><span class="p">,</span> <span class="n">zbin</span><span class="p">)</span>
+
+    <span class="c1"># the bath size would have to be an input get_loaders </span>
+    <span class="c1"># ¿hace cross-validation with batch_size?</span>
+    <span class="n">train_dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">ds_train</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+    <span class="n">test_dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">ds_test</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">train_dl</span><span class="p">,</span> <span class="n">test_dl</span><span class="p">,</span> <span class="n">zbin</span><span class="p">[</span><span class="n">ix_test</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Martin Eriksen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

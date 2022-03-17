@@ -1,10 +1,38 @@
 #!/usr/bin/env python
-# encoding: UTF8
+# -*- coding: utf-8 -*-
+
+# Created at 
+
+# =============================================================================
+# DOCS
+# =============================================================================
+
+"""Autoencoder: a type of unsupervised neural network whose intent is to reduce 
+    noise and extract features without knowing the redshift, making it possible 
+    to train it with a larger dataset. We input the flux ratios by dividing on 
+    the i-band flux. In the first step, the encoder maps raw information into a 
+    lower dimensionality feature space, whereas the second step attempts to map 
+    it to the original input data in the original dimensions.
+"""
+
+# =============================================================================
+# IMPORTS
+# =============================================================================
 
 from torch import nn
 
 class Encoder(nn.Module):
-    """Encoder network."""
+    """Encoder network.
+    objects belonging to this class have the following attributes:
+
+    - Nfeat:
+    
+    - Nl: Number of linear layers
+
+    - Nbands: Number of narrow and broad bands
+    
+    
+    """
     
     def __init__(self, Nfeat=10, Nl=10, Nbands=46):
         super().__init__()
@@ -26,7 +54,8 @@ class Encoder(nn.Module):
         return x
     
 class Decoder(nn.Module):
-    """Decoder network."""
+    """Decoder network.
+    """
     
     def __init__(self, Nfeat=10, Nl=10, Nbands=46):
         super().__init__()

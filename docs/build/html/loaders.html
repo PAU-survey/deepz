@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>loaders module &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="local_settings module" href="local_settings.html" />
+    <link rel="prev" title="arch_mdn module" href="arch_mdn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> DEEPz
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">loaders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="paus_sexp.html">paus_sexp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_funct.html">train_funct module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trainer_sexp.html">trainer_sexp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="var_networks.html">var_networks module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DEEPz</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">deepz</a> &raquo;</li>
+      <li>loaders module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/loaders.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-loaders">
+<span id="loaders-module"></span><h1>loaders module<a class="headerlink" href="#module-loaders" title="Permalink to this headline"></a></h1>
+<p>load of data</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="loaders.get_loaders">
+<span class="sig-prename descclassname"><span class="pre">loaders.</span></span><span class="sig-name descname"><span class="pre">get_loaders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ifold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ntrain</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/loaders.html#get_loaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#loaders.get_loaders" title="Permalink to this definition"></a></dt>
+<dd><p>Get loaders for specific fold.</p>
+<blockquote>
+<div><p>First, it generates two tensors with the indices of the 
+sources to be selected for the train and test sets. In 
+particular, the tensor of indices of the train set is 
+equal to zero when it exceeds the size of Ntrain.</p>
+<p>Then, using DataLoader, a PyTorch class that is a Python 
+interable, map-style data sets are entered to define the 
+train and test sets based on the index tensors and batch size 
+(batch_size_train=500 and batch_size_test=100), in particular, 
+the train set is given the plus parameter shuffle=True.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ifold</strong> – <p>?</p>
+</p></li>
+<li><p><strong>inds</strong> (<em>tensor</em>) – Indices of the selected sources with flux information and 
+¿¿¿config[‘catnr’]???.</p></li>
+<li><p><strong>data</strong> – paus data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Dtype data</dt>
+<dd class="field-even"><p>tensors</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Tensors train_dl, test_dl, zbin[ix_test]</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>PyTorch tensors</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="arch_mdn.html" class="btn btn-neutral float-left" title="arch_mdn module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="local_settings.html" class="btn btn-neutral float-right" title="local_settings module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Martin Eriksen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

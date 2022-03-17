@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> DEEPz
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../example.html">Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">deepz</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DEEPz</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for utils</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># encoding: UTF8</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">var_networks</span>
+
+<span class="c1"># My hackish way of forcing this...</span>
+<span class="c1">#path_backup = sys.path.copy()</span>
+<span class="c1">#sys.path = [&#39;/nfs/astro/eriksen/play_deepz/sims/flag&#39;]</span>
+<span class="kn">import</span> <span class="nn">arch_mdn</span>
+<span class="c1">##sys.path = path_backup</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;loaded path&#39;</span><span class="p">,</span> <span class="n">arch_mdn</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="c1">#import ranker</span>
+
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+
+<div class="viewcode-block" id="get_nets"><a class="viewcode-back" href="../utils.html#utils.get_nets">[docs]</a><span class="k">def</span> <span class="nf">get_nets</span><span class="p">(</span><span class="n">path_base</span><span class="p">,</span> <span class="n">use_mdn</span><span class="p">,</span> <span class="n">pretrain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">Nbands</span><span class="o">=</span><span class="mi">46</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize networks.</span>
+
+<span class="sd">    :param path_base: ?</span>
+
+<span class="sd">    :type path_base: ?</span>
+
+<span class="sd">    :param use_mdn: Is a boolean. If is True, ...?</span>
+<span class="sd">    </span>
+<span class="sd">    :type use_mdm: boolean</span>
+
+<span class="sd">    :param pretrain: Boolean, if is True then the networks have been trained.</span>
+
+<span class="sd">    :type pretrain:</span>
+
+<span class="sd">    :param Nbands: The total number of bands is 46 by default.</span>
+
+<span class="sd">    :type Nbands: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1">#: Nfeat is </span>
+    <span class="n">Nfeat</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="c1">#: Nl is </span>
+    <span class="n">Nl</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="c1">#: kwds</span>
+    <span class="n">kwds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Nfeat&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;Nl&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;Nbands&#39;</span><span class="p">:</span> <span class="n">Nbands</span><span class="p">}</span>
+
+    <span class="c1">#: enc encoder</span>
+    <span class="n">enc</span> <span class="o">=</span> <span class="n">var_networks</span><span class="o">.</span><span class="n">Encoder</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+    <span class="c1">#: dec, is decoder</span>
+    <span class="n">dec</span> <span class="o">=</span> <span class="n">var_networks</span><span class="o">.</span><span class="n">Decoder</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+   
+    <span class="k">if</span> <span class="n">use_mdn</span><span class="p">:</span>
+        <span class="n">net_pz</span> <span class="o">=</span> <span class="n">arch_mdn</span><span class="o">.</span><span class="n">MDNNetwork</span><span class="p">(</span><span class="n">Nbands</span><span class="o">+</span><span class="n">Nfeat</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">net_pz</span> <span class="o">=</span> <span class="n">arch_mdn</span><span class="o">.</span><span class="n">Network</span><span class="p">(</span><span class="n">Nbands</span><span class="o">+</span><span class="n">Nfeat</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+    <span class="c1"># And then loading the pretrained network.</span>
+    <span class="k">if</span> <span class="n">pretrain</span><span class="p">:</span>
+        <span class="n">enc</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;enc&#39;</span><span class="p">)))</span>
+        <span class="n">dec</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;dec&#39;</span><span class="p">)))</span>
+        <span class="n">net_pz</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path_base</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;netpz&#39;</span><span class="p">)))</span>
+
+    <span class="n">net_pz</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="c1">#enc.eval()</span>
+    <span class="c1">#dec.eval()</span>
+    
+    <span class="k">return</span> <span class="n">enc</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">net_pz</span></div>
+
+
+
+<div class="viewcode-block" id="all_inds"><a class="viewcode-back" href="../utils.html#utils.all_inds">[docs]</a><span class="k">def</span> <span class="nf">all_inds</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Load a matrix with all the indices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<span class="c1">#    index_path = &#39;/nfs/pic.es/user/e/eriksen/papers/deepz/redux/inds_large_v1.txt&#39;</span>
+    <span class="n">index_path</span> <span class="o">=</span> <span class="s1">&#39;/nfs/astro/idazaper/deepz/inds/inds_large_v1.txt&#39;</span>
+    <span class="n">inds_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">index_path</span><span class="p">)</span>
+    <span class="n">inds_all</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">inds_all</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">inds_all</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Martin Eriksen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

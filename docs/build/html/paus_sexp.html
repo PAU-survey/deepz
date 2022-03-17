@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>paus_sexp module &mdash; DEEPz  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="train_data module" href="train_data.html" />
+    <link rel="prev" title="local_settings module" href="local_settings.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> DEEPz
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Example</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">deepz</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="arch_mdn.html">arch_mdn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html">loaders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="local_settings.html">local_settings module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">paus_sexp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_data.html">train_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_funct.html">train_funct module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trainer_alpha.html">trainer_alpha module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="trainer_sexp.html">trainer_sexp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="var_networks.html">var_networks module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DEEPz</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="modules.html">deepz</a> &raquo;</li>
+      <li>paus_sexp module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/paus_sexp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-paus_sexp">
+<span id="paus-sexp-module"></span><h1>paus_sexp module<a class="headerlink" href="#module-paus_sexp" title="Permalink to this headline"></a></h1>
+<p>This paper focuses on the data from the Cosmological Evolution Survey 
+<a class="reference external" href="https://cosmos.astro.caltech.edu/">(COSMOS)</a>,  field1 where we have PAUS 
+observations and there are abundant spectroscopic measurements. Our fiducial 
+setup uses the Canada-FranceHawaii Telescope Lensing Survey (CFHTLenS) u-band 
+and the B, V, r, i, z bands from the Subaru telescope as in 
+Eriksen et al. (2019). As the spectroscopic catalogue, we use 8566 secure 
+(3 ≤ CLASS ≤ 5) redshifts from the zCOSMOS DR3 survey (Lilly et al. 2009) that 
+are observed with all 40 narrow bands.</p>
+<p>The PAUS data are acquired at the William Herschel Telescope (WHT) with the 
+PAUCam instrument and transferred to the Port d’Informaci Cientfica 
+(PIC, Tonello et al. 2019). First the images are detrended in the nightly pipeline 
+(Serrano et al. in prep). Our astrometry is relative to Gaia DR2 
+(Brown et al. 2018), while the photometry is calibrated relative to the Sloan 
+Digital Sky Survey (SDSS) by fitting the Pickles stellar templates 
+(Pickles 1998) to the u, g, r, i, z broad bands from SDSS (Smith et al. 2002) and 
+then predicting the expected fluxes in the narrow bands.
+The final zero-points are determined by using the median star zero-point for each 
+image. PAUS observes weak lensing fields (CFHTLenS: W1, W3 and W4) with deeper 
+broad-band data from external surveys. PAUS uses forced photometry, assuming known 
+galaxy positions, morphologies and sizes from external catalogues. The photometry 
+code determines for each galaxy the radius needed to capture a fixed fraction of 
+light, assuming the galaxy follows a Srsic profile convolved with a known
+Point Spread Function (PSF). The algorithm uses apertures that measure 62.5% of the 
+light, since this is considered statistically optimal. A given galaxy is observed 
+several times (3-10) from different overlapping exposures. The coadded fluxes are 
+produced using inverse variance weighting of the individual measurements.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="paus_sexp.get_cosmos">
+<span class="sig-prename descclassname"><span class="pre">paus_sexp.</span></span><span class="sig-name descname"><span class="pre">get_cosmos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_cuts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_cosmos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.get_cosmos" title="Permalink to this definition"></a></dt>
+<dd><p>Preprocessing on cosmos data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>apply_cuts</strong> (<em>bool</em>) – true if you want to apply constraints on conf and i_auto, 
+such that the cosmos data complies with: 3 &lt;= conf &lt;= 5 and i_auto &lt; 22.5. 
+Otherwise, if False, then only apply constraint on column r50 of the cosmos 
+data, such that: r50 &gt; 0.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Preprocessed cosmos data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="paus_sexp.get_indexp">
+<span class="sig-prename descclassname"><span class="pre">paus_sexp.</span></span><span class="sig-name descname"><span class="pre">get_indexp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inds_touse</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NB_bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_fa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#get_indexp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.get_indexp" title="Permalink to this definition"></a></dt>
+<dd><p>Flow and flow error of the sources of interest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inds_touse</strong> (<em>array</em>) – Common sources between COSMOS and Subaru.</p></li>
+<li><p><strong>NB_bands</strong> (<em>list</em>) – List of the names of the 40 narrow bands to be used in the 
+studio.</p></li>
+<li><p><strong>indexp_path</strong> (<em>str</em>) – path</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Flux and flux error in the 40 narrow bands of the sources in common 
+between COSMOS and subaru catalogues with nr &lt; 10.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>arrays</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="paus_sexp.paus">
+<span class="sig-prename descclassname"><span class="pre">paus_sexp.</span></span><span class="sig-name descname"><span class="pre">paus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_cuts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">galcat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_fa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df_cosmos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/paus_sexp.html#paus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#paus_sexp.paus" title="Permalink to this definition"></a></dt>
+<dd><p>PAUS data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>apply_cuts</strong> (<em>bool</em>) – true if you want to apply constraints on conf and i_auto, 
+such that the cosmos data complies with: 3 &lt;= conf &lt;= 5 and i_auto &lt; 22.5. 
+Otherwise, if False, then only apply constraint on column r50 of the cosmos 
+data, such that: r50 &gt; 0.</p></li>
+<li><p><strong>galcat_path</strong> (<em>str</em>) – coadd_v8.h5</p></li>
+<li><p><strong>indexp_path</strong> (<em>str</em>) – fa_v8.pq</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>flux, flux_err, fmes, vinv, isnan, zbin, ref_id.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tensor, tensor, tensor, tensor, array, tensor, tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="local_settings.html" class="btn btn-neutral float-left" title="local_settings module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="train_data.html" class="btn btn-neutral float-right" title="train_data module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Martin Eriksen.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
