@@ -32,12 +32,10 @@ import os
 from pathlib import Path
 import paus_sexp as paus_data
 
-from matplotlib import pyplot as plt
-import utils
-
 import local_settings
 import loaders
 import train_funct
+
 
 sys.path.append('../code')
 
@@ -72,6 +70,7 @@ df_galcat = local_settings.galcat
 df_cosmos = local_settings.cosmos
 df_fa = local_settings.df_fa
 data = paus_data.paus(True, df_galcat, df_fa, df_cosmos)
+
 
 # index
 inds_all = local_settings.inds_all

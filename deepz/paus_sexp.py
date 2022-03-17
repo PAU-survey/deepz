@@ -117,6 +117,7 @@ def get_indexp(inds_touse, NB_bands, df_fa):
     return X.flux.values, X.flux_error.values
 
 
+
 def paus(apply_cuts, galcat, df_fa, df_cosmos):
     """PAUS data
 
