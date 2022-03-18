@@ -26,7 +26,7 @@ from torch.utils.data.dataset import random_split
 from torch.utils.data import TensorDataset, DataLoader
 
 
-path_in = Path('/nfs/astro/eriksen/deepz/sims/v9/')
+path_in = Path('/data/astro/eriksen/deepz/sims/v9/')
 
 mags_df = pd.read_parquet(str(path_in / 'mags.parquet'))
 params_df = pd.read_parquet(str(path_in / 'params.parquet'))
@@ -215,7 +215,7 @@ for i in range(10):
 version = 9
 sim = 'fsps'
 pztype = 'mdn' if use_mdn else 'normal'
-output_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/pretrain')
+output_dir = Path('/data/astro/scratch/eriksen/deepz/redux/pretrain')
 if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 
