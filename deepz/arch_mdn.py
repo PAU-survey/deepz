@@ -178,33 +178,3 @@ class MDNNetwork(nn.Module):
     
     
         return log_prob, loss
-    
-    
-    
-class Conv(nn.Module):
-    """Convolutional neural network."""
-    
-    def __init__(self):
-        super().__init__()
-        
-        self.conv1 = nn.Sequential(nn.Conv1d(1, 32, 3, padding=1), nn.LeakyReLU(0.1), \
-                              nn.MaxPool1d(2))
-
-        self.conv2 = nn.Sequential(nn.Conv1d(32, 64, 3, padding=1), nn.LeakyReLU(0.1), \
-                              nn.MaxPool1d(2))
-
-        self.conv3 = nn.Sequential(nn.Conv1d(64, 128, 3, padding=1), nn.LeakyReLU(0.1), \
-                              nn.MaxPool1d(2))
-
-        self.conv = nn.Sequential(self.conv1, self.conv2, self.conv3)
-        
-        # Testing reducing the number of neurons here...
-        self.dens = nn.Linear(128*5, 128)
-        
-    def forward(self, x):
-        x = self.conv(x.unsqueeze(1))
-        x = x.view(len(x), -1)
-        
-        #x = self.dens(x.view(len(x), -1))
-        
-        return x
