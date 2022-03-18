@@ -30,11 +30,9 @@ PATH = os.path.abspath(os.path.dirname(__file__))
 
 #path = os.path.join('/', 'cephfs', 'pic.es', 'data', 'astro', 'scratch', 'eriksen', 'deepz')
 # Local path
-path = os.path.join('/data/astro/scratch/idazaper/deepz/')
+path = os.path.join('/data/astro/scratch/eriksen/deepz/')
 
-##################
-# paus_sexp.py   #
-##################
+# For training on data.
 
 #: input 
 D = {'photoz': '4199.csv', 'coadd': '4213.csv', 'cosmos': '/4378.csv'}
@@ -43,7 +41,7 @@ cosmos = pd.read_csv(data_in_path + D['cosmos'], comment='#')
 
 #: input/lumus/coadd_v8.h5
 galcat_path = os.path.join(path, 'input/lumus/coadd_v8.h5 ')
-galcat_path = '/data/astro/scratch/idazaper/deepz/input/lumus/coadd_v8.h5'
+galcat_path = '/data/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
 galcat = pd.read_hdf(galcat_path, 'cat')
 
 

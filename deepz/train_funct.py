@@ -31,7 +31,7 @@ from torch.utils.data import TensorDataset, DataLoader
 
 import os
 from pathlib import Path
-import paus_sexp as paus_data
+import paus_data
 
 from matplotlib import pyplot as plt
 import utils
@@ -39,7 +39,7 @@ import utils
 import local_settings
 import loaders
 
-sys.path.append('../code')
+#sys.path.append('../code')
 
 
 def train(ifold, data, **config):

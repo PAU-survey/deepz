@@ -16,7 +16,7 @@ import utils
 Ntrain = 'all'
 
 import trainer_sexp
-import paus_sexp as paus_data
+import paus_data
 flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus()
 
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])

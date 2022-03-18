@@ -85,9 +85,7 @@ test_dl = DataLoader(test_ds, batch_size=100)
 # In[6]:
 
 
-#from arch import Network
-import arch_mdn
-import var_networks
+import networks
 
 # If using a mixure density network.
 use_mdn = False
@@ -96,13 +94,13 @@ use_mdn = True
 # Different networks.
 Nfeat = 10
 Nl = 5
-enc = var_networks.Encoder(Nfeat=Nfeat, Nl=Nl).cuda()
-dec = var_networks.Decoder(Nfeat=Nfeat, Nl=Nl).cuda()
+enc = networks.Encoder(Nfeat=Nfeat, Nl=Nl).cuda()
+dec = networks.Decoder(Nfeat=Nfeat, Nl=Nl).cuda()
 
 if use_mdn:
-    net_pz = arch_mdn.MDNNetwork(len(bands)+Nfeat).cuda()
+    net_pz = networks.MDNNetwork(len(bands)+Nfeat).cuda()
 else:
-    net_pz = arch_mdn.Network(len(bands)+Nfeat).cuda()
+    raise NotImplementedError()
 
 loss_function = nn.CrossEntropyLoss()
 

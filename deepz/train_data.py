@@ -30,14 +30,11 @@ from torch.utils.data import TensorDataset, DataLoader
 
 import os
 from pathlib import Path
-import paus_sexp as paus_data
+import paus_data
 
 import local_settings
 import loaders
 import train_funct
-
-
-sys.path.append('../code')
 
 
 # train_funct.train(ifold, data, Ntrain, **config)
@@ -54,13 +51,13 @@ def gen_conf():
 """Config.
 """
 
-version = 9                                    # version of train Hace falta que lo agregue?
+version = 9
 verpretrain = 8
 #Ntrain = 'all'
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
 keep_last = False
 alpha = 0
-label = 'march11'
+label = 'march18'
 
 
 """Input
