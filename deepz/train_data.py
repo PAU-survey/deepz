@@ -92,9 +92,6 @@ if True:
 
         print('To store at:')
         print(out_fmt)
-        
-        
-        
 
         train_funct.train_all(data, **config) 
 

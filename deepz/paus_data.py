@@ -147,7 +147,7 @@ def paus(apply_cuts, galcat, df_fa, df_cosmos):
 
     # Overlap between the two catalogues ...
     cosmos = get_cosmos(apply_cuts, df_cosmos)
-    touse = cosmos.index & sub.index
+    touse = cosmos.index.intersection(sub.index)
 
     # Here we are not actually using the flux, but a flux ratio..
     flux_df = sub.loc[touse]

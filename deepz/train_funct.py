@@ -71,9 +71,15 @@ def train(ifold, data, **config):
     flux, flux_err, fmes, vinv, isnan, zbin, ref_id = data
     
     #: Loading the pretrained network.
-    enc, dec, net_pz = utils.get_nets(config['use_mdn'], config['pretrain'])
+    #: /redux/pretrain/v
+    pretrain_v_path = local_settings.pretrain_v
+    verpretrain = config['verpretrain']
+    part = 'mdn' if config['use_mdn'] else 'normal'
+    path_base = pretrain_v_path + f'{verpretrain}' + '_{}_' + part + '.pt'
+    enc, dec, net_pz = utils.get_nets(path_base, config['use_mdn'], config['pretrain'])
     
     #: Indices of the selected sources with flow information and 
+    inds_all = np.loadtxt(local_settings.inds_large_v1_path)
     inds = inds_all[config['catnr']][:len(flux)]
     
     #: Train and test Samples (sample_Kfold, mask, data, train set size)
@@ -84,24 +90,25 @@ def train(ifold, data, **config):
          config['keep_last'])
 
     #: Networks parameters
-    params = chain(enc.parameters(), dec.parameters(), net_pz.parameters()) ### CAMBIO IMPORTANTE
+    def params():
+        return chain(enc.parameters(), dec.parameters(), net_pz.parameters())
    
     #:wd
     wd = 1e-4
     
     #: trainer_alpha.train with the better hyperparameters, optimizer=params, lrm wd), N?, K=Model, samples, config
     if True: 
-        optimizer = optim.Adam(params, lr=1e-3, weight_decay=wd)
+        optimizer = optim.Adam(params(), lr=1e-3, weight_decay=wd)
         trainer_alpha.train(optimizer, 100, *K)          
 
     print('main train function...')
-    optimizer = optim.Adam(params, lr=1e-4, weight_decay=wd)
+    optimizer = optim.Adam(params(), lr=1e-4, weight_decay=wd)
     trainer_alpha.train(optimizer, 200, *K)
     
-    optimizer = optim.Adam(params, lr=1e-5, weight_decay=wd)
+    optimizer = optim.Adam(params(), lr=1e-5, weight_decay=wd)
     trainer_alpha.train(optimizer, 200, *K)
 
-    optimizer = optim.Adam(params, lr=1e-6, weight_decay=wd)
+    optimizer = optim.Adam(params(), lr=1e-6, weight_decay=wd)
     trainer_alpha.train(optimizer, 200, *K)
     
     return enc, dec, net_pz
