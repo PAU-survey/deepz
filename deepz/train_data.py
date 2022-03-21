@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# encoding: UTF8
 
 # Created at 
 
@@ -75,7 +75,7 @@ inds_all = local_settings.inds_all
 
 if True:
     use_mdn = True
-    model_dir = Path('/data/astro/scratch/idazaper/deepz/redux/train') / str(version)
+    model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
     Ntrain = 'all'
     for catnr, keep_last, alpha in gen_conf():
         pretrain = False if verpretrain == 'no' else True

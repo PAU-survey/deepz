@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
+# encoding: UTF8
 
 
 #get_ipython().run_line_magic('load_ext', 'autoreload')

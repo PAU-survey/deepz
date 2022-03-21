@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# encoding: UTF8
 
 #from IPython.core import debugger as ipdb
 import os
