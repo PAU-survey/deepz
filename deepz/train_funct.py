@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# encoding: UTF8
+# -*- coding: utf-8 -*-
 
 # Created at 
 
@@ -92,23 +92,28 @@ def train(ifold, data, **config):
     #: Networks parameters
     def params():
         return chain(enc.parameters(), dec.parameters(), net_pz.parameters())
+    
+    print('parameters()', params())
+    params = chain(enc.parameters(), dec.parameters(), net_pz.parameters()) ### CAMBIO IMPORTANTE
+    print('params', params)
+    
    
     #:wd
     wd = 1e-4
     
     #: trainer_alpha.train with the better hyperparameters, optimizer=params, lrm wd), N?, K=Model, samples, config
     if True: 
-        optimizer = optim.Adam(params(), lr=1e-3, weight_decay=wd)
+        optimizer = optim.Adam(params, lr=1e-3, weight_decay=wd)
         trainer_alpha.train(optimizer, 100, *K)          
 
     print('main train function...')
-    optimizer = optim.Adam(params(), lr=1e-4, weight_decay=wd)
+    optimizer = optim.Adam(params, lr=1e-4, weight_decay=wd)
     trainer_alpha.train(optimizer, 200, *K)
     
-    optimizer = optim.Adam(params(), lr=1e-5, weight_decay=wd)
+    optimizer = optim.Adam(params, lr=1e-5, weight_decay=wd)
     trainer_alpha.train(optimizer, 200, *K)
 
-    optimizer = optim.Adam(params(), lr=1e-6, weight_decay=wd)
+    optimizer = optim.Adam(params, lr=1e-6, weight_decay=wd)
     trainer_alpha.train(optimizer, 200, *K)
     
     return enc, dec, net_pz

@@ -155,14 +155,15 @@ def paus(apply_cuts, galcat, df_fa, df_cosmos):
     flux = flux_df.flux[bands].values
     flux_err = flux_df.flux_err[bands].values
     
+    # band subaru_i
     norm = flux[:, -2]
+
+    # normalisation
     flux = torch.Tensor(flux / norm[:, None])
     flux_err = torch.Tensor(flux_err / norm[:, None])
 
     # The individual exposures.
     fmes, emes = get_indexp(touse, NB, df_fa)
-    #fmes = np.nan_to_num(fmes, copy=False)
-    #emes = np.nan_to_num(emes, copy=False)
     fmes = torch.Tensor(fmes / norm[:, None, None])
     emes = torch.Tensor(emes / norm[:, None, None])
     

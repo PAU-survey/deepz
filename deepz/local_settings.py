@@ -47,6 +47,7 @@ galcat = pd.read_hdf(galcat_path, 'cat')
 
 #: input/lumus/fa_v8.h5
 indexp_path = os.path.join(path, 'input/lumus/fa_v8.pq')
+# columns: ref_id band flux flux_error nr
 df_fa = pd.read_parquet(indexp_path)
 
 #################

@@ -58,6 +58,7 @@ catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
 keep_last = False
 alpha = 0
 label = 'march18'
+label = 'pruebaVane'
 
 
 """Input
@@ -75,7 +76,7 @@ inds_all = local_settings.inds_all
 
 if True:
     use_mdn = True
-    model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
+    model_dir = Path('/data/astro/scratch/idazaper/deepz/redux/train') / str(version)
     Ntrain = 'all'
     for catnr, keep_last, alpha in gen_conf():
         pretrain = False if verpretrain == 'no' else True
