@@ -36,7 +36,6 @@ import paus_data
 from matplotlib import pyplot as plt
 import utils
 
-import local_settings
 import loaders
 
 #sys.path.append('../code')
