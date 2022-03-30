@@ -36,6 +36,8 @@ import local_settings
 import loaders
 import train_funct
 
+import user_settings
+
 
 # train_funct.train(ifold, data, Ntrain, **config)
 # train_funct.pz_fold(ifold, inds, data, Ntrain, **config)
@@ -50,7 +52,6 @@ def gen_conf():
                 
 """Config.
 """
-
 version = 9
 verpretrain = 8
 #Ntrain = 'all'
@@ -63,11 +64,18 @@ label = 'pruebaVane'
 
 """Input
 """
-# paus data
-df_galcat = local_settings.galcat
-df_cosmos = local_settings.cosmos
-df_fa = local_settings.df_fa
-data = paus_data.paus(True, df_galcat, df_fa, df_cosmos)
+if os.path.exists(user_settings.path):
+    print('data in use', user_settings.path)
+    df_cosmos = pd.read_csv(user_settings.cosmos_path, comment='#')
+    df_galcat = pd.read_hdf(user_settings.galcat_path, 'cat')
+    df_fa = pd.read_parquet(user_settings.indexp_path)
+    data = paus_data.paus(True, df_galcat, df_fa, df_cosmos)
+else:
+    print('default')
+    df_galcat = local_settings.galcat
+    df_cosmos = local_settings.cosmos
+    df_fa = local_settings.df_fa
+    data = paus_data.paus(True, df_galcat, df_fa, df_cosmos)
 
 
 # index
@@ -76,7 +84,7 @@ inds_all = local_settings.inds_all
 
 if True:
     use_mdn = True
-    model_dir = Path('/data/astro/scratch/idazaper/deepz/redux/train') / str(version)
+    model_dir = Path('network') / str(version)
     Ntrain = 'all'
     for catnr, keep_last, alpha in gen_conf():
         pretrain = False if verpretrain == 'no' else True
@@ -103,7 +111,7 @@ if True:
         print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
 
         fname = f'{label}'+'_catnr{catnr}.csv'.format(**config)
-        path_out = model_dir / fname
+        path_out = '../../output/pz.csv'
 
         pz.to_csv(path_out) 
 

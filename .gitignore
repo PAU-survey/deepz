@@ -1,5 +1,11 @@
 .ipynb_checkpoints/
 deepz/.prueba.ipynb
-deepz/__pycache_
+deepz/__pycache__
 deepz/2_SelectionFeatures.ipynb
 deepz/1_input.ipynb
+deepz/3_simu.ipynb
+deepz/.ipynb_checkpoints
+
+
+
+
