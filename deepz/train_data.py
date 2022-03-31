@@ -89,57 +89,51 @@ def run_photoz(input_path='../../input/', output_path='../../output/',
     #version = 2
     #output_dir = Path(redux_path) / str(version)
 
-    def gen_conf():
-        for catnr in range(10):
-            keep_last = [True]
-            alpha = [0.8]
-            yield catnr, keep_last, alpha
                 
     """Config.
     """
     version = 9
     verpretrain = 8
-    #Ntrain = 'all'
     catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
-    keep_last = False
-    alpha = 0
+    keep_last = True
+    alpha = 0.8
     label = 'march18'
     label = 'pruebaVane'
 
-    if True:
-        use_mdn = True
-        model_dir = Path('network') / str(version)
-        Ntrain = 'all'
-        for catnr, keep_last, alpha in gen_conf():
-            pretrain = False if verpretrain == 'no' else True
-            config = {'verpretrain': verpretrain, 'Ntrain': Ntrain, 'catnr': catnr, 'use_mdn': use_mdn,
-                      'Ntrain': Ntrain, 'pretrain': pretrain, 'keep_last': keep_last}
+    use_mdn = True
+    model_dir = Path('network') / str(version)
+    Ntrain = 'all'
+    
+    for catnr in range(10):
+        pretrain = False if verpretrain == 'no' else True
+        config = {'verpretrain': verpretrain, 'Ntrain': Ntrain, 'catnr': catnr, 'use_mdn': use_mdn,
+                  'Ntrain': Ntrain, 'pretrain': pretrain, 'keep_last': keep_last}
 
-            config['Nexp'] = 0
-            config['alpha'] = alpha
+        config['Nexp'] = 0
+        config['alpha'] = alpha
  
-            out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
-            out_fmt = str(model_dir / out_fmt)
+        out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
+        out_fmt = str(model_dir / out_fmt)
 
-            config['out_fmt'] = out_fmt
+        config['out_fmt'] = out_fmt
 
-            print('To store at:')
-            print(out_fmt)
+        print('To store at:')
+        print(out_fmt)
 
-            train_funct.train_all(data, **config) 
+        train_funct.train_all(data, **config) 
 
-            pz = train_funct.photoz_all(inds_all, data, **config)
-            pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
+        pz = train_funct.photoz_all(inds_all, data, **config)
+        pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
-            sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
-            print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
+        sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
+        print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
 
-            fname = f'{label}'+'_catnr{catnr}.csv'.format(**config)
-            path_out = '../../output/pz.csv'
+        fname = f'{label}'+'_catnr{catnr}.csv'.format(**config)
+        path_out = '../../output/pz.csv'
 
-            pz.to_csv(path_out) 
+        pz.to_csv(path_out) 
 
-            break
+        break
 
 if __name__ == '__main__':
     fire.Fire(run_photoz)
