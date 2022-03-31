@@ -91,9 +91,9 @@ def run_photoz(input_path='../../input/', output_path='../../output/',
 
     def gen_conf():
         for catnr in range(10):
-            for keep_last in [True]:
-                for alpha in [0.8]:
-                    yield catnr, keep_last, alpha
+            keep_last = [True]
+            alpha = [0.8]
+            yield catnr, keep_last, alpha
                 
     """Config.
     """
