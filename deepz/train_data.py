@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-# coding: utf-8
+# encoding: UTF8
 
+# Train the network on observed PAUS data.
 from IPython.core import debugger as ipdb
 import os
 import time
@@ -10,12 +11,8 @@ from itertools import chain
 import os
 import sys
 
-#sys.path.append('..')
-#sys.path.append('../var')
-sys.path.append('../code')
-
 import torch
-#assert torch.__version__.startswith('1.0'), 'For some reason the code fails badly on newer PyTorch versions.'
+assert torch.__version__.startswith('1.0'), 'For some reason the code fails badly on newer PyTorch versions.'
 
 
 from torch import optim, nn
@@ -24,35 +21,37 @@ from torch.utils.data import TensorDataset, DataLoader
 from matplotlib import pyplot as plt
 
 import utils
-
-import paus_sexp as paus_data
+import paus_data
+import trainer_alpha
 
 #pretrain = True #False
 alpha = 0.8
-Ntrain = 8000 #'all'
-Ntrain = 100 #'all'
+#Ntrain = 8000 #'all'
+#Ntrain = 100 #'all'
 verpretrain = 3
 
-import paus_sexp as paus_data
 flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus()
 
 
-#model_dir = Path('/nfs/astro/eriksen/deepz/encmodels_data')
 
 version = 2
-output_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux') / str(version)
+output_dir = Path('/data/astro/scratch/eriksen/deepz/redux') / str(version)
 
 # Other values collided with importing the code in a notebook...
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
-inds_all = np.loadtxt('/cephfs/pic.es/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
+inds_all = np.loadtxt('/data/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
 
 
-
-# In[6]:
 def get_loaders(ifold, inds):
-    """Get loaders for specific fold."""
+    """Create data loaders for a specific fold.
+       :param ifold: {int} Which fold to use.
+       :param inds: {array} Ifold for each galaxy.
+    """
     
     def sub(ix):
+        """Select subset.
+           :param ix: {array} Array indices to use.
+        """
         ds = TensorDataset(flux[ix].cuda(), fmes[ix].cuda(), vinv[ix].cuda(), isnan[ix].cuda(), zbin[ix].cuda())
         
         return ds
@@ -77,25 +76,18 @@ def get_loaders(ifold, inds):
     return train_dl, test_dl, zbin[ix_test]
 
 
-# In[7]:
-import trainer_alpha
-
 def train(ifold, **config):
-    """Train the networks for one fold."""
+    """Train the networks for one fold.
+       :param config: {dict} Dictionary with the configuration.
+    """
     
     verpretrain = config['verpretrain']
     pretrain = config['pretrain']
 
     part = 'mdn' if use_mdn else 'normal'
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v16_{}_'+part+'.pt'
-    #path_base = f'/nfs/astro/eriksen/deepz/redux/5/pretrain_fsps_{part}'+'_{}.pt'
-    
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v23_{}_'+part+'.pt'
-#    path_base = '/nfs/astro/eriksen/deepz/encmodels/v16_{}_'+part+'.pt'
-#/nfs/astro/eriksen/deepz/redux/pretrain/1
 
     # Where to find the pretrained files.
-    path_base = f'/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
+    path_base = f'/data/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
 
     inds = inds_all[config['catnr']][:len(flux)]
     
@@ -124,15 +116,13 @@ def train(ifold, **config):
     
     return enc, dec, net_pz
 
-# In[8]:
-
 
 def pz_fold(ifold, inds, out_fmt, use_mdn):
-    """Estimate the photo-z for one fold."""
-    
-    # Load network..
-    #model_dir = Path('/nfs/astro/eriksen/deepz/encmodels_data')
-    #path = str(model_dir/ f'{ifold}.pt')
+    """Estimate the photo-z for one fold.
+       :param ifold: {int} Which ifold to use.
+       :param inds: {array} Indices to use.
+       :param out_fmt: {str} Format of output path.
+    """
     
     # Loading the networks...
     net_base_path = out_fmt.format(ifold=ifold, net='{}')
@@ -141,7 +131,6 @@ def pz_fold(ifold, inds, out_fmt, use_mdn):
     
     _, test_dl, zbin_test = get_loaders(ifold, inds)
 
-   
     assert isinstance(inds, torch.Tensor), 'This is required...'
  
     # OK, this needs some improvement...
@@ -166,13 +155,14 @@ def pz_fold(ifold, inds, out_fmt, use_mdn):
     
     part = pd.DataFrame(D)
     part['ifold'] = ifold
-    #part = np.vstack([zs_fold, zb_fold]).T
 
     return part
 
 
 def train_all(**config):
-    """Train all the folds."""
+    """Train all the folds.
+       :param config: {dict} Configuration dictionary.
+    """
    
     out_fmt = config['out_fmt']
     for ifold in range(5):
@@ -190,13 +180,14 @@ def train_all(**config):
         
         print('time', time.time() - t1)
        
-        #path = str(model_dir/ f'{ifold}.pt')
         torch.save(enc.state_dict(), str(out_fmt.format(net='enc', ifold=ifold)))
         torch.save(dec.state_dict(), str(out_fmt.format(net='dec', ifold=ifold)))
         torch.save(net_pz.state_dict(),  str(out_fmt.format(net='netpz', ifold=ifold)))
                    
 def photoz_all(**config):
-    """Run the photo-z for all folds."""
+    """Run the photo-z for all folds.
+       :param config: {dict} Configuration dictionary.
+    """
                    
     L = []
     inds = inds_all[config['catnr']][:len(flux)]
@@ -210,21 +201,15 @@ def photoz_all(**config):
 
     return df
 
-
-# In[16]:
-
 import trainer_sexp
 
-#model_dir = Path('models/v7')
-# Where we store the models based on the data...
-version = 9
+version = 11
 sim = 'fsps'
 
 def gen_conf():
     for catnr in range(10):
         for keep_last in [True]:
             for alpha in [0.8]:
-#[0.5, 0.6, 0.7, 0.8, 0.9, 1.0]:
                 yield catnr, keep_last, alpha
 
 # This code for running different configurations has been moved out into a notebook.
@@ -234,7 +219,7 @@ if True: #True: #False: #False: #False: #True: #False:
     #catnr = 0
 
     use_mdn = True
-    model_dir = Path('/cephfs/pic.es/astro/scratch/eriksen/deepz/redux/train') / str(version)
+    model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
 
     verpretrain = 8
     Ntrain = 'all'
@@ -251,8 +236,6 @@ if True: #True: #False: #False: #False: #True: #False:
         config['Nexp'] = 0
         config['alpha'] = alpha
  
-            #    config['output_dir'] = output_dir
-#        out_fmt = 'pre{verpretrain}_alpha{alpha}_keep{keep_last}_catnr{catnr}'.format(**config)
         out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
         out_fmt = str(model_dir / out_fmt)
 
