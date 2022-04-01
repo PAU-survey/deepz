@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
+# Pretrain the network on simulations. Later the trained network
+# would be the start for training on data.
 
-#get_ipython().run_line_magic('load_ext', 'autoreload')
-#get_ipython().run_line_magic('autoreload', '2')
 import sys
 import os
-#sys.path.append('..')
-#sys.path.append('../var')
 
 import time
 from pathlib import Path
@@ -30,16 +28,8 @@ mags_df = pd.read_parquet(str(path_in / 'mags.parquet'))
 params_df = pd.read_parquet(str(path_in / 'params.parquet'))
 
 
-# In[3]:
-
-
-#import os
-#os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
 config = {'use_enc': False}
-# 
-
-# In[4]:
 
 
 # Bands to select for the training...
@@ -80,8 +70,6 @@ train_dl = DataLoader(train_ds, batch_size=500, shuffle=True)
 test_dl = DataLoader(test_ds, batch_size=100)
 
 
-# In[6]:
-
 
 import networks
 
@@ -107,11 +95,6 @@ def xloss_function(net, pred, target):
     
     return loss
 
-
-# In[ ]:
-
-
-#optimizer = optim.Adam(net.parameters(), lr=1e-4)
 params_chain = chain(enc.parameters(), dec.parameters(), net_pz.parameters())
 optimizer = optim.Adam(params_chain, lr=1e-3)
 
@@ -126,9 +109,6 @@ for i in range(10):
         t3 = time.time()
         optimizer.zero_grad()
         
-        # Testint doing the 
-#        ampl = 1+0.05*torch.randn(len(Bflux))
-#        Bflux = ampl[:,None]*Bflux.mean(1)[:,None] + Bflux # HACK!!!
         Bflux = Bflux.cuda()
         Bflux_err = (Bflux / SN[None,:]).cuda()
         
@@ -139,11 +119,7 @@ for i in range(10):
             feat = 0.*feat
 
         Xinp = torch.cat([Bflux, feat], 1) # In train
-         #Bflux + noise)
         
-        #bz_rand = smoother(log_pz)
-        #Bzbin = Bzbin.cuda() + bz_rand.cuda()
-        #Bzbin = Bzbin.clamp(0, 2099)
         if use_mdn:
             Bzbin = Bzbin.cuda()
             
