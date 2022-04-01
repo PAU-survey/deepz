@@ -104,6 +104,25 @@ def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True, Nexp=0,
 
     return coadd, touse
 
+def get_coadd_allexp(flux, fmes, vinv, isnan, rm=True):
+    """Coadd using all the exposures. Simplified version to avoid potential
+       problems in random selections.
+    """
+
+    mask = (~isnan).type(torch.float)
+
+    weight = vinv * mask
+    norm = weight.sum(2)
+    coadd = (weight*fmes).sum(2) / norm
+
+    coadd = torch.cat([coadd, flux[:,40:]], 1)
+    touse = ~(norm == 0).any(1)
+
+    if rm:
+        coadd = coadd[touse]
+
+    return coadd, touse
+
 def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nexp, keep_last):
     """Train the network.
        :param optimizer: {object} PyTorch optimizer.

@@ -14,15 +14,14 @@ import sys
 import torch
 assert torch.__version__.startswith('1.0'), 'For some reason the code fails badly on newer PyTorch versions.'
 
-
 from torch import optim, nn
 from pathlib import Path
 from torch.utils.data import TensorDataset, DataLoader
 from matplotlib import pyplot as plt
 
-import utils
 import paus_data
-import trainer_alpha
+import trainer
+import utils
 
 #pretrain = True #False
 alpha = 0.8
@@ -31,7 +30,6 @@ alpha = 0.8
 verpretrain = 3
 
 flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus()
-
 
 
 version = 2
@@ -100,19 +98,19 @@ def train(ifold, **config):
         return chain(enc.parameters(), dec.parameters(), net_pz.parameters())
    
     wd = 1e-4
-    if True: #False: #False: #False: #True: #False: #True: #True: #False: #True: #False: #False: #True: #False: #True: #pretrain:
+    if True: # Since I tested this so many times.
         optimizer = optim.Adam(params(), lr=1e-3, weight_decay=wd)
-        trainer_alpha.train(optimizer, 100, *K)
+        trainer.train(optimizer, 100, *K)
 
     print('main train function...')
     optimizer = optim.Adam(params(), lr=1e-4, weight_decay=wd)
-    trainer_alpha.train(optimizer, 200, *K)
+    trainer.train(optimizer, 200, *K)
     
     optimizer = optim.Adam(params(), lr=1e-5, weight_decay=wd)
-    trainer_alpha.train(optimizer, 200, *K)
+    trainer.train(optimizer, 200, *K)
 
     optimizer = optim.Adam(params(), lr=1e-6, weight_decay=wd)
-    trainer_alpha.train(optimizer, 200, *K)
+    trainer.train(optimizer, 200, *K)
     
     return enc, dec, net_pz
 
@@ -133,13 +131,11 @@ def pz_fold(ifold, inds, out_fmt, use_mdn):
 
     assert isinstance(inds, torch.Tensor), 'This is required...'
  
-    # OK, this needs some improvement...
     L = []
     for Bflux, Bfmes, Bvinv, Bisnan, Bzbin in test_dl:
-        Bcoadd, touse = trainer_sexp.get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=1)
+        Bcoadd, touse = trainer.get_coadd_allexp(Bflux, Bfmes, Bvinv, Bisnan)
         assert touse.all()
             
-        # Testing training augmentation.            
         feat = enc(Bcoadd)
         Binput = torch.cat([Bcoadd, feat], 1)
         pred = net_pz(Binput)
@@ -203,7 +199,7 @@ def photoz_all(**config):
 
 import trainer_sexp
 
-version = 11
+version = 12
 sim = 'fsps'
 
 def gen_conf():
