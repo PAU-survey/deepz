@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
+# The PAUS data in the COSMOS field.
+
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -16,6 +18,10 @@ D = {'photoz': '4199.csv', 'coadd': '4213.csv', 'cosmos': '4378.csv'}
 
 
 def get_cosmos(apply_cuts):
+    """Return the COSMOS catalogue.
+       :param apply_cuts: {bool} If applying a cut.
+    """
+
     cosmos = pd.read_csv(str(data_in / D['cosmos']), comment='#')
     cosmos = cosmos.set_index('paudm_id')
     cosmos = cosmos[0 < cosmos.r50]
@@ -27,6 +33,11 @@ def get_cosmos(apply_cuts):
     return cosmos
 
 def get_indexp(inds_touse, NB_bands, indexp_path):
+    """Load the individual exposure data.
+       :param inds_touse: {array} Reference IDs to use.
+       :param NB_bands: {list} Narrow bands to use.
+       :param indexp_path: {str} Path to the individual exposures file.
+    """
 
     df_fa = pd.read_parquet(indexp_path)
     df_fa = df_fa.set_index('ref_id')
@@ -45,7 +56,11 @@ def get_indexp(inds_touse, NB_bands, indexp_path):
     return X.flux.values, X.flux_error.values
 
 def paus(apply_cuts=True):
-# Testing Lumus.
+    """The PAUS data in the COSMOS field.
+       :param apply_cuts: {bool} If applying the cuts.
+    """
+
+    # Testing Lumus.
     galcat_path = '/data/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
     indexp_path = Path('/data/astro/scratch/eriksen/deepz/input/lumus/fa_v8.pq')
 
@@ -84,6 +99,8 @@ def paus(apply_cuts=True):
     fmes[isnan] = 0
 
     flux = torch.Tensor(flux)
+
+    # Using a redshift bin is only done for historical reasons.
     zbin = torch.tensor(cosmos.loc[touse].zspec.values / 0.001).round().type(torch.long)
 
     print('# Galaxies', len(flux))
@@ -92,8 +109,6 @@ def paus(apply_cuts=True):
     # Test, this makes a difference when selecting with a PyTorch
     # uint8 tensor.
     ref_id = torch.Tensor(flux_df.index.values)
-   
-    # Testing....
-    
-    #return flux, flux_err, fmes, vinv, isnan, zbin, ref_id
-    return flux, flux_err, fmes, vinv, isnan, zbin, ref_id #, flux_df
+  
+ 
+    return flux, flux_err, fmes, vinv, isnan, zbin, ref_id
