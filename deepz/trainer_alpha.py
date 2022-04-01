@@ -13,24 +13,13 @@ from torch.utils.data import TensorDataset, DataLoader
 
 import utils
 
-def smoother(log_pz, kappa=0.15):
-    """Functionality for smoothing the p(z)."""
-    
-    pz = torch.exp(log_pz.detach())
-    pz = pz / pz.sum(1)[:,None]
-
-    csum = pz.cumsum(dim=1)
-    pz_std = ((0.16 < csum) & (csum < 0.84)).sum(1)
-    pz_std = (0.5*pz_std.float()).clamp(0.002, 0.02)
-    X = torch.normal(0, kappa*pz_std.float())
-    bz_rand = (X / 0.001).round().type(torch.long)
-    
-    return bz_rand
-
-
 def mask_entries(fmes, Nexp=1):
     """Mask single exposure entries, removing a fixed number of
-       exposure, but keeping at least one.
+       exposure, but keeping at least one. This procedure is
+       discussed in the paper.
+
+       :param fmes: {tensor} The individual flux measurements.
+       :param Nexp: {int} Minimum number of exposures.
     """
 
     # Remove a fixed number of exposures.
@@ -51,6 +40,12 @@ def mask_entries(fmes, Nexp=1):
     return mask
 
 def mask_alpha(fmes, isnan, alpha, keep_last):
+    """Mask single exposure entries.
+       :param fmes: {tensor} The individual flux measurements.
+       :param isnan: NOT USED.
+       :param alpha: {float} Fraction of individual exposures used.
+       :param keep_last: {bool} If keeping at least one measurement.
+    """
 
     inp = alpha*torch.ones_like(fmes)
     mask_rand = torch.bernoulli(inp)
@@ -81,23 +76,25 @@ def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True, Nexp=0,
               keep_last=False):
     """Get the coadded fluxes, using only a fraction of the
        individual exposures.
+
+       :param flux: {tensor} Coadded fluxes.
+       :param fmes: {tensor} Individual flux measurements.
+       :param vinv: {tensor} Inverse variance.
+       :param isnan: {tensor} Used?
+       :param alpha: {float} Fraction of the individual measurements used.
+       :param rm: {bool} If removing entries without all narrow bands.
+       :param Nexp: {int} DELETED option.
+       :param keep_last: {bool} Keep the last flux measurement.
     """
 
     assert not Nexp, 'Deleted option'   
     inp = alpha*torch.ones_like(fmes)
-#    mask = (~isnan).type(torch.float)
-#    mask *= torch.bernoulli(inp)
     mask = mask_alpha(fmes, isnan, alpha, keep_last)
-
-
-#    ipdb.set_trace()
-
 
 
     weight = vinv * mask
     norm = weight.sum(2)
     coadd = (weight*fmes).sum(2) / norm
-    #coadd_err = torch.sqrt(1./weight.sum(2))
     
     coadd = torch.cat([coadd, flux[:,40:]], 1)
     touse = ~(norm == 0).any(1)    
@@ -108,9 +105,23 @@ def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True, Nexp=0,
     return coadd, touse
 
 def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nexp, keep_last):
+    """Train the network.
+       :param optimizer: {object} PyTorch optimizer.
+       :param N: {int} Number of epochs.
+       :param enc: {object} Encoder network.
+       :param dec: {object} Decoder network.
+       :param net_pz: {object} Network for predicting the redshift.
+       :param train_dl: {object} Training data loader.
+       :param test_dl: {object} Test data loader.
+       :param use_mdn: {bool} If using MDNs.
+       :param alpha: {float} Fraction of the individual measurements used.
+       :param rm: {bool} If removing entries without all narrow bands.
+       :param Nexp: {int} Used?
+       :param keep_last: {bool} Keep the last flux measurement.
+    """
+ 
     loss_function = nn.CrossEntropyLoss()
     for i in range(N):
-#        print('i', i)
         L = []
         
         enc.train()
@@ -142,16 +153,8 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nex
                 Bzbin = Bzbin.cuda()
                 
                 Bz = 0.001*Bzbin.type(torch.float)
-#                log_pz, _ = net_pz.loss(Binput, Bz)
-#                bz_rand = smoother(log_pz)
-                
-                #Bzbin = Bzbin + bz_rand.cuda()
-                #Bzbin = Bzbin.clamp(0, 2099)
-#                Bz = 0.001*Bzbin.type(torch.float)
-                
                 _, loss = net_pz.loss(Binput, Bz)
                 
-                #loss = loss_function(log_pz, Bzbin.cuda())
                 
             loss.backward()
             optimizer.step()    
