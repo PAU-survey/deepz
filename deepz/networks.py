@@ -10,6 +10,11 @@ class MDNNetwork(nn.Module):
     """Mixture density network."""
 
     def __init__(self, Nbands, fr=0.02):
+        """Initalize the network.
+           :param Nbands: {int} Number of bands.
+           :param fr: {float} Dropout fraction.
+        """
+
         super().__init__()
         
         n2 = 600
@@ -46,22 +51,25 @@ class MDNNetwork(nn.Module):
         self.lin_logvar = nn.Linear(250, n_gaussian) # Not changing name because of pretraining...
     
     def get_dist(self, X):
+        """Get the parameters describing the MDN.
+           :param X: {tensor} Network input.
+        """
+
         X = self.net(X)
       
         logalpha = self.lin_logalpha(X)
         logalpha = logalpha - torch.logsumexp(logalpha, 1)[:,None]
         
-        mu = self.lin_mu(X) #.abs()
+        mu = self.lin_mu(X)
         logsig = self.lin_logvar(X)
-       
-        # Testing scaling the sigma..
-        #sig = torch.exp(logsig)
-        #sig = sig + 0.001 #:*1.15
-        #logsig = torch.log(sig)
     
         return logalpha, mu, logsig
     
     def forward(self, X):
+        """Get the probability function evaluated on a grid.
+           :param X: {tensor} Network input.
+        """
+
         # This way of using the forward is for not having to modify the
         # test code everywhere.
       
@@ -83,7 +91,10 @@ class MDNNetwork(nn.Module):
         return prob    
         
     def loss(self, X, y):
-        """Evaluates the logarithmic probability."""
+        """Evaluates the logarithmic probability.
+           :param X: {tensor} Network input.
+           :param y: {tensor} Spectroscopic redshift (label).
+        """
 
         logalpha, mu, logsig = self.get_dist(X)
         y = y.unsqueeze(1)
@@ -93,7 +104,6 @@ class MDNNetwork(nn.Module):
         log_prob = torch.logsumexp(log_prob, 1)
         loss = -log_prob.mean()
   
-
         # For testing....
         z = torch.linspace(0, 2.1, 2100).cuda()
         
@@ -104,41 +114,16 @@ class MDNNetwork(nn.Module):
     
         return log_prob, loss
     
-    
-    
-class Conv(nn.Module):
-    """Convolutional neural network."""
-    
-    def __init__(self):
-        super().__init__()
-        
-        self.conv1 = nn.Sequential(nn.Conv1d(1, 32, 3, padding=1), nn.LeakyReLU(0.1), \
-                              nn.MaxPool1d(2))
-
-        self.conv2 = nn.Sequential(nn.Conv1d(32, 64, 3, padding=1), nn.LeakyReLU(0.1), \
-                              nn.MaxPool1d(2))
-
-        self.conv3 = nn.Sequential(nn.Conv1d(64, 128, 3, padding=1), nn.LeakyReLU(0.1), \
-                              nn.MaxPool1d(2))
-
-        self.conv = nn.Sequential(self.conv1, self.conv2, self.conv3)
-        
-        # Testing reducing the number of neurons here...
-        self.dens = nn.Linear(128*5, 128)
-        
-    def forward(self, x):
-        x = self.conv(x.unsqueeze(1))
-        x = x.view(len(x), -1)
-        
-        #x = self.dens(x.view(len(x), -1))
-        
-        return x
-
-
 class Encoder(nn.Module):
     """Encoder network."""
     
     def __init__(self, Nfeat=10, Nl=10, Nbands=46):
+        """Initialize the network.
+           :param Nfeat: {int} Feature space dimention.
+           :param Nl: {int} Number of layers.
+           :param Nbands: {int} Number of input bands.
+        """
+
         super().__init__()
         
         Nw = 250
@@ -152,6 +137,10 @@ class Encoder(nn.Module):
         self.last = nn.Linear(Nw, Nfeat)
         
     def forward(self, x):
+        """Encode flux ratios to features.
+          :param x: {tensor} Flux ratios.
+        """
+
         x = self.bulk(x)
         x = self.last(x)
         
@@ -161,6 +150,12 @@ class Decoder(nn.Module):
     """Decoder network."""
     
     def __init__(self, Nfeat=10, Nl=10, Nbands=46):
+        """Initialize the network.
+           :param Nfeat: {int} Feature space dimention.
+           :param Nl: {int} Number of layers.
+           :param Nbands: {int} Number of input bands.
+        """
+
         super().__init__()
         
         Nw = 250
@@ -174,6 +169,10 @@ class Decoder(nn.Module):
         self.last = nn.Linear(Nw, Nbands)
         
     def forward(self, x):
+        """Decode features to flux ratios.
+           :param x: {tensor} Features.
+        """
+
         x = self.bulk(x)
         x = self.last(x)
         
