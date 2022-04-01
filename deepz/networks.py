@@ -1,48 +1,14 @@
 #!/usr/bin/env python
+# encoding: UTF8
 
 import torch
 from torch import nn
 import torch.nn.functional as F
 from torch.distributions import Normal
 
-class Network(nn.Module):
-    def __init__(self, Nbands, fr=0.2):
-        super().__init__()
-        
-        n2 = 600
-        n2 = 400
-
-        n3 = 250
-        self.zp = nn.BatchNorm1d(Nbands)
-        self.lin1 = nn.Sequential(\
-                    nn.Linear(Nbands, n2), nn.Dropout(fr), nn.ReLU())
-
-        self.lin2 = nn.Sequential(nn.BatchNorm1d(n2), \
-                    nn.Linear(n2, n3), nn.Dropout(fr), nn.ReLU())
-        
-        L = []
-        for i in range(13): # was 13
-            layer = nn.Sequential(nn.BatchNorm1d(n3), \
-                    nn.Linear(n3, n3), nn.Dropout(fr), nn.ReLU()) 
-            L.append(layer)
-            
-        self.lin3 = nn.Sequential(*L)
-        
-        self.lin4 = nn.BatchNorm1d(n3)
-        self.last = nn.Linear(n3, 2100)
-        
-    def forward(self, x):
-        x = self.zp(x)
-        x = self.lin1(x)
-        x = self.lin2(x)
-        x = self.lin3(x)
-
-        x = self.lin4(x)
-        x = self.last(x)
-        
-        return x
-    
 class MDNNetwork(nn.Module):
+    """Mixture density network."""
+
     def __init__(self, Nbands, fr=0.02):
         super().__init__()
         
@@ -165,5 +131,50 @@ class Conv(nn.Module):
         x = x.view(len(x), -1)
         
         #x = self.dens(x.view(len(x), -1))
+        
+        return x
+
+
+class Encoder(nn.Module):
+    """Encoder network."""
+    
+    def __init__(self, Nfeat=10, Nl=10, Nbands=46):
+        super().__init__()
+        
+        Nw = 250
+        fr = 0.01
+        L = [nn.Linear(Nbands, Nw)]
+        
+        for i in range(Nl):
+            L += [nn.BatchNorm1d(Nw), nn.Linear(Nw, Nw), nn.Dropout(fr), nn.ReLU()]
+            
+        self.bulk = nn.Sequential(*L)
+        self.last = nn.Linear(Nw, Nfeat)
+        
+    def forward(self, x):
+        x = self.bulk(x)
+        x = self.last(x)
+        
+        return x
+    
+class Decoder(nn.Module):
+    """Decoder network."""
+    
+    def __init__(self, Nfeat=10, Nl=10, Nbands=46):
+        super().__init__()
+        
+        Nw = 250
+        fr = 0.01
+        L = [nn.Linear(Nfeat, Nw)]
+        
+        for i in range(Nl):
+            L += [nn.BatchNorm1d(Nw), nn.Linear(Nw,Nw), nn.Dropout(fr), nn.ReLU()]
+            
+        self.bulk = nn.Sequential(*L)
+        self.last = nn.Linear(Nw, Nbands)
+        
+    def forward(self, x):
+        x = self.bulk(x)
+        x = self.last(x)
         
         return x

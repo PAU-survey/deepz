@@ -23,8 +23,6 @@ from pathlib import Path
 from torch.utils.data import TensorDataset, DataLoader
 from matplotlib import pyplot as plt
 
-#import arch_mdn
-#import paus_data
 import utils
 
 import paus_sexp as paus_data
@@ -81,7 +79,6 @@ def get_loaders(ifold, inds):
 
 # In[7]:
 import trainer_alpha
-import var_networks
 
 def train(ifold, **config):
     """Train the networks for one fold."""

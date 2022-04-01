@@ -4,18 +4,11 @@
 import sys
 import numpy as np
 import torch
-import var_networks
-
-# My hackish way of forcing this...
-#path_backup = sys.path.copy()
-#sys.path = ['/nfs/astro/eriksen/play_deepz/sims/flag']
-import arch_mdn
-##sys.path = path_backup
-
-print('loaded path', arch_mdn.__file__)
-#import ranker
-
 from torch.utils.data import TensorDataset, DataLoader
+
+import networks
+
+
 
 def get_nets(path_base, use_mdn, pretrain=True, Nbands=46):
     """Initialize networks."""
@@ -23,13 +16,13 @@ def get_nets(path_base, use_mdn, pretrain=True, Nbands=46):
     Nfeat = 10
     Nl = 5
     kwds = {'Nfeat': 10, 'Nl': 5, 'Nbands': Nbands}
-    enc = var_networks.Encoder(**kwds).cuda()
-    dec = var_networks.Decoder(**kwds).cuda()
+    enc = networks.Encoder(**kwds).cuda()
+    dec = networks.Decoder(**kwds).cuda()
    
     if use_mdn:
-        net_pz = arch_mdn.MDNNetwork(Nbands+Nfeat).cuda()
+        net_pz = networks.MDNNetwork(Nbands+Nfeat).cuda()
     else:
-        net_pz = arch_mdn.Network(Nbands+Nfeat).cuda()
+        net_pz = networks.Network(Nbands+Nfeat).cuda()
 
     # And then loading the pretrained network.
     if pretrain:
