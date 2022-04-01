@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
-#from IPython.core import debugger as ipdb
+# Generate FSPS simulations to pretrain the simulations.
+
 import os
 import dask
 import dask.config
@@ -17,10 +18,10 @@ import fsps
 
 bands = fsps.filters.list_filters()
 
-#client = Client('tcp://193.109.175.131:35060')
-
 def empty_gen(params):
-    """Generate an empty set of data."""
+    """Generate an empty set of data.
+       :param params: {dataframe} Per galaxy parameters.
+    """
    
     os.environ['SPS_HOME'] = '/nfs/astro/eriksen/source/fsps'
  
@@ -52,7 +53,10 @@ ranges = {\
 
 
 def gen_params(Ngal):
-    """Generate the distribution of parameters."""
+    """Generate the distribution of parameters.
+       :param Ngal: {int} Numbers of galaxies to generate.
+       :returns: Galaxy parameters.
+    """
 
     print('starting...')
     # Input parameters.
@@ -76,30 +80,27 @@ def gen_params(Ngal):
     return df1
 
 def make_sim(df1, out_path):
-    """Create the simulations."""
+    """Create the simulations.
+       :param df1: {dataframe} Galaxy parameters.
+       :param out_path: {path} Output path.
+    """
 
     df2 = dd.from_pandas(df1, chunksize=10000)
-    #df2 = dd.from_pandas(df1, chunksize=3000)
     df2.to_parquet(str(out_path / 'params.parquet'))
 
     meta = [(x, float) for x in bands]
     G = df2.map_partitions(empty_gen, meta=meta)
 
     print('Staring parallel..')
-#    with dask.config.set(scheduler='processes'), ProgressBar():
     with ProgressBar():
-    #with dask.config.set(scheduler='single-threaded'):
         G.to_parquet(str(out_path / 'mags.parquet'))
 
 
-Ngal = int(1e6)
-#Ngal = int(1e2)
 Ngal = int(1e6)
 out_path = Path('/nfs/astro/eriksen/deepz/sims/v9')
 
 if __name__ == '__main__':
     df1 = gen_params(Ngal)
 
-#    cluster = LocalCluster(n_workers=8, threads_per_worker=1)
     client = Client('tcp://193.109.175.131:44657')
     make_sim(df1, out_path)
