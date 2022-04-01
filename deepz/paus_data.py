@@ -73,7 +73,7 @@ def paus(apply_cuts=True):
 
     # Overlap between the two catalogues ...
     cosmos = get_cosmos(apply_cuts)
-    touse = cosmos.index & sub.index
+    touse = cosmos.index.intersection(sub.index)
 
     # Here we are not actually using the flux, but a flux
     # ratio..

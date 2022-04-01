@@ -175,7 +175,8 @@ def train_all(**config):
         net_pz.train()
         
         print('time', time.time() - t1)
-       
+      
+        print('where getting stored...', str(out_fmt.format(net='enc', ifold=ifold))) 
         torch.save(enc.state_dict(), str(out_fmt.format(net='enc', ifold=ifold)))
         torch.save(dec.state_dict(), str(out_fmt.format(net='dec', ifold=ifold)))
         torch.save(net_pz.state_dict(),  str(out_fmt.format(net='netpz', ifold=ifold)))
@@ -197,8 +198,6 @@ def photoz_all(**config):
 
     return df
 
-import trainer_sexp
-
 version = 12
 sim = 'fsps'
 
@@ -208,12 +207,7 @@ def gen_conf():
             for alpha in [0.8]:
                 yield catnr, keep_last, alpha
 
-# This code for running different configurations has been moved out into a notebook.
-if True: #True: #False: #False: #False: #True: #False:
-    #verpretrain = 3
-    #Ntrain = 8000
-    #catnr = 0
-
+if True:
     use_mdn = True
     model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
 
