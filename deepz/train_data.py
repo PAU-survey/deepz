@@ -140,6 +140,7 @@ def pz_fold(ifold, inds, out_fmt):
 def train_all(**config):
     """Train all the folds.
        :param config: {dict} Configuration dictionary.
+
     """
    
     out_fmt = config['out_fmt']
@@ -163,63 +164,58 @@ def train_all(**config):
         torch.save(dec.state_dict(), str(out_fmt.format(net='dec', ifold=ifold)))
         torch.save(net_pz.state_dict(),  str(out_fmt.format(net='netpz', ifold=ifold)))
                    
-def photoz_all(**config):
+def make_catalogue(catnr, out_fmt):
     """Run the photo-z for all folds.
-       :param config: {dict} Configuration dictionary.
+       :param catnr: {int} Which of the indexes to use per fold.
+       :param out_fmt: {str} FIX THIS!
     """
                    
     L = []
-    inds = inds_all[config['catnr']][:len(flux)]
+    inds = inds_all[catnr][:len(flux)]
 
     inds = torch.Tensor(inds) # Inds_all should be a tensor in the first place.
     for ifold in range(5):
-        L.append(pz_fold(ifold, inds, config['out_fmt']))
+        L.append(pz_fold(ifold, inds, out_fmt))
         
     df = pd.concat(L)
     df = df.set_index('ref_id')
 
     return df
 
-version = 13
 
+def photoz_all(out_fmt, verpretrain, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
+    """Train the networks and return the catalogs.
+       :param out_fmt: {str} Where to store the models.
+       :param verpretrain: {int} Version of the pretrained network.
+       :param catnr: {int} Which of the indexes to use per fold.
+       :param pretrain: {bool} If using a pretrained network.
+       :param alpha: {float} Fraction of measurements used when training.
+       :param keep_last: {bool} Keeping at least one measurement per band.
+    """
 
-model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
-
-verpretrain = 8
-keep_last = False
-
-label = 'march11'
-
-alpha = 0.8
-keep_last = True
-
-number_cats = 1
-
-for catnr in range(number_cats):
-    pretrain = False if verpretrain == 'no' else True
-    config = {'verpretrain': verpretrain, 'catnr': catnr, 
-              'pretrain': pretrain, 'keep_last': keep_last}
+    # This part still needs to be cleaned.
+    config = {'out_fmt': out_fmt, 'verpretrain': verpretrain, 'catnr': catnr, 'pretrain': pretrain,
+              'alpha': alpha, 'keep_last': keep_last}
 
     config['Nexp'] = 0
-    config['alpha'] = alpha
 
-    out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
-    out_fmt = str(model_dir / out_fmt)
-
-    config['out_fmt'] = out_fmt
-
-    print('To store at:')
-    print(out_fmt)
-
-    train_all(**config) 
-
-    pz = photoz_all(**config)
+    train_all(**config)
+    df = make_catalogue(catnr, out_fmt)
     pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
     sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
-    print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
+    print('sig68:', sig68)
 
-    fname = f'{label}'+'_catnr{catnr}.csv'.format(**config)
-    path_out = model_dir / fname
+    return df
 
-    pz.to_csv(path_out) 
+
+
+version = 13
+label = 'march11'
+verpretrain = 8
+
+model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
+out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
+out_fmt = str(model_dir / out_fmt)
+
+pz = photoz_all(out_fmt, verpretrain)
