@@ -182,18 +182,19 @@ def make_catalogue(catnr, model_dir, model_label):
     return df
 
 
-def photoz_all(model_dir, pretrain_label, model_label, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
+def photoz_all(model_dir, pretrain_label, model_label, bb, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
     """Train the networks and return the catalogs.
        :param model_dir: {str} Directory to store models.
        :param pretrain_label: {str} Label to describe the pretrained model.
        :param model_label: {str} Label to describe the final model.
+       :param bb: {str} Broad bands.
        :param catnr: {int} Which of the indexes to use per fold.
        :param pretrain: {bool} If using a pretrained network.
        :param alpha: {float} Fraction of measurements used when training.
        :param keep_last: {bool} Keeping at least one measurement per band.
     """
 
-    # This part still needs to be cleaned.
+    bb = utils.broad_bands(bb)
     config = {'model_dir': model_dir, 'pretrain_label': pretrain_label, 'model_label': model_label,
               'catnr': catnr, 'pretrain': pretrain, 'alpha': alpha, 'keep_last': keep_last}
 

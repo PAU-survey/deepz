@@ -23,6 +23,7 @@ from torch.utils.data.dataset import random_split
 from torch.utils.data import TensorDataset, DataLoader
 
 import networks
+import utils
 
 def load_sims(path_sims, broad_bands, norm_band=None):
     """Load the FSPS simulations used for training. 
@@ -169,40 +170,22 @@ def train_sim(train_dl, test_dl, Nbands):
 
     return net
 
-def parse_bb(broad_bands):
-    """Parse the broad band input string.
-       :param broad_bands: {object} Which broad bands to use.
-    """
-
-    if isinstance(broad_bands, list):
-        pass 
-    elif isinstance(broad_bands, tuple):
-        broad_bands = list(broad_bands)
-    elif broad_bands.lower() == 'cosmos':
-        broad_bands = ['cfht_u', 'subaru_b', 'subaru_v', 'subaru_r', 'subaru_i', 'subaru_z']
-    elif bb.lower() == 'cfht':
-        broad_bands = ['cfht_u', 'cfht_g', 'cfht_r', 'cfht_i', 'cfht_z']
-    else:
-        raise NotImplementedError()
-
-    return broad_bands
-
-def train(path_sims, model_dir, pretrain_label, broad_bands):
+def train(path_sims, model_dir, pretrain_label, bb):
     """Pretrain the model on simulations.
        :param path_sims: {path} Directory with the simulations.
        :param model_dir: {path} Directory where to store the models.
        :param pretrain_label: {str} 
-       :param broad_bands: {str, list} Broad bands to use (or cosmos, cfht).
+       :param bb: {str, list} Broad bands to use (or cosmos, cfht).
     """
 
-    broad_bands = parse_bb(broad_bands)
+    bb = utils.broad_bands(bb)
 
-    output_path = Path(model_dir) / 'pretrain_{pretrain_label}.pt'
+    output_path = Path(model_dir) / f'pretrain_{pretrain_label}.pt'
     if output_path.exists():
         print('Output file aready exists:', output_path)
         return
 
-    flux, flux_err, zbin = load_sims(path_sims, broad_bands)
+    flux, flux_err, zbin = load_sims(path_sims, bb)
     Nbands = flux.shape[1]
 
     train_dl, test_dl = to_dl(flux, flux_err, zbin)

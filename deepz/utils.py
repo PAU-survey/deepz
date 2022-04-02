@@ -33,6 +33,24 @@ def path_model(model_dir, label, catnr, ifold):
 
     return path
 
+def broad_bands(bb):
+    """Parse the broad band input string.
+       :param bb: {object} Which broad bands to use.
+    """
+
+    if isinstance(broad_bands, list):
+        pass
+    elif isinstance(broad_bands, tuple):
+        broad_bands = list(broad_bands)
+    elif broad_bands.lower() == 'cosmos':
+        broad_bands = ['cfht_u', 'subaru_b', 'subaru_v', 'subaru_r', 'subaru_i', 'subaru_z']
+    elif bb.lower() == 'cfht':
+        broad_bands = ['cfht_u', 'cfht_g', 'cfht_r', 'cfht_i', 'cfht_z']
+    else:
+        raise NotImplementedError()
+
+    return broad_bands
+
 
 def get_nets(path_base, pretrain=True, Nbands=46):
     """Initialize networks.
