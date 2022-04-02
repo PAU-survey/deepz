@@ -82,16 +82,14 @@ def train(ifold, **config):
     verpretrain = config['verpretrain']
     pretrain = config['pretrain']
 
-    part = 'mdn' if use_mdn else 'normal'
-
     # Where to find the pretrained files.
-    path_base = f'/data/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}_'+part+'.pt'
+    path_base = f'/data/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}.pt'
 
     inds = inds_all[config['catnr']][:len(flux)]
     
-    enc, dec, net_pz = utils.get_nets(path_base, use_mdn, pretrain)
+    enc, dec, net_pz = utils.get_nets(path_base, pretrain)
     train_dl, test_dl, _ = get_loaders(ifold, inds)
-    K = (enc, dec, net_pz, train_dl, test_dl, use_mdn, config['alpha'], config['Nexp'], \
+    K = (enc, dec, net_pz, train_dl, test_dl, config['alpha'], config['Nexp'], \
          config['keep_last'])
 
     def params():
@@ -115,7 +113,7 @@ def train(ifold, **config):
     return enc, dec, net_pz
 
 
-def pz_fold(ifold, inds, out_fmt, use_mdn):
+def pz_fold(ifold, inds, out_fmt):
     """Estimate the photo-z for one fold.
        :param ifold: {int} Which ifold to use.
        :param inds: {array} Indices to use.
@@ -124,7 +122,7 @@ def pz_fold(ifold, inds, out_fmt, use_mdn):
     
     # Loading the networks...
     net_base_path = out_fmt.format(ifold=ifold, net='{}')
-    enc, dec, net_pz = utils.get_nets(str(net_base_path), use_mdn)
+    enc, dec, net_pz = utils.get_nets(str(net_base_path))
     enc.eval(), dec.eval(), net_pz.eval()
     
     _, test_dl, zbin_test = get_loaders(ifold, inds)
@@ -191,7 +189,7 @@ def photoz_all(**config):
 
     inds = torch.Tensor(inds) # Inds_all should be a tensor in the first place.
     for ifold in range(5):
-        L.append(pz_fold(ifold, inds, config['out_fmt'], config['use_mdn']))
+        L.append(pz_fold(ifold, inds, config['out_fmt']))
         
     df = pd.concat(L)
     df = df.set_index('ref_id')
@@ -208,7 +206,6 @@ def gen_conf():
                 yield catnr, keep_last, alpha
 
 if True:
-    use_mdn = True
     model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
 
     verpretrain = 8
@@ -220,7 +217,7 @@ if True:
     for catnr, keep_last, alpha in gen_conf():
            #for Ntrain in ['all']:
         pretrain = False if verpretrain == 'no' else True
-        config = {'verpretrain': verpretrain, 'Ntrain': Ntrain, 'catnr': catnr, 'use_mdn': use_mdn,
+        config = {'verpretrain': verpretrain, 'Ntrain': Ntrain, 'catnr': catnr, 
                   'Ntrain': Ntrain, 'pretrain': pretrain, 'keep_last': keep_last}
 
         config['Nexp'] = 0

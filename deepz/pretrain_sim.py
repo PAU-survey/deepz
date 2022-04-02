@@ -73,20 +73,13 @@ test_dl = DataLoader(test_ds, batch_size=100)
 
 import networks
 
-# If using a mixure density network.
-use_mdn = False
-use_mdn = True
-
 # Different networks.
 Nfeat = 10
 Nl = 5
 enc = networks.Encoder(Nfeat=Nfeat, Nl=Nl).cuda()
 dec = networks.Decoder(Nfeat=Nfeat, Nl=Nl).cuda()
 
-if use_mdn:
-    net_pz = networks.MDNNetwork(len(bands)+Nfeat).cuda()
-else:
-    raise NotImplementedError()
+net_pz = networks.MDNNetwork(len(bands)+Nfeat).cuda()
 
 loss_function = nn.CrossEntropyLoss()
 
@@ -120,14 +113,10 @@ for i in range(10):
 
         Xinp = torch.cat([Bflux, feat], 1) # In train
         
-        if use_mdn:
-            Bzbin = Bzbin.cuda()
-            
-            Bz = 0.001*Bzbin.type(torch.float)
-            _, loss_pz = net_pz.loss(Xinp, Bz)  
-        else:
-            log_pz = net_pz(Xinp)
-            loss_pz = loss_function(log_pz, Bzbin.cuda())     
+        Bzbin = Bzbin.cuda()
+        
+        Bz = 0.001*Bzbin.type(torch.float)
+        _, loss_pz = net_pz.loss(Xinp, Bz)  
         
         # And then
         loss_recon = (dec(feat) - Bflux).abs() / Bflux_err
@@ -159,14 +148,9 @@ for i in range(10):
         pred = net_pz(Xinp.cuda())
         
         # For some reason we did *not* include the reconstruction loss here.
-        if use_mdn:
-            Bzbin = Bzbin.cuda()
-            Bz = 0.001*Bzbin.type(torch.float)
-            _, loss = net_pz.loss(Xinp, Bz)    
-        else:
-            log_pz = pred
-            loss_pz = loss_function(log_pz, Bzbin.cuda())
-            
+        Bzbin = Bzbin.cuda()
+        Bz = 0.001*Bzbin.type(torch.float)
+        _, loss = net_pz.loss(Xinp, Bz)    
         
         L.append(loss.item())
         
@@ -188,13 +172,12 @@ for i in range(10):
 
 version = 9
 sim = 'fsps'
-pztype = 'mdn' if use_mdn else 'normal'
 output_dir = Path('/data/astro/scratch/eriksen/deepz/redux/pretrain')
 if not os.path.exists(output_dir):
     os.mkdir(output_dir)
 
     
-path_base = str(output_dir / (f'v{version}'+'_{}_'+f'{pztype}.pt'))
+path_base = str(output_dir / (f'v{version}'+'_{}.pt'))
 torch.save(enc.state_dict(), path_base.format('enc'))
 torch.save(dec.state_dict(), path_base.format('dec'))
 torch.save(net_pz.state_dict(), path_base.format('pz'))

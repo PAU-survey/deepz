@@ -123,7 +123,7 @@ def get_coadd_allexp(flux, fmes, vinv, isnan, rm=True):
 
     return coadd, touse
 
-def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nexp, keep_last):
+def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, Nexp, keep_last):
     """Train the network.
        :param optimizer: {object} PyTorch optimizer.
        :param N: {int} Number of epochs.
@@ -132,7 +132,6 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nex
        :param net_pz: {object} Network for predicting the redshift.
        :param train_dl: {object} Training data loader.
        :param test_dl: {object} Test data loader.
-       :param use_mdn: {bool} If using MDNs.
        :param alpha: {float} Fraction of the individual measurements used.
        :param rm: {bool} If removing entries without all narrow bands.
        :param Nexp: {int} Used?
@@ -161,18 +160,9 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nex
             feat = enc(Bcoadd)
             Binput = torch.cat([Bcoadd, feat], 1)
             
-            if not use_mdn:
-                log_pz = net_pz(Binput)
-                bz_rand = smoother(log_pz)
-                Bzbin = Bzbin.cuda() + bz_rand.cuda()
-                Bzbin = Bzbin.clamp(0, 2099)
-                # Disable the smoother to simpler compare the results.
-                loss = loss_function(log_pz, Bzbin.cuda())
-            else:
-                Bzbin = Bzbin.cuda()
-                
-                Bz = 0.001*Bzbin.type(torch.float)
-                _, loss = net_pz.loss(Binput, Bz)
+            Bzbin = Bzbin.cuda()
+            Bz = 0.001*Bzbin.type(torch.float)
+            _, loss = net_pz.loss(Binput, Bz)
                 
                 
             loss.backward()
@@ -201,11 +191,8 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, use_mdn, alpha, Nex
             
             
             pred = net_pz(Binput)
-            if not use_mdn:
-                loss = loss_function(pred, Bzbin.cuda())
-            else:
-                Bz = 0.001*Bzbin.type(torch.float)
-                log_pz, loss = net_pz.loss(Binput, Bz)
+            Bz = 0.001*Bzbin.type(torch.float)
+            log_pz, loss = net_pz.loss(Binput, Bz)
                 
             L.append(loss.item())
 

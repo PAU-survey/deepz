@@ -12,10 +12,9 @@ import networks
 
 
 
-def get_nets(path_base, use_mdn, pretrain=True, Nbands=46):
+def get_nets(path_base, pretrain=True, Nbands=46):
     """Initialize networks.
        :param path_base: {str} Path to the pretrained networks.
-       :param use_mdn: {bool} If using a mixture density network.
        :param Nbands: {int} Number of bands.
     """
     
@@ -25,10 +24,7 @@ def get_nets(path_base, use_mdn, pretrain=True, Nbands=46):
     enc = networks.Encoder(**kwds).cuda()
     dec = networks.Decoder(**kwds).cuda()
    
-    if use_mdn:
-        net_pz = networks.MDNNetwork(Nbands+Nfeat).cuda()
-    else:
-        net_pz = networks.Network(Nbands+Nfeat).cuda()
+    net_pz = networks.MDNNetwork(Nbands+Nfeat).cuda()
 
     # And then loading the pretrained network.
     if pretrain:
