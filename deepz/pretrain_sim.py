@@ -9,6 +9,7 @@ import sys
 import time
 
 from pathlib import Path
+import fire
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -23,174 +24,186 @@ from torch.utils.data import TensorDataset, DataLoader
 
 import networks
 
-path_in = Path('/data/astro/scratch/eriksen/deepz/sims/v9/')
+def load_sims(path_sims, broad_bands):
+    """Load the FSPS simulations used for training.
+       :param path_sims: {path} Path to the simulation directory.
+       :param broad_bands: {list} List of broad bands.
+    """
 
-mags_df = pd.read_parquet(str(path_in / 'mags.parquet'))
-params_df = pd.read_parquet(str(path_in / 'params.parquet'))
+    path_sims = Path(path_sims)
+    mags_df = pd.read_parquet(str(path_sims / 'mags.parquet'))
+    params_df = pd.read_parquet(str(path_sims / 'params.parquet'))
 
-# Bands to select for the training...
-NB = ['nb{}'.format(x) for x in 455+10*np.arange(40)]
-BB = ['cfht_u', 'subaru_b', 'subaru_v', 'subaru_r', 'subaru_i', 'subaru_z']
-bands = NB + BB
-SN = torch.tensor(len(NB)*[10] + len(BB)*[35], dtype=torch.float).cuda()
+    # Bands to select for the training...
+    NB = ['nb{}'.format(x) for x in 455+10*np.arange(40)]
+    BB = broad_bands
+    bands = NB + BB
+    SN = torch.tensor(len(NB)*[10] + len(BB)*[35], dtype=torch.float).cuda()
 
-col = mags_df.values - mags_df.values[:,-2][:,None]
-print('type', type(col))
-col = pd.DataFrame(col, index=mags_df.index, columns=mags_df.columns)
+    col = mags_df.values - mags_df.values[:,-2][:,None]
+    col = pd.DataFrame(col, index=mags_df.index, columns=mags_df.columns)
 
-# A small fraction has very extreme colors. Cutting
-# these away..
-tosel = ~(10 < col.abs()).any(axis=1)
-#tosel = pd.Series(True, index=col.index)
-col = col.loc[tosel, bands]
+    # A small fraction has very extreme colors. Cutting
+    # these away..
+    tosel = ~(10 < col.abs()).any(axis=1)
+    col = col.loc[tosel, bands]
 
-# Convert to fluxes.
-flux = torch.tensor(10**(-0.4*col.values)).float()
-flux_err = flux/ SN.cpu()[None,:]
+    # Convert to fluxes.
+    flux = torch.tensor(10**(-0.4*col.values)).float()
+    flux_err = flux/ SN.cpu()[None,:]
 
-# And then select the parameters.
-params = torch.tensor(params_df.loc[tosel].values).float()
-zind = list(params_df.columns).index('zred')
-zbin = (params[:, zind]/0.001).round().type(torch.long)
+    # And then select the parameters.
+    params = torch.tensor(params_df.loc[tosel].values).float()
+    zind = list(params_df.columns).index('zred')
+    zbin = (params[:, zind]/0.001).round().type(torch.long)
 
-
-
-ds = TensorDataset(params, zbin, flux, flux_err)
-Ngal = len(ds)
-
-Ntest = int(0.002*Ngal)
-Ntrain = Ngal - Ntest
-
-train_ds, test_ds = random_split(ds, (Ntrain, Ntest)) 
-train_dl = DataLoader(train_ds, batch_size=500, shuffle=True)
-test_dl = DataLoader(test_ds, batch_size=100)
+    return flux, flux_err, zbin
 
 
+def to_dl(flux, flux_err, zbin):
+    """Convert input tensors to dataloaders.
 
-# Different networks.
-#Nfeat = 10
-#Nl = 5
-#enc = networks.Encoder(Nfeat=Nfeat, Nl=Nl).cuda()
-#dec = networks.Decoder(Nfeat=Nfeat, Nl=Nl).cuda()
-#net_pz = networks.MDNNetwork(len(bands)+Nfeat).cuda()
+       :param flux: {tensor} Galaxy fluxes.
+       :param flux_err: {tensor} Galaxy flux errors.
+       :param zbin: {tensor} Redshift bin.
+    """
 
-Nbands = len(bands)
+    ds = TensorDataset(flux, flux_err, zbin)
+    Ngal = len(ds)
+
+    Ntest = int(0.002*Ngal)
+    Ntrain = Ngal - Ntest
+
+    train_ds, test_ds = random_split(ds, (Ntrain, Ntest)) 
+    train_dl = DataLoader(train_ds, batch_size=500, shuffle=True)
+    test_dl = DataLoader(test_ds, batch_size=100)
+
+    return train_dl, test_dl
 
 
-net = networks.Deepz(Nbands).cuda()
+def train_sim(train_dl, test_dl, Nbands):
+    """Train on the simulations.
+       :param train_dl: {object} Trainer data loader.
+       :param test_dl: {object} Test data loader.
+    """
 
-#params_chain = chain(enc.parameters(), dec.parameters(), net_pz.parameters())
-#params_chain = chain(enc.parameters(), dec.parameters(), net_pz.parameters())
-#optimizer = optim.Adam(params_chain, lr=1e-3)
-optimizer = optim.Adam(net.parameters(), lr=1e-3)
+    net = networks.Deepz(Nbands).cuda()
+    optimizer = optim.Adam(net.parameters(), lr=1e-3)
 
-for i in range(10):
-    L = []
-#    enc.train()
-#    dec.train()
-#    net_pz.train()
-   
-    net.train()
- 
-    t1 = time.time()
-    for Bparams, Bzbin, Bflux, Bflux_err in train_dl:
-        t3 = time.time()
-        optimizer.zero_grad()
+    for i in range(10):
+        L = []
+       
+        net.train()
+     
+        t1 = time.time()
+        for Bflux, Bflux_err, Bzbin in train_dl:
+            t3 = time.time()
+            optimizer.zero_grad()
+            
+            Bflux = Bflux.cuda()
+            Bflux_err = Bflux_err.cuda()
+            #Bflux_err = (Bflux / SN[None,:]).cuda()
+            
+            noise = Bflux_err * torch.randn(Bflux.shape).cuda()
+            Bflux = Bflux + noise
+            
+            Bzbin = Bzbin.cuda()
+            
+            Bz = 0.001*Bzbin.type(torch.float)
+
+            pred, recon, loss_pz = net.pred_recon_loss(Bflux, Bflux, Bz)
+            loss_recon = (recon - Bflux).abs() / Bflux_err
+            loss_recon = loss_recon.mean()
+
+            loss = loss_pz + loss_recon
+
+            loss.backward()
+            optimizer.step()    
+            L.append(loss.item())
+            
+        print('time train', time.time() - t1)
+        loss_train = sum(L) / len(L)
+        L = []
+        dxL = []
+
+        net.eval()
+
+        print('starting test eval')
+        for Bflux, Bflux_err, Bzbin in test_dl:
+            Bflux = Bflux.cuda()
+            Bflux_err = Bflux_err.cuda()
+            
+            # For some reason we did *not* include the reconstruction loss here.
+            Bzbin = Bzbin.cuda()
+            Bz = 0.001*Bzbin.type(torch.float)
+
+            pred, recon, loss_pz = net.pred_recon_loss(Bflux, Bflux, Bz)
+
+            loss_recon = (recon - Bflux).abs() / Bflux_err
+            loss_recon = loss_recon.mean()
+            loss = loss_pz + loss_recon
+            
+            L.append(loss.item())
+            
+            zbt = 0.001*pred.argmax(1).float()
+            zbt = pd.Series(zbt.cpu().numpy())
+            zs = 0.001*Bzbin.float()
+            zs = pd.Series(zs.cpu().numpy())
+            dx_part = (zbt - zs) / (1+zs)
+            dxL.append(dx_part)
         
-        Bflux = Bflux.cuda()
-        Bflux_err = (Bflux / SN[None,:]).cuda()
-        
-        noise = Bflux_err * torch.randn(Bflux.shape).cuda()
-        Bflux = Bflux + noise
-#        feat = enc(Bflux)
+        dxt = pd.concat(dxL, ignore_index=True)
+        sig68 = 0.5*(dxt.quantile(0.84) - dxt.quantile(0.16))
+        loss_test = sum(L) / len(L)
 
-#        Xinp = torch.cat([Bflux, feat], 1) # In train
-        
-        Bzbin = Bzbin.cuda()
-        
-        Bz = 0.001*Bzbin.type(torch.float)
-#        _, loss_pz = net_pz.loss(Xinp, Bz)  
-        
-        # And then
-#        loss_recon = (dec(feat) - Bflux).abs() / Bflux_err
-#        loss_recon = loss_recon.mean()
-#        loss = loss_pz + loss_recon
+        assert not np.isnan(loss_train), 'Found NaN when training. Try again.'
+        outl = (dxt.abs() > 0.02).mean()
+        print(i, loss_train, loss_test, 'sig68', sig68, 'outl', outl)
 
-        pred, recon, loss_pz = net.pred_recon_loss(Bflux, Bflux, Bz)
-        loss_recon = (recon - Bflux).abs() / Bflux_err
-        loss_recon = loss_recon.mean()
+    return net
 
-        loss = loss_pz + loss_recon
+def parse_bb(broad_bands):
+    """Parse the broad band input string.
+       :param broad_bands: {object} Which broad bands to use.
+    """
 
-        loss.backward()
-        optimizer.step()    
-        L.append(loss.item())
-        
-        #print('T', time.time() - t3)
-    
-    print('time train', time.time() - t1)
-    loss_train = sum(L) / len(L)
-    L = []
-    dxL = []
-#    enc.eval()
-#    dec.eval()
-#    net_pz.eval()
+    if isinstance(broad_bands, list):
+        pass 
+    elif isinstance(broad_bands, tuple):
+        broad_bands = list(broad_bands)
+    elif broad_bands.lower() == 'cosmos':
+        broad_bands = ['cfht_u', 'subaru_b', 'subaru_v', 'subaru_r', 'subaru_i', 'subaru_z']
+    elif bb.lower() == 'cfht':
+        # Just need to be specified.
+        raise NotImplementedError()
+    else:
+        raise NotImplementedError()
 
-    net.eval()
+    return broad_bands
 
-    print('starting test eval')
-    for Bparams, Bzbin, Bflux, Bflux_err in test_dl:
-        Bflux = Bflux.cuda()
-        Bflux_err = Bflux_err.cuda()
-#        feat = enc(Bflux)
+def train(path_sims, model_dir, pretrain_label, broad_bands):
+    """Pretrain the model on simulations.
+       :param path_sims: {path} Directory with the simulations.
+       :param model_dir: {path} Directory where to store the models.
+       :param pretrain_label: {str} 
+       :param broad_bands: {str, list} Broad bands to use (or cosmos, cfht).
+    """
 
-#        Xinp = torch.cat([Bflux, feat], 1) # In test.
-#        pred = net_pz(Xinp.cuda())
-        
-        # For some reason we did *not* include the reconstruction loss here.
-        Bzbin = Bzbin.cuda()
-        Bz = 0.001*Bzbin.type(torch.float)
-#        _, loss = net_pz.loss(Xinp, Bz)    
+    broad_bands = parse_bb(broad_bands)
 
-        pred, recon, loss_pz = net.pred_recon_loss(Bflux, Bflux, Bz)
+    output_path = Path(model_dir) / 'pretrain_{pretrain_label}.pt'
+    if output_path.exists():
+        print('Output file aready exists:', output_path)
+        return
 
-        loss_recon = (recon - Bflux).abs() / Bflux_err
-        loss_recon = loss_recon.mean()
+    flux, flux_err, zbin = load_sims(path_sims, broad_bands)
+    Nbands = flux.shape[1]
 
-        loss = loss_pz + loss_recon
-        
-        L.append(loss.item())
-        
-        zbt = 0.001*pred.argmax(1).float()
-        zbt = pd.Series(zbt.cpu().numpy())
-        zs = 0.001*Bzbin.float()
-        zs = pd.Series(zs.cpu().numpy())
-        dx_part = (zbt - zs) / (1+zs)
-        dxL.append(dx_part)
-    
-    dxt = pd.concat(dxL, ignore_index=True)
-    sig68 = 0.5*(dxt.quantile(0.84) - dxt.quantile(0.16))
-    loss_test = sum(L) / len(L)
+    train_dl, test_dl = to_dl(flux, flux_err, zbin)
+    net = train_sim(train_dl, test_dl, Nbands)
 
-    assert not np.isnan(loss_train), 'Found NaN when training. Try again.'
-    outl = (dxt.abs() > 0.02).mean()
-    print(i, loss_train, loss_test, 'sig68', sig68, 'outl', outl)
+    print('Storing model to:', output_path)
+    torch.save(net.state_dict(), output_path)
 
-
-version = 1
-output_dir = Path('/data/astro/scratch/eriksen/deepz/clear')
-path = output_dir / f'pretrain_{version}.pt'
-
-if path.exists():
-    print('Path already exists...')
-    sys.exit(1)
-
-if not os.path.exists(output_dir):
-    os.mkdir(output_dir)
-
-torch.save(net.state_dict(), path)
-
-#path_base = str(output_dir / (f'v{version}'+'_{}.pt'))
-#torch.save(enc.state_dict(), path_base.format('enc'))
-#torch.save(dec.state_dict(), path_base.format('dec'))
-#torch.save(net_pz.state_dict(), path_base.format('pz'))
+if __name__ == '__main__':
+    fire.Fire(train)
