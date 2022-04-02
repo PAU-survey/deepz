@@ -25,7 +25,7 @@ import utils
 
 
 
-flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus()
+flux, flux_err, fmes, vinv, isnan, zs, ref_id = paus_data.paus()
 
 # Other values collided with importing the code in a notebook...
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
@@ -42,7 +42,7 @@ def get_loaders(ifold, inds):
         """Select subset.
            :param ix: {array} Array indices to use.
         """
-        ds = TensorDataset(flux[ix].cuda(), fmes[ix].cuda(), vinv[ix].cuda(), isnan[ix].cuda(), zbin[ix].cuda())
+        ds = TensorDataset(flux[ix].cuda(), fmes[ix].cuda(), vinv[ix].cuda(), isnan[ix].cuda(), zs[ix].cuda())
         
         return ds
     
@@ -55,7 +55,7 @@ def get_loaders(ifold, inds):
     train_dl = DataLoader(ds_train, batch_size=500, shuffle=True)
     test_dl = DataLoader(ds_test, batch_size=100)
     
-    return train_dl, test_dl, zbin[ix_test]
+    return train_dl, test_dl, zs[ix_test]
 
 
 def train(ifold, **config):
@@ -108,12 +108,12 @@ def pz_fold(ifold, inds, out_fmt):
     enc, dec, net_pz = utils.get_nets(str(net_base_path))
     enc.eval(), dec.eval(), net_pz.eval()
     
-    _, test_dl, zbin_test = get_loaders(ifold, inds)
+    _, test_dl, zs_test = get_loaders(ifold, inds)
 
     assert isinstance(inds, torch.Tensor), 'This is required...'
  
     L = []
-    for Bflux, Bfmes, Bvinv, Bisnan, Bzbin in test_dl:
+    for Bflux, Bfmes, Bvinv, Bisnan, Bzs in test_dl:
         Bcoadd, touse = trainer.get_coadd_allexp(Bflux, Bfmes, Bvinv, Bisnan)
         assert touse.all()
             
@@ -125,7 +125,7 @@ def pz_fold(ifold, inds, out_fmt):
         L.append(zb_part)
 
     zb_fold = torch.cat(L).detach().cpu().numpy()
-    zs_fold = 0.001*zbin_test.type(torch.float)
+    zs_fold = zs_test
 
     refid_fold = ref_id[inds == ifold]
     D = {'zs': zs_fold, 'zb': zb_fold, 'ref_id': refid_fold}
@@ -197,18 +197,18 @@ def photoz_all(out_fmt, verpretrain, catnr=0, pretrain=True, alpha=0.8, keep_las
               'alpha': alpha, 'keep_last': keep_last}
 
     train_all(**config)
-    df = make_catalogue(catnr, out_fmt)
+    pz = make_catalogue(catnr, out_fmt)
     pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
     sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
     print('sig68:', sig68)
 
-    return df
+    return pz
 
 
 
 version = 13
-label = 'march11'
+label = 'april02'
 verpretrain = 8
 
 model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)

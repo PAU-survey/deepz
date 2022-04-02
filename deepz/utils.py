@@ -11,7 +11,6 @@ from torch.utils.data import TensorDataset, DataLoader
 import networks
 
 
-
 def get_nets(path_base, pretrain=True, Nbands=46):
     """Initialize networks.
        :param path_base: {str} Path to the pretrained networks.
@@ -46,11 +45,11 @@ def get_loaders(ifold, inds, data):
        :param data: {tuple} All the data to use.
     """
     
-    flux, flux_err, fmes, vinv, isnan, zbin, ref_id = data
+    flux, flux_err, fmes, vinv, isnan, zs, ref_id = data
     
     def sub(ix):
         ds = TensorDataset(flux[ix].cuda(), fmes[ix].cuda(), vinv[ix].cuda(), \
-                           isnan[ix].cuda(), zbin[ix].cuda())
+                           isnan[ix].cuda(), zs[ix].cuda())
         
         return ds
     
@@ -63,4 +62,4 @@ def get_loaders(ifold, inds, data):
     train_dl = DataLoader(ds_train, batch_size=500, shuffle=True)
     test_dl = DataLoader(ds_test, batch_size=100)
     
-    return train_dl, test_dl, zbin[ix_test]
+    return train_dl, test_dl, zs[ix_test]

@@ -3,6 +3,7 @@
 
 # The PAUS data in the COSMOS field.
 
+from IPython.core import debugger
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -100,15 +101,15 @@ def paus(apply_cuts=True):
 
     flux = torch.Tensor(flux)
 
-    # Using a redshift bin is only done for historical reasons.
-    zbin = torch.tensor(cosmos.loc[touse].zspec.values / 0.001).round().type(torch.long)
+    # The spectroscopic redshift.
+    zs = torch.Tensor(cosmos.loc[touse].zspec.values)
 
     print('# Galaxies', len(flux))
-    assert len(flux) == len(zbin), 'Inconsistent number of galaxies'
+    assert len(flux) == len(zs), 'Inconsistent number of galaxies'
     
     # Test, this makes a difference when selecting with a PyTorch
     # uint8 tensor.
     ref_id = torch.Tensor(flux_df.index.values)
   
  
-    return flux, flux_err, fmes, vinv, isnan, zbin, ref_id
+    return flux, flux_err, fmes, vinv, isnan, zs, ref_id

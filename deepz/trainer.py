@@ -143,22 +143,21 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, keep_last):
         net_pz.train()
         
         t1 = time.time()
-        for Bflux, Bfmes, Bvinv, Bisnan, Bzbin in train_dl:
+        for Bflux, Bfmes, Bvinv, Bisnan, Bzs in train_dl:
             if len(Bflux) < 10:
                 continue
 
             optimizer.zero_grad()
             Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=alpha, \
                                       keep_last=keep_last)
-            Bzbin = Bzbin[touse]
+            Bzs = Bzs[touse]
            
             # Testing training augmentation.            
             feat = enc(Bcoadd)
             Binput = torch.cat([Bcoadd, feat], 1)
             
-            Bzbin = Bzbin.cuda()
-            Bz = 0.001*Bzbin.type(torch.float)
-            _, loss = net_pz.loss(Binput, Bz)
+            Bzs = Bzs.cuda()
+            _, loss = net_pz.loss(Binput, Bzs)
                 
                 
             loss.backward()
@@ -178,7 +177,7 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, keep_last):
         net_pz.eval()
 
         t2 = time.time()
-        for Bflux, Bfmes, Bvinv, Bisnan, Bzbin in test_dl:
+        for Bflux, Bfmes, Bvinv, Bisnan, Bzs in test_dl:
             Bflux = Bflux.cuda()
             feat = enc(Bflux)
             
@@ -187,14 +186,13 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, keep_last):
             
             
             pred = net_pz(Binput)
-            Bz = 0.001*Bzbin.type(torch.float)
-            log_pz, loss = net_pz.loss(Binput, Bz)
+            log_pz, loss = net_pz.loss(Binput, Bzs)
                 
             L.append(loss.item())
 
             zbt = 0.001*pred.argmax(1).float()
             zbt = pd.Series(zbt.cpu().numpy())
-            zst = 0.001*Bzbin.float()
+            zst = Bzs
             zst = pd.Series(zst.cpu().numpy())
             dx_part = (zbt - zst) / (1+zst)
             dxL.append(dx_part)
