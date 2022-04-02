@@ -23,17 +23,9 @@ import paus_data
 import trainer
 import utils
 
-#pretrain = True #False
-alpha = 0.8
-#Ntrain = 8000 #'all'
-#Ntrain = 100 #'all'
-verpretrain = 3
+
 
 flux, flux_err, fmes, vinv, isnan, zbin, ref_id = paus_data.paus()
-
-
-version = 2
-output_dir = Path('/data/astro/scratch/eriksen/deepz/redux') / str(version)
 
 # Other values collided with importing the code in a notebook...
 catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
@@ -56,14 +48,6 @@ def get_loaders(ifold, inds):
     
     ix_train = torch.ByteTensor(1*(inds != ifold))
     ix_test = torch.ByteTensor(1*(inds == ifold))
-
-    # Here we deterministically remove galaxies.
-    if not Ntrain == 'all':
-        # You *don't* need to use a different number because of the folds.
-        Nsel = int(Ntrain)
-        
-        ix_train[Nsel:] = 0
-        
 
     ds_train = sub(ix_train)
     ds_test = sub(ix_test)
@@ -196,56 +180,46 @@ def photoz_all(**config):
 
     return df
 
-version = 12
-sim = 'fsps'
+version = 13
 
-def gen_conf():
-    for catnr in range(10):
-        for keep_last in [True]:
-            for alpha in [0.8]:
-                yield catnr, keep_last, alpha
 
-if True:
-    model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
+model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
 
-    verpretrain = 8
-    Ntrain = 'all'
-    keep_last = False
+verpretrain = 8
+keep_last = False
 
-    label = 'march11'
+label = 'march11'
 
-    for catnr, keep_last, alpha in gen_conf():
-           #for Ntrain in ['all']:
-        pretrain = False if verpretrain == 'no' else True
-        config = {'verpretrain': verpretrain, 'Ntrain': Ntrain, 'catnr': catnr, 
-                  'Ntrain': Ntrain, 'pretrain': pretrain, 'keep_last': keep_last}
+alpha = 0.8
+keep_last = True
 
-        config['Nexp'] = 0
-        config['alpha'] = alpha
- 
-        out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
-        out_fmt = str(model_dir / out_fmt)
+number_cats = 1
 
-        config['out_fmt'] = out_fmt
+for catnr in range(number_cats):
+    pretrain = False if verpretrain == 'no' else True
+    config = {'verpretrain': verpretrain, 'catnr': catnr, 
+              'pretrain': pretrain, 'keep_last': keep_last}
 
-        print('To store at:')
-        print(out_fmt)
+    config['Nexp'] = 0
+    config['alpha'] = alpha
 
-        train_all(**config) 
+    out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
+    out_fmt = str(model_dir / out_fmt)
 
-        pz = photoz_all(**config)
-        pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
+    config['out_fmt'] = out_fmt
 
-        sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
-        print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
+    print('To store at:')
+    print(out_fmt)
 
-        fname = f'{label}'+'_catnr{catnr}.csv'.format(**config)
-        path_out = model_dir / fname
+    train_all(**config) 
 
-        pz.to_csv(path_out) 
+    pz = photoz_all(**config)
+    pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
-        # By now we only want to run one catalogue.
+    sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
+    print('keep_last', keep_last, 'alpha', alpha, 'sig68', sig68)
 
-        break
-    #cat_out = str(output_dir / f'pzcat_{catnr}_mdn.csv') #'/nfs/pic.es/user/e/eriksen/papers/deepz/sims/cats/pzcat_v65_mdn.csv'
-    #pz.to_csv(cat_out)
+    fname = f'{label}'+'_catnr{catnr}.csv'.format(**config)
+    path_out = model_dir / fname
+
+    pz.to_csv(path_out) 
