@@ -4,11 +4,34 @@
 # Various utils.
 
 import sys
+from pathlib import Path
 import numpy as np
 import torch
 from torch.utils.data import TensorDataset, DataLoader
 
 import networks
+
+def path_pretrain(model_dir, label):
+    """Path to the pretrained model.
+       :param model_dir: {str} Model directory.
+       :param label: {str} Label describing the pretrained model.
+    """
+
+    path = Path(model_dir) / f'pretrain_{label}.pt'
+
+    return path
+
+def path_model(model_dir, label, catnr, ifold):
+    """Path to the model trained on data.
+       :param model_dir: {str} Model directory.
+       :param label: {str} Label describing the model.
+       :param catnr: {int} Catalogue number.
+       :param ifold: {int} Fold number.
+    """
+
+    path = Path(model_dir) / f'ondata_{label}_cat{catnr}_ifold{ifold}.pt'
+
+    return path
 
 
 def get_nets(path_base, pretrain=True, Nbands=46):
@@ -44,7 +67,9 @@ def get_loaders(ifold, inds, data):
        :param inds: {array} Indices to use.
        :param data: {tuple} All the data to use.
     """
-    
+   
+    raise NotImplementedError('Fisk')
+ 
     flux, flux_err, fmes, vinv, isnan, zs, ref_id = data
     
     def sub(ix):

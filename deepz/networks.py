@@ -9,9 +9,9 @@ from torch.distributions import Normal
 class MDNNetwork(nn.Module):
     """Mixture density network."""
 
-    def __init__(self, Nbands, fr=0.02):
+    def __init__(self, Ninput, fr=0.02):
         """Initalize the network.
-           :param Nbands: {int} Number of bands.
+           :param Ninput: {int} Number of inputs, #Bands+#Features.
            :param fr: {float} Dropout fraction.
         """
 
@@ -21,9 +21,9 @@ class MDNNetwork(nn.Module):
         n2 = 400
 
         n3 = 250
-        zp = nn.BatchNorm1d(Nbands)
+        zp = nn.BatchNorm1d(Ninput)
         lin1 = nn.Sequential(\
-               nn.Linear(Nbands, n2), nn.Dropout(fr), nn.ReLU())
+               nn.Linear(Ninput, n2), nn.Dropout(fr), nn.ReLU())
 
         lin2 = nn.Sequential(nn.BatchNorm1d(n2), \
                 nn.Linear(n2, n3), nn.Dropout(fr), nn.ReLU())
@@ -177,3 +177,61 @@ class Decoder(nn.Module):
         x = self.last(x)
         
         return x
+
+class Deepz(nn.Module):
+    """The Deepz network."""
+
+    def __init__(self, Nbands, Nfeat=10, Nl=5):
+        """Initialize network
+           :param Nbands: {int} Number of input bands.
+           :param Nl: {int} Number of layers in encoder/decoder.
+        """
+        super().__init__()
+
+        # Setting Nl=5. I think we used 5 in the paper.
+        self.enc = Encoder(Nl=Nl, Nbands=Nbands)
+        self.dec = Decoder(Nl=Nl, Nbands=Nbands)
+        self.mdn = MDNNetwork(Nbands+Nfeat)
+
+    def forward(self, flux, coadd):
+        """Predict the p(z) for each galaxy.
+           :param flux: {tensor} All the coadded fluxes.
+           :param coadd: {tensor} Newly constructed coadds.
+        """
+
+        feat = self.enc(flux)
+        Binput = torch.cat([coadd, feat], 1)
+        pred = self.mdn(Binput)
+
+        return pred
+
+    def loss(self, flux, coadd, zs):
+        """Evaluate the MDN loss.
+           :param flux: {tensor} All the coadded fluxes.
+           :param coadd: {tensor} Newly constructed coadds.
+           :param zs: {tensor} Spectroscopic redshift.
+        """
+
+        feat = self.enc(flux)
+        Binput = torch.cat([coadd, feat], 1)
+
+        _, loss = self.mdn.loss(Binput, zs)
+
+        return loss
+
+    def pred_recon_loss(self, flux, coadd, zs):
+        """Predict the p(z) and return the loss.
+           :param flux: {tensor} All the coadded fluxes.
+           :param coadd: {tensor} Newly constructed coadds.
+           :param zs: {tensor} Spectroscopic redshift.
+        """
+
+        feat = self.enc(flux)
+        Binput = torch.cat([coadd, feat], 1)
+        pred = self.mdn(Binput)
+
+        _, loss = self.mdn.loss(Binput, zs)
+
+        recon = self.dec(feat)
+
+        return pred, recon, loss

@@ -120,7 +120,7 @@ def get_coadd_allexp(flux, fmes, vinv, isnan, rm=True):
 
     return coadd, touse
 
-def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, keep_last):
+def train(optimizer, N, net, train_dl, test_dl, alpha, keep_last):
     """Train the network.
        :param optimizer: {object} PyTorch optimizer.
        :param N: {int} Number of epochs.
@@ -137,12 +137,9 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, keep_last):
     loss_function = nn.CrossEntropyLoss()
     for i in range(N):
         L = []
+       
+        net.train() 
         
-        enc.train()
-        dec.train()
-        net_pz.train()
-        
-        t1 = time.time()
         for Bflux, Bfmes, Bvinv, Bisnan, Bzs in train_dl:
             if len(Bflux) < 10:
                 continue
@@ -152,41 +149,27 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, keep_last):
                                       keep_last=keep_last)
             Bzs = Bzs[touse]
            
-            # Testing training augmentation.            
-            feat = enc(Bcoadd)
-            Binput = torch.cat([Bcoadd, feat], 1)
-            
-            Bzs = Bzs.cuda()
-            _, loss = net_pz.loss(Binput, Bzs)
+            loss = net.loss(Bcoadd, Bcoadd, Bzs)
                 
-                
+                            
             loss.backward()
             optimizer.step()    
             L.append(loss.item())
 
-        #print('time', time.time() - t1)
         if i == 0 or i % 20:
             continue
             
         loss_train = sum(L) / len(L)
         L = []
         dxL = []
-        
-        enc.eval()
-        dec.eval()
-        net_pz.eval()
+       
+        net.eval() 
 
         t2 = time.time()
         for Bflux, Bfmes, Bvinv, Bisnan, Bzs in test_dl:
-            Bflux = Bflux.cuda()
-            feat = enc(Bflux)
             
             Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=1)
-            Binput = torch.cat([Bcoadd, feat], 1)
-            
-            
-            pred = net_pz(Binput)
-            log_pz, loss = net_pz.loss(Binput, Bzs)
+            pred,_,loss = net.pred_recon_loss(Bcoadd, Bcoadd, Bzs)
                 
             L.append(loss.item())
 
@@ -201,8 +184,7 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, keep_last):
         sig68 = 0.5*(dxt.quantile(0.84) - dxt.quantile(0.16))
         loss_test = sum(L) / len(L)
 
-        print('time eval', time.time() - t2)
         outl = (dxt.abs() > 0.02).mean()
         poutl = 100*outl
+        print('time eval', time.time() - t2)
         print(f'{i}, {loss_train:.2f}, {loss_test:.2f}, sig68: {sig68:.5f}, outl:{poutl:.2f}')
-      

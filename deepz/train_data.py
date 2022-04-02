@@ -4,14 +4,17 @@
 # Train the network on observed PAUS data.
 from IPython.core import debugger as ipdb
 import os
+import sys
 import time
 import numpy as np
 import pandas as pd
 from itertools import chain
-import os
-import sys
+from IPython.core import debugger
 
 import torch
+
+# Later versions works slightly different with the galaxy selection. The results will
+# therefore 
 assert torch.__version__.startswith('1.0'), 'For some reason the code fails badly on newer PyTorch versions.'
 
 from torch import optim, nn
@@ -20,15 +23,15 @@ from torch.utils.data import TensorDataset, DataLoader
 from matplotlib import pyplot as plt
 
 import paus_data
+import networks
 import trainer
 import utils
-
 
 
 flux, flux_err, fmes, vinv, isnan, zs, ref_id = paus_data.paus()
 
 # Other values collided with importing the code in a notebook...
-catnr = 0 #if len(sys.argv) == 1 else int(sys.argv[1])
+catnr = 0
 inds_all = np.loadtxt('/data/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
 
 
@@ -62,21 +65,22 @@ def train(ifold, **config):
     """Train the networks for one fold.
        :param config: {dict} Dictionary with the configuration.
     """
-    
-    verpretrain = config['verpretrain']
-    pretrain = config['pretrain']
-
-    # Where to find the pretrained files.
-    path_base = f'/data/astro/scratch/eriksen/deepz/redux/pretrain/v{verpretrain}'+'_{}.pt'
 
     inds = inds_all[config['catnr']][:len(flux)]
-    
-    enc, dec, net_pz = utils.get_nets(path_base, pretrain)
+
+    net = networks.Deepz(46).cuda() # Hack.
+    path_pretrain = utils.path_pretrain(config['model_dir'], config['pretrain_label'])
+
+    if config['pretrain']:
+        print('Loading pretrain:', path_pretrain)
+        assert path_pretrain.exists()
+        net.load_state_dict(torch.load(path_pretrain))
+
     train_dl, test_dl, _ = get_loaders(ifold, inds)
-    K = (enc, dec, net_pz, train_dl, test_dl, config['alpha'], config['keep_last'])
+    K = (net, train_dl, test_dl, config['alpha'], config['keep_last'])
 
     def params():
-        return chain(enc.parameters(), dec.parameters(), net_pz.parameters())
+        return net.parameters()
    
     wd = 1e-4
     if True: # Since I tested this so many times.
@@ -93,20 +97,43 @@ def train(ifold, **config):
     optimizer = optim.Adam(params(), lr=1e-6, weight_decay=wd)
     trainer.train(optimizer, 200, *K)
     
-    return enc, dec, net_pz
+    return net
+
+def train_all(**config):
+    """Train all the folds.
+       :param config: {dict} Configuration dictionary.
+
+    """
+  
+    C = config
+    for ifold in range(5):
+
+        model_path = utils.path_model(C['model_dir'], C['model_label'], C['catnr'], ifold)
+        if model_path.exists():
+            print('Alread trained:', ifold)
+            continue
+
+        print('Running for:', ifold)
+        print('storing to:', model_path)
+        net = train(ifold, **config)
+        torch.save(net.state_dict(), model_path)
 
 
-def pz_fold(ifold, inds, out_fmt):
+def pz_fold(catnr, ifold, inds, model_dir, model_label):
     """Estimate the photo-z for one fold.
+       :param catnr: {int} Catalogue number.
        :param ifold: {int} Which ifold to use.
        :param inds: {array} Indices to use.
+       :param model_dir: {path} Model directory.
        :param out_fmt: {str} Format of output path.
     """
-    
-    # Loading the networks...
-    net_base_path = out_fmt.format(ifold=ifold, net='{}')
-    enc, dec, net_pz = utils.get_nets(str(net_base_path))
-    enc.eval(), dec.eval(), net_pz.eval()
+
+    # Here we should not hard-code the number of bands.
+    net = networks.Deepz(Nbands=46).cuda()
+    net.eval()
+ 
+    path_model = utils.path_model(model_dir, model_label, catnr, ifold)
+    net.load_state_dict(torch.load(path_model))
     
     _, test_dl, zs_test = get_loaders(ifold, inds)
 
@@ -117,14 +144,14 @@ def pz_fold(ifold, inds, out_fmt):
         Bcoadd, touse = trainer.get_coadd_allexp(Bflux, Bfmes, Bvinv, Bisnan)
         assert touse.all()
             
-        feat = enc(Bcoadd)
-        Binput = torch.cat([Bcoadd, feat], 1)
-        pred = net_pz(Binput)
+        with torch.no_grad():
+            pred = net(Bcoadd, Bcoadd)
+
         
         zb_part = 0.001*pred.argmax(1).type(torch.float)
         L.append(zb_part)
 
-    zb_fold = torch.cat(L).detach().cpu().numpy()
+    zb_fold = torch.cat(L).cpu().numpy()
     zs_fold = zs_test
 
     refid_fold = ref_id[inds == ifold]
@@ -135,38 +162,11 @@ def pz_fold(ifold, inds, out_fmt):
 
     return part
 
-
-def train_all(**config):
-    """Train all the folds.
-       :param config: {dict} Configuration dictionary.
-
-    """
-   
-    out_fmt = config['out_fmt']
-    for ifold in range(5):
-        test_path = str(out_fmt.format(net='enc', ifold=ifold))
-        if os.path.exists(test_path):
-            print('Alread run, skipping:', test_path)
-            continue
-            
-        print('Running for:', ifold)
-        t1 = time.time()
-        enc, dec, net_pz = train(ifold, **config)
-        enc.eval()
-        dec.eval()
-        net_pz.train()
-        
-        print('time', time.time() - t1)
-      
-        print('where getting stored...', str(out_fmt.format(net='enc', ifold=ifold))) 
-        torch.save(enc.state_dict(), str(out_fmt.format(net='enc', ifold=ifold)))
-        torch.save(dec.state_dict(), str(out_fmt.format(net='dec', ifold=ifold)))
-        torch.save(net_pz.state_dict(),  str(out_fmt.format(net='netpz', ifold=ifold)))
                    
-def make_catalogue(catnr, out_fmt):
+def make_catalogue(catnr, model_dir, model_label):
     """Run the photo-z for all folds.
        :param catnr: {int} Which of the indexes to use per fold.
-       :param out_fmt: {str} FIX THIS!
+       :param model_dir: {path} Directory where the models are stored.
     """
                    
     L = []
@@ -174,7 +174,7 @@ def make_catalogue(catnr, out_fmt):
 
     inds = torch.Tensor(inds) # Inds_all should be a tensor in the first place.
     for ifold in range(5):
-        L.append(pz_fold(ifold, inds, out_fmt))
+        L.append(pz_fold(catnr, ifold, inds, model_dir, model_label))
         
     df = pd.concat(L)
     df = df.set_index('ref_id')
@@ -182,10 +182,11 @@ def make_catalogue(catnr, out_fmt):
     return df
 
 
-def photoz_all(out_fmt, verpretrain, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
+def photoz_all(model_dir, pretrain_label, model_label, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
     """Train the networks and return the catalogs.
-       :param out_fmt: {str} Where to store the models.
-       :param verpretrain: {int} Version of the pretrained network.
+       :param model_dir: {str} Directory to store models.
+       :param pretrain_label: {str} Label to describe the pretrained model.
+       :param model_label: {str} Label to describe the final model.
        :param catnr: {int} Which of the indexes to use per fold.
        :param pretrain: {bool} If using a pretrained network.
        :param alpha: {float} Fraction of measurements used when training.
@@ -193,11 +194,11 @@ def photoz_all(out_fmt, verpretrain, catnr=0, pretrain=True, alpha=0.8, keep_las
     """
 
     # This part still needs to be cleaned.
-    config = {'out_fmt': out_fmt, 'verpretrain': verpretrain, 'catnr': catnr, 'pretrain': pretrain,
-              'alpha': alpha, 'keep_last': keep_last}
+    config = {'model_dir': model_dir, 'pretrain_label': pretrain_label, 'model_label': model_label,
+              'catnr': catnr, 'pretrain': pretrain, 'alpha': alpha, 'keep_last': keep_last}
 
     train_all(**config)
-    pz = make_catalogue(catnr, out_fmt)
+    pz = make_catalogue(catnr, model_dir, model_label)
     pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
     sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
@@ -206,13 +207,8 @@ def photoz_all(out_fmt, verpretrain, catnr=0, pretrain=True, alpha=0.8, keep_las
     return pz
 
 
+model_dir = '/data/astro/scratch/eriksen/deepz/clean/'
+pretrain_label = 1
+model_label = 'fiskv2'
 
-version = 13
-label = 'april02'
-verpretrain = 8
-
-model_dir = Path('/data/astro/scratch/eriksen/deepz/redux/train') / str(version)
-out_fmt = '{net}_'+label+'_ifold{ifold}.pt'
-out_fmt = str(model_dir / out_fmt)
-
-pz = photoz_all(out_fmt, verpretrain)
+photoz_all(model_dir, pretrain_label, model_label)
