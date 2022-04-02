@@ -24,11 +24,18 @@ from torch.utils.data import TensorDataset, DataLoader
 
 import networks
 
-def load_sims(path_sims, broad_bands):
-    """Load the FSPS simulations used for training.
+def load_sims(path_sims, broad_bands, norm_band=None):
+    """Load the FSPS simulations used for training. 
        :param path_sims: {path} Path to the simulation directory.
        :param broad_bands: {list} List of broad bands.
+       :param norm_band: {str} Band to normalize, otherwise i-band.
     """
+
+    # Reasonable default!
+    if not norm_band:
+        ibands = [x for x in broad_bands if x.endswith('_i')]
+        assert len(ibands) == 1, 'No unique iband: {}'.format(ibands)
+        norm_band = ibands[0]
 
     path_sims = Path(path_sims)
     mags_df = pd.read_parquet(str(path_sims / 'mags.parquet'))
@@ -40,7 +47,7 @@ def load_sims(path_sims, broad_bands):
     bands = NB + BB
     SN = torch.tensor(len(NB)*[10] + len(BB)*[35], dtype=torch.float).cuda()
 
-    col = mags_df.values - mags_df.values[:,-2][:,None]
+    col = mags_df.subtract(mags_df[norm_band], axis='rows').values
     col = pd.DataFrame(col, index=mags_df.index, columns=mags_df.columns)
 
     # A small fraction has very extreme colors. Cutting
@@ -48,7 +55,7 @@ def load_sims(path_sims, broad_bands):
     tosel = ~(10 < col.abs()).any(axis=1)
     col = col.loc[tosel, bands]
 
-    # Convert to fluxes.
+    # Convert to fluxes. This is really flux ratios.
     flux = torch.tensor(10**(-0.4*col.values)).float()
     flux_err = flux/ SN.cpu()[None,:]
 
@@ -174,8 +181,7 @@ def parse_bb(broad_bands):
     elif broad_bands.lower() == 'cosmos':
         broad_bands = ['cfht_u', 'subaru_b', 'subaru_v', 'subaru_r', 'subaru_i', 'subaru_z']
     elif bb.lower() == 'cfht':
-        # Just need to be specified.
-        raise NotImplementedError()
+        broad_bands = ['cfht_u', 'cfht_g', 'cfht_r', 'cfht_i', 'cfht_z']
     else:
         raise NotImplementedError()
 
