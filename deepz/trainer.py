@@ -72,8 +72,7 @@ def mask_alpha(fmes, isnan, alpha, keep_last):
 
 
 
-def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True, Nexp=0, 
-              keep_last=False):
+def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True, keep_last=False):
     """Get the coadded fluxes, using only a fraction of the
        individual exposures.
 
@@ -83,11 +82,9 @@ def get_coadd(flux, fmes, vinv, isnan, alpha=0.80, rm=True, Nexp=0,
        :param isnan: {tensor} Used?
        :param alpha: {float} Fraction of the individual measurements used.
        :param rm: {bool} If removing entries without all narrow bands.
-       :param Nexp: {int} DELETED option.
        :param keep_last: {bool} Keep the last flux measurement.
     """
 
-    assert not Nexp, 'Deleted option'   
     inp = alpha*torch.ones_like(fmes)
     mask = mask_alpha(fmes, isnan, alpha, keep_last)
 
@@ -123,7 +120,7 @@ def get_coadd_allexp(flux, fmes, vinv, isnan, rm=True):
 
     return coadd, touse
 
-def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, Nexp, keep_last):
+def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, keep_last):
     """Train the network.
        :param optimizer: {object} PyTorch optimizer.
        :param N: {int} Number of epochs.
@@ -134,7 +131,6 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, Nexp, keep_l
        :param test_dl: {object} Test data loader.
        :param alpha: {float} Fraction of the individual measurements used.
        :param rm: {bool} If removing entries without all narrow bands.
-       :param Nexp: {int} Used?
        :param keep_last: {bool} Keep the last flux measurement.
     """
  
@@ -152,7 +148,7 @@ def train(optimizer, N, enc, dec, net_pz, train_dl, test_dl, alpha, Nexp, keep_l
                 continue
 
             optimizer.zero_grad()
-            Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=alpha, Nexp=Nexp, \
+            Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=alpha, \
                                       keep_last=keep_last)
             Bzbin = Bzbin[touse]
            

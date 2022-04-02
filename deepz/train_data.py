@@ -73,8 +73,7 @@ def train(ifold, **config):
     
     enc, dec, net_pz = utils.get_nets(path_base, pretrain)
     train_dl, test_dl, _ = get_loaders(ifold, inds)
-    K = (enc, dec, net_pz, train_dl, test_dl, config['alpha'], config['Nexp'], \
-         config['keep_last'])
+    K = (enc, dec, net_pz, train_dl, test_dl, config['alpha'], config['keep_last'])
 
     def params():
         return chain(enc.parameters(), dec.parameters(), net_pz.parameters())
@@ -196,8 +195,6 @@ def photoz_all(out_fmt, verpretrain, catnr=0, pretrain=True, alpha=0.8, keep_las
     # This part still needs to be cleaned.
     config = {'out_fmt': out_fmt, 'verpretrain': verpretrain, 'catnr': catnr, 'pretrain': pretrain,
               'alpha': alpha, 'keep_last': keep_last}
-
-    config['Nexp'] = 0
 
     train_all(**config)
     df = make_catalogue(catnr, out_fmt)
