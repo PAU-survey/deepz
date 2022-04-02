@@ -25,18 +25,15 @@ from torch.utils.data import TensorDataset, DataLoader
 import networks
 import utils
 
-def load_sims(path_sims, broad_bands, norm_band=None):
+def load_sims(path_sims, bb, norm_band=None):
     """Load the FSPS simulations used for training. 
        :param path_sims: {path} Path to the simulation directory.
-       :param broad_bands: {list} List of broad bands.
+       :param bb: {list} List of broad bands.
        :param norm_band: {str} Band to normalize, otherwise i-band.
     """
 
-    # Reasonable default!
-    if not norm_band:
-        ibands = [x for x in broad_bands if x.endswith('_i')]
-        assert len(ibands) == 1, 'No unique iband: {}'.format(ibands)
-        norm_band = ibands[0]
+    # Use i-band if not specified.
+    norm_band = utils.norm_band(bb, norm_band)
 
     path_sims = Path(path_sims)
     mags_df = pd.read_parquet(str(path_sims / 'mags.parquet'))
@@ -44,7 +41,7 @@ def load_sims(path_sims, broad_bands, norm_band=None):
 
     # Bands to select for the training...
     NB = ['nb{}'.format(x) for x in 455+10*np.arange(40)]
-    BB = broad_bands
+    BB = bb
     bands = NB + BB
     SN = torch.tensor(len(NB)*[10] + len(BB)*[35], dtype=torch.float).cuda()
 

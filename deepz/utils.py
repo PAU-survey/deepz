@@ -51,6 +51,20 @@ def broad_bands(bb):
 
     return bb 
 
+def norm_band(bb, norm):
+    """Determine the band for normalization.
+       :param norm: {str} Band for normalization.
+    """
+
+    # Reasonable default!
+    if not norm:
+        ibands = [x for x in bb if x.endswith('_i')]
+        assert len(ibands) == 1, 'No unique iband: {}'.format(ibands)
+        norm = ibands[0]
+
+    return norm
+
+
 def get_loaders(ifold, inds, data):
     """Get loaders for specific fold.
        :param ifold: {int} The ifold to use.
