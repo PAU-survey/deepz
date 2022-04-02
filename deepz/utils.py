@@ -38,46 +38,18 @@ def broad_bands(bb):
        :param bb: {object} Which broad bands to use.
     """
 
-    if isinstance(broad_bands, list):
+    if isinstance(bb, list):
         pass
-    elif isinstance(broad_bands, tuple):
-        broad_bands = list(broad_bands)
-    elif broad_bands.lower() == 'cosmos':
-        broad_bands = ['cfht_u', 'subaru_b', 'subaru_v', 'subaru_r', 'subaru_i', 'subaru_z']
+    elif isinstance(bb, tuple):
+        bb = list(bb)
+    elif bb.lower() == 'cosmos':
+        bb = ['cfht_u', 'subaru_b', 'subaru_v', 'subaru_r', 'subaru_i', 'subaru_z']
     elif bb.lower() == 'cfht':
-        broad_bands = ['cfht_u', 'cfht_g', 'cfht_r', 'cfht_i', 'cfht_z']
+        bb = ['cfht_u', 'cfht_g', 'cfht_r', 'cfht_i', 'cfht_z']
     else:
         raise NotImplementedError()
 
-    return broad_bands
-
-
-def get_nets(path_base, pretrain=True, Nbands=46):
-    """Initialize networks.
-       :param path_base: {str} Path to the pretrained networks.
-       :param Nbands: {int} Number of bands.
-    """
-    
-    Nfeat = 10
-    Nl = 5
-    kwds = {'Nfeat': 10, 'Nl': 5, 'Nbands': Nbands}
-    enc = networks.Encoder(**kwds).cuda()
-    dec = networks.Decoder(**kwds).cuda()
-   
-    net_pz = networks.MDNNetwork(Nbands+Nfeat).cuda()
-
-    # And then loading the pretrained network.
-    if pretrain:
-        enc.load_state_dict(torch.load(path_base.format('enc')))
-        dec.load_state_dict(torch.load(path_base.format('dec')))
-        net_pz.load_state_dict(torch.load(path_base.format('netpz')))
-
-    net_pz.train()
-    #enc.eval()
-    #dec.eval()
-    
-    return enc, dec, net_pz
-
+    return bb 
 
 def get_loaders(ifold, inds, data):
     """Get loaders for specific fold.
