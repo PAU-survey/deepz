@@ -8,6 +8,7 @@ import sys
 import time
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from itertools import chain
 from IPython.core import debugger
 
@@ -17,8 +18,8 @@ import torch
 # therefore 
 assert torch.__version__.startswith('1.0'), 'For some reason the code fails badly on newer PyTorch versions.'
 
+import fire
 from torch import optim, nn
-from pathlib import Path
 from torch.utils.data import TensorDataset, DataLoader
 from matplotlib import pyplot as plt
 
@@ -28,24 +29,26 @@ import trainer
 import utils
 
 
-flux, flux_err, fmes, vinv, isnan, zs, ref_id = paus_data.paus()
-
 # Other values collided with importing the code in a notebook...
-catnr = 0
 inds_all = np.loadtxt('/data/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
 
-
-def get_loaders(ifold, inds):
+def get_loaders(data, ifold, inds):
     """Create data loaders for a specific fold.
        :param ifold: {int} Which fold to use.
        :param inds: {array} Ifold for each galaxy.
     """
-    
+
+    # There might be a better way of doing this. PyTorch does support
+    # dataloaders returning dictionaries with tensors.
+ 
     def sub(ix):
         """Select subset.
            :param ix: {array} Array indices to use.
         """
-        ds = TensorDataset(flux[ix].cuda(), fmes[ix].cuda(), vinv[ix].cuda(), isnan[ix].cuda(), zs[ix].cuda())
+
+        ds = TensorDataset(data['flux'][ix].cuda(), data['fmes'][ix].cuda(), \
+                           data['vinv'][ix].cuda(), data['isnan'][ix].cuda(), \
+                           data['zs'][ix].cuda())
         
         return ds
     
@@ -58,17 +61,18 @@ def get_loaders(ifold, inds):
     train_dl = DataLoader(ds_train, batch_size=500, shuffle=True)
     test_dl = DataLoader(ds_test, batch_size=100)
     
-    return train_dl, test_dl, zs[ix_test]
+    return train_dl, test_dl, data['zs'][ix_test]
 
 
-def train(ifold, **config):
+def train(data, ifold, **config):
     """Train the networks for one fold.
        :param config: {dict} Dictionary with the configuration.
     """
 
-    inds = inds_all[config['catnr']][:len(flux)]
+    inds = inds_all[config['catnr']][:len(data['flux'])]
 
-    net = networks.Deepz(46).cuda() # Hack.
+    Nbands = 40 + len(config['bb'])
+    net = networks.Deepz(Nbands).cuda()
     path_pretrain = utils.path_pretrain(config['model_dir'], config['pretrain_label'])
 
     if config['pretrain']:
@@ -76,7 +80,7 @@ def train(ifold, **config):
         assert path_pretrain.exists()
         net.load_state_dict(torch.load(path_pretrain))
 
-    train_dl, test_dl, _ = get_loaders(ifold, inds)
+    train_dl, test_dl, _ = get_loaders(data, ifold, inds)
     K = (net, train_dl, test_dl, config['alpha'], config['keep_last'])
 
     def params():
@@ -99,7 +103,7 @@ def train(ifold, **config):
     
     return net
 
-def train_all(**config):
+def train_all(data, **config):
     """Train all the folds.
        :param config: {dict} Configuration dictionary.
 
@@ -115,21 +119,25 @@ def train_all(**config):
 
         print('Running for:', ifold)
         print('storing to:', model_path)
-        net = train(ifold, **config)
+        net = train(data, ifold, **config)
         torch.save(net.state_dict(), model_path)
 
 
-def pz_fold(catnr, ifold, inds, model_dir, model_label):
+def pz_fold(catnr, ifold, inds, model_dir, model_label, bb):
     """Estimate the photo-z for one fold.
        :param catnr: {int} Catalogue number.
        :param ifold: {int} Which ifold to use.
        :param inds: {array} Indices to use.
        :param model_dir: {path} Model directory.
-       :param out_fmt: {str} Format of output path.
+       :param model_label: {str} Label describing the model.
+       :param bb: {list} List of broad bands to use.
     """
 
+#    debugger.set_trace()
+ 
     # Here we should not hard-code the number of bands.
-    net = networks.Deepz(Nbands=46).cuda()
+    Nbands = 40 + len(bb)
+    net = networks.Deepz(Nbands=Nbands).cuda()
     net.eval()
  
     path_model = utils.path_model(model_dir, model_label, catnr, ifold)
@@ -163,7 +171,7 @@ def pz_fold(catnr, ifold, inds, model_dir, model_label):
     return part
 
                    
-def make_catalogue(catnr, model_dir, model_label):
+def make_catalogue(catnr, model_dir, model_label, bb):
     """Run the photo-z for all folds.
        :param catnr: {int} Which of the indexes to use per fold.
        :param model_dir: {path} Directory where the models are stored.
@@ -174,7 +182,7 @@ def make_catalogue(catnr, model_dir, model_label):
 
     inds = torch.Tensor(inds) # Inds_all should be a tensor in the first place.
     for ifold in range(5):
-        L.append(pz_fold(catnr, ifold, inds, model_dir, model_label))
+        L.append(pz_fold(catnr, ifold, inds, model_dir, model_label, bb))
         
     df = pd.concat(L)
     df = df.set_index('ref_id')
@@ -196,20 +204,26 @@ def photoz_all(model_dir, pretrain_label, model_label, bb, catnr=0, pretrain=Tru
 
     bb = utils.broad_bands(bb)
     config = {'model_dir': model_dir, 'pretrain_label': pretrain_label, 'model_label': model_label,
-              'catnr': catnr, 'pretrain': pretrain, 'alpha': alpha, 'keep_last': keep_last}
+              'bb': bb, 'catnr': catnr, 'pretrain': pretrain, 'alpha': alpha, 'keep_last': keep_last}
 
-    train_all(**config)
-    pz = make_catalogue(catnr, model_dir, model_label)
+
+    data = paus_data.paus(bb)
+
+
+    train_all(data, **config)
+    pz = make_catalogue(catnr, model_dir, model_label, bb)
     pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
     sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
     print('sig68:', sig68)
 
+    # Not strictly needed, but might make life simpler.
+    path_pzcat = Path(model_dir) / f'pzcat_{model_label}_cat{catnr}.csv'
+    if not path_pzcat.exists():
+        print('Storing catalogs in:', path_pzcat)
+        pz.to_csv(path_pzcat)
+
     return pz
 
-
-model_dir = '/data/astro/scratch/eriksen/deepz/clean/'
-pretrain_label = 1
-model_label = 'fiskv2'
-
-photoz_all(model_dir, pretrain_label, model_label)
+if __name__ == '__main__':
+    fire.Fire(photoz_all)

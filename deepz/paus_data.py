@@ -9,12 +9,9 @@ import numpy as np
 import pandas as pd
 import torch
 
+import utils
+
 data_in = Path('/data/astro/scratch/eriksen/deepz/input')
-
-NB = ['NB{}'.format(x) for x in 455+10*np.arange(40)]
-BB = ['cfht_u', 'subaru_B', 'subaru_V', 'subaru_r', 'subaru_i', 'subaru_z']
-bands = NB + BB
-
 D = {'photoz': '4199.csv', 'coadd': '4213.csv', 'cosmos': '4378.csv'}
 
 
@@ -56,10 +53,27 @@ def get_indexp(inds_touse, NB_bands, indexp_path):
     
     return X.flux.values, X.flux_error.values
 
-def paus(apply_cuts=True):
+def replace(bb, f, t):
+    """Replace occurence of f by t.
+       :param bb: {list} List of bands.
+       :param f: {str} From string.
+       :param t: {str} To string.
+    """
+
+    return [(t if x == f else x) for x in bb]
+
+def paus(bb, apply_cuts=True, norm_band=None):
     """The PAUS data in the COSMOS field.
        :param apply_cuts: {bool} If applying the cuts.
+       :param norm_band: {str} Band used for the normalization.
     """
+
+    NB = ['NB{}'.format(x) for x in 455+10*np.arange(40)]
+
+    # There are always some exceptions to handle.
+    BB = replace(bb, 'subaru_b', 'subaru_B')
+    BB = replace(BB, 'subaru_v', 'subaru_V')
+    bands = NB + BB
 
     # Testing Lumus.
     galcat_path = '/data/astro/scratch/eriksen/deepz/input/lumus/coadd_v8.h5'
@@ -79,11 +93,18 @@ def paus(apply_cuts=True):
     # Here we are not actually using the flux, but a flux
     # ratio..
     flux_df = sub.loc[touse]
+
+
     
     flux = flux_df.flux[bands].values
     flux_err = flux_df.flux_err[bands].values
-    
-    norm = flux[:, -2]
+ 
+    norm_band = utils.norm_band(bb, norm_band)
+    norm_ind = bands.index(norm_band)
+ 
+#    debugger.set_trace()
+    print('Normalization index', norm_ind) 
+    norm = flux[:, norm_ind]
     flux = torch.Tensor(flux / norm[:, None])
     flux_err = torch.Tensor(flux_err / norm[:, None])
 
@@ -110,6 +131,11 @@ def paus(apply_cuts=True):
     # Test, this makes a difference when selecting with a PyTorch
     # uint8 tensor.
     ref_id = torch.Tensor(flux_df.index.values)
-  
+
+    # So one don't need to remember the order in a tuple later.
+    data = {'flux': flux, 'flux_err': flux_err, 'fmes': fmes, 
+            'vinv': vinv, 'isnan': isnan, 'zs': zs, 'ref_id': ref_id}
+
+    return data
  
-    return flux, flux_err, fmes, vinv, isnan, zs, ref_id
+#    return flux, flux_err, fmes, vinv, isnan, zs, ref_id
