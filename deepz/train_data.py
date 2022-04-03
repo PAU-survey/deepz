@@ -28,10 +28,6 @@ import networks
 import trainer
 import utils
 
-
-# Other values collided with importing the code in a notebook...
-inds_all = np.loadtxt('/data/astro/scratch/eriksen/deepz/inds/inds_large_v1.txt')
-
 def get_loaders(data, ifold, inds):
     """Create data loaders for a specific fold.
        :param ifold: {int} Which fold to use.
@@ -64,12 +60,15 @@ def get_loaders(data, ifold, inds):
     return train_dl, test_dl, data['zs'][ix_test]
 
 
-def train(data, ifold, **config):
+def train(data, inds_split, ifold, **config):
     """Train the networks for one fold.
+       :param data: {dict} Flux data and redshifts for training.
+       :param inds_split: {tensor} Indices explaining how to split in folds.
+       :param ifold: {int} Which fold to train.
        :param config: {dict} Dictionary with the configuration.
     """
 
-    inds = inds_all[config['catnr']][:len(data['flux'])]
+    inds = inds_split[:len(data['flux'])]
 
     Nbands = 40 + len(config['bb'])
     net = networks.Deepz(Nbands).cuda()
@@ -103,14 +102,16 @@ def train(data, ifold, **config):
     
     return net
 
-def train_all(data, **config):
+def train_all(data, inds_split, **config):
     """Train all the folds.
+       :param data: {dict} Flux data and redshifts for training.
+       :param inds_split: {tensor} Indices explaining how to split in folds.
        :param config: {dict} Configuration dictionary.
-
     """
-  
+ 
     C = config
-    for ifold in range(5):
+    Nfolds = int(inds_split.max() + 1)
+    for ifold in range(Nfolds):
 
         model_path = utils.path_model(C['model_dir'], C['model_label'], C['catnr'], ifold)
         if model_path.exists():
@@ -119,7 +120,7 @@ def train_all(data, **config):
 
         print('Running for:', ifold)
         print('storing to:', model_path)
-        net = train(data, ifold, **config)
+        net = train(data, inds_split, ifold, **config)
         torch.save(net.state_dict(), model_path)
 
 
@@ -190,12 +191,13 @@ def make_catalogue(catnr, model_dir, model_label, bb):
     return df
 
 
-def photoz_all(model_dir, pretrain_label, model_label, bb, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
+def photoz_all(model_dir, pretrain_label, model_label, bb, inds_path, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
     """Train the networks and return the catalogs.
        :param model_dir: {str} Directory to store models.
        :param pretrain_label: {str} Label to describe the pretrained model.
        :param model_label: {str} Label to describe the final model.
        :param bb: {str} Broad bands.
+       :param inds_path: {path} Path to file containing indices to use.
        :param catnr: {int} Which of the indexes to use per fold.
        :param pretrain: {bool} If using a pretrained network.
        :param alpha: {float} Fraction of measurements used when training.
@@ -207,10 +209,12 @@ def photoz_all(model_dir, pretrain_label, model_label, bb, catnr=0, pretrain=Tru
               'bb': bb, 'catnr': catnr, 'pretrain': pretrain, 'alpha': alpha, 'keep_last': keep_last}
 
 
+    # Indices determining the splitting in folds. We could be generating these on the
+    # fly if not being specified by the user.
+    inds_split = np.loadtxt(inds_path)[config['catnr']]
     data = paus_data.paus(bb)
 
-
-    train_all(data, **config)
+    train_all(data, inds_split, **config)
     pz = make_catalogue(catnr, model_dir, model_label, bb)
     pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
