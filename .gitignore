@@ -1,2 +1,6 @@
 .ipynb_checkpoints/
 deepz/__pycache__
+
+# For storing user specified configuration.
+data.py
+sim.py
