@@ -140,7 +140,7 @@ def train_all(data, inds_split, **config):
         torch.save(net.state_dict(), model_path)
 
 
-def pz_fold(catnr, ifold, inds, model_dir, model_label, bb):
+def pz_fold(data, catnr, ifold, inds, model_dir, model_label, bb):
     """Estimate the photo-z for one fold.
        :param catnr: {int} Catalogue number.
        :param ifold: {int} Which ifold to use.
@@ -160,7 +160,7 @@ def pz_fold(catnr, ifold, inds, model_dir, model_label, bb):
     path_model = utils.path_model(model_dir, model_label, catnr, ifold)
     net.load_state_dict(torch.load(path_model))
     
-    _, test_dl, zs_test = get_loaders(ifold, inds)
+    _, test_dl, zs_test = get_loaders(data, ifold, inds)
 
     assert isinstance(inds, torch.Tensor), 'This is required...'
  
@@ -179,7 +179,7 @@ def pz_fold(catnr, ifold, inds, model_dir, model_label, bb):
     zb_fold = torch.cat(L).cpu().numpy()
     zs_fold = zs_test
 
-    refid_fold = ref_id[inds == ifold]
+    refid_fold = data['ref_id'][inds == ifold]
     D = {'zs': zs_fold, 'zb': zb_fold, 'ref_id': refid_fold}
     
     part = pd.DataFrame(D)
@@ -188,18 +188,18 @@ def pz_fold(catnr, ifold, inds, model_dir, model_label, bb):
     return part
 
                    
-def make_catalogue(catnr, model_dir, model_label, bb):
+def make_catalogue(data, inds_split, catnr, model_dir, model_label, bb):
     """Run the photo-z for all folds.
        :param catnr: {int} Which of the indexes to use per fold.
        :param model_dir: {path} Directory where the models are stored.
     """
                    
     L = []
-    inds = inds_all[catnr][:len(flux)]
+    inds = inds_split[:len(data['flux'])]
 
     inds = torch.Tensor(inds) # Inds_all should be a tensor in the first place.
     for ifold in range(5):
-        L.append(pz_fold(catnr, ifold, inds, model_dir, model_label, bb))
+        L.append(pz_fold(data, catnr, ifold, inds, model_dir, model_label, bb))
         
     df = pd.concat(L)
     df = df.set_index('ref_id')
@@ -231,7 +231,7 @@ def photoz_all(model_dir, pretrain_label, model_label, bb, inds_path, catnr=0, p
     data = paus_data.paus(bb)
 
     train_all(data, inds_split, **config)
-    pz = make_catalogue(catnr, model_dir, model_label, bb)
+    pz = make_catalogue(data, inds_split, catnr, model_dir, model_label, bb)
     pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
     sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
