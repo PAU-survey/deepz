@@ -30,10 +30,6 @@ from IPython.core import debugger
 
 import torch
 
-# Later versions works slightly different with the galaxy selection. The results will
-# therefore 
-assert torch.__version__.startswith('1.0'), 'For some reason the code fails badly on newer PyTorch versions.'
-
 import fire
 from torch import optim, nn
 from torch.utils.data import TensorDataset, DataLoader
@@ -64,8 +60,8 @@ def get_loaders(data, ifold, inds):
         
         return ds
     
-    ix_train = torch.ByteTensor(1*(inds != ifold))
-    ix_test = torch.ByteTensor(1*(inds == ifold))
+    ix_train = torch.BoolTensor(inds != ifold)
+    ix_test = torch.BoolTensor(inds == ifold)
 
     ds_train = sub(ix_train)
     ds_test = sub(ix_test)

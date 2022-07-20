@@ -15,7 +15,12 @@ setup(
     packages = find_packages(),
 
     install_requires = [
+        'fire',
+        'matplotlib',
+        'pandas',
+        'pytables',
         'torch',
+        'xarray'
     ],
     author = name,
     author_email = email,
