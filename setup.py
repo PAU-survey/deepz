@@ -18,7 +18,6 @@ setup(
         'fire',
         'matplotlib',
         'pandas',
-        'pytables',
         'torch',
         'xarray'
     ],

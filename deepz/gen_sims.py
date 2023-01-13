@@ -30,16 +30,31 @@ from pathlib import Path
 from time import sleep
 from dask.diagnostics import ProgressBar
 from astropy.cosmology import Planck15 
+
+os.environ['SPS_HOME'] = '/data/astro/scratch/eriksen/source/fsps'
 import fsps
 
 bands = fsps.filters.list_filters()
+
+
+# Parameters defining the ranges. Based on numbers from Cigal.
+ranges = {\
+'zred': [0, 4.0],
+'logzsol': [-0.5, 0.2],
+#'tage': [1, 13.7],
+'gas_logu': [-4., 1.],
+'tau': [0.1, 12],
+'const': [0, 0.25],
+'dust2': [0, 0.6]}
+
+
 
 def empty_gen(params):
     """Generate an empty set of data.
        :param params: {dataframe} Per galaxy parameters.
     """
    
-    os.environ['SPS_HOME'] = '/nfs/astro/eriksen/source/fsps'
+    os.environ['SPS_HOME'] = '/data/astro/scratch/eriksen/source/fsps'
  
     # This hard coding should actually not be needed..
     L = ['zred', 'logzsol', 'tau', 'const', 'sf_start', 'dust2']
@@ -56,16 +71,6 @@ def empty_gen(params):
     
     return pd.DataFrame(mags, columns=bands, index=params.index)
 
-
-# Parameters defining the ranges. Based on numbers from Cigal.
-ranges = {\
-'zred': [0, 1.5],
-'logzsol': [-0.5, 0.2],
-#'tage': [1, 13.7],
-'gas_logu': [-4., 1.],
-'tau': [0.1, 12],
-'const': [0, 0.25],
-'dust2': [0, 0.6]}
 
 
 def gen_params(Ngal):
@@ -101,7 +106,8 @@ def make_sim(df1, out_path):
        :param out_path: {path} Output path.
     """
 
-    df2 = dd.from_pandas(df1, chunksize=10000)
+    Nchunk = 2000
+    df2 = dd.from_pandas(df1, chunksize=Nchunk)
     df2.to_parquet(str(out_path / 'params.parquet'))
 
     meta = [(x, float) for x in bands]
@@ -113,10 +119,21 @@ def make_sim(df1, out_path):
 
 
 Ngal = int(1e6)
-out_path = Path('/nfs/astro/eriksen/deepz/sims/v9')
+#Ngal = int(3e4)
+out_path = Path('/data/astro/scratch/eriksen/deepz/sims/v12')
 
 if __name__ == '__main__':
     df1 = gen_params(Ngal)
 
-    client = Client('tcp://193.109.175.131:44657')
+    from dask_jobqueue import HTCondorCluster
+    cluster = HTCondorCluster(n_workers=200, cores=1, memory='4GB', disk='1GB')
+    client = Client(cluster)
+    
+    print('Scheduler:')
+    print(cluster.scheduler_address)
+
+    print('\nDashboard:')
+    print(cluster.dashboard_link)
+
+#    client = Client('tcp://193.109.175.131:44657')
     make_sim(df1, out_path)

@@ -28,7 +28,7 @@ import torch
 from torch import nn, optim
 from torch.utils.data import TensorDataset, DataLoader
 
-import utils
+from . import utils
 
 def mask_entries(fmes, Nexp=1):
     """Mask single exposure entries, removing a fixed number of
@@ -65,6 +65,7 @@ def mask_alpha(fmes, isnan, alpha, keep_last):
     """
 
     inp = alpha*torch.ones_like(fmes)
+
     mask_rand = torch.bernoulli(inp)
     ismes = (fmes != 0).type(torch.float)
 

@@ -35,10 +35,10 @@ from torch import optim, nn
 from torch.utils.data import TensorDataset, DataLoader
 from matplotlib import pyplot as plt
 
-import paus_data
-import networks
-import trainer
-import utils
+from . import paus_data
+from . import networks
+from . import trainer
+from . import utils
 
 def get_loaders(data, ifold, inds):
     """Create data loaders for a specific fold.

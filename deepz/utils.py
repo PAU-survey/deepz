@@ -25,7 +25,7 @@ import numpy as np
 import torch
 from torch.utils.data import TensorDataset, DataLoader
 
-import networks
+from . import networks
 
 def path_pretrain(model_dir, label):
     """Path to the pretrained model.

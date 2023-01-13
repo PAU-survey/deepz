@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 import torch
 
-import utils
+from . import utils
 
 data_in = Path('/data/astro/scratch/eriksen/deepz/input')
 D = {'photoz': '4199.csv', 'coadd': '4213.csv', 'cosmos': '4378.csv'}
