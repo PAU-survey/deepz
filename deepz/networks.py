@@ -197,14 +197,13 @@ class Decoder(nn.Module):
 class Deepz(nn.Module):
     """The Deepz network."""
 
-    def __init__(self, Nbands, Nfeat=10, Nl=5):
+    def __init__(self, Nbands, Nfeat=10, Nl=10):
         """Initialize network
            :param Nbands: {int} Number of input bands.
            :param Nl: {int} Number of layers in encoder/decoder.
         """
         super().__init__()
 
-        # Setting Nl=5. I think we used 5 in the paper.
         self.enc = Encoder(Nl=Nl, Nbands=Nbands)
         self.dec = Decoder(Nl=Nl, Nbands=Nbands)
         self.mdn = MDNNetwork(Nbands+Nfeat)
