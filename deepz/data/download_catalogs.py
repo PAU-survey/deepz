@@ -18,9 +18,16 @@ import time
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import dask
 import dask.dataframe as dd
+from IPython.core import debugger as ipdb
 
 from matplotlib import pyplot as plt
+
+# Forces a single process. Otherwise it starts too many threads and gets
+# killed.
+dask.config.set(scheduler='single-threaded')
+
 
 def get_passwd():
     """Get the PAUdm password."""
@@ -51,11 +58,9 @@ def find_psql():
     raise FileNotFoundError('Missing psql binary path')
 
 
-def download_cat(root, sql, fname_out):
+def download_cat(path_out, sql, dtype={}):
     """Download and store catalogue as parquet file."""
     
-    root = Path(root)
-    path_out = root / fname_out
     assert path_out.suffix == '.pq', 'Only storing to parquet files.'
     if path_out.exists():
         print('Path exists:', path_out)
@@ -69,20 +74,20 @@ def download_cat(root, sql, fname_out):
     # This part could be better. For some reason it is using too much memory.
     # I suspect this is because passing the file object to subprocess.
     t1 = time.time()
-    with tempfile.NamedTemporaryFile(dir=root, delete=True) as temp_file:
+
+    # Set delete=True to automatically delete temporary files.
+    with tempfile.NamedTemporaryFile(dir=path_out.parent, delete=True) as temp_file:
+        print('Tmp file:', temp_file.name)
+
         # Dumps the table to a temporary file.
         command = [psql_path, '-Ureadonly', '-hdb.pau.pic.es', 'dm', '-c', sql, '--csv']
         subprocess.run(command, env=env, stdout=temp_file.file)
     
         # Convert to a Parquet file.
-        df = dd.read_csv(temp_file.name).reset_index(drop=True)
+        df = dd.read_csv(temp_file.name, dtype=dtype).reset_index(drop=True)
         df.to_parquet(path_out)
 
     print(f'Time downloading {prod_id}:', time.time() - t1)
-
-
-# In[17]:
-
 
 def fa_sql(memba_prod):
     """SQL for downloading forced aperture plus calibration."""
@@ -102,9 +107,6 @@ def fa_sql(memba_prod):
     return sql
 
 
-# In[23]:
-
-
 def coadd_sql(memba_prod):
     """SQL for downloading the coadds."""
     
@@ -118,13 +120,12 @@ def coadd_sql(memba_prod):
     return sql_coadd
 
 
-# Where to store the downloaded files.
-d_root = '/data/aai/common/eriksen/reprod/download'
-
 def download(d_root, memba_prodL=[1012, 1015, 1057]):
     """Download the different catalogs needed."""
 
     # The productions used in the PAUS data release.
+
+    d_root = Path(d_root)
 
     # Downloading the CFHT catalogue.
     sql_cfht = """
@@ -134,18 +135,27 @@ def download(d_root, memba_prodL=[1012, 1015, 1057]):
                  FROM cfhtlens
     """
 
-    fname_out = 'cfhtlens.pq'
-    download_cat(d_root, sql_cfht, fname_out)
+    os.makedirs(d_root / 'download', exist_ok=True)
+
+    # Specifying dtype here. Needed depending on the order of the rows.
+    dtype={'extinction_y': 'float64',
+           'mag_y': 'float64',
+           'magerr_y': 'float64'}
+    path_out = d_root / 'download' / 'cfhtlens.pq'
+    download_cat(path_out, sql_cfht, dtype=dtype)
 
     # Downloading forced aperture catalogues.
     for prod_id in memba_prodL:
         sql_memba = fa_sql(prod_id)
         fname_out = f'fa_memba{prod_id}.pq'
-        download_cat(root, sql_memba, fname_out)
+        path_out = d_root / 'download' / fname_out
+        download_cat(path_out, sql_memba)
 
 
     # Downloading forced aperture catalogues.
     for prod_id in memba_prodL:
         sql_memba = coadd_sql(prod_id)
         fname_out = f'coadd_memba{prod_id}.pq'
-        download_cat(root, sql_memba, fname_out)
+        path_out = d_root / 'download' / fname_out
+
+        download_cat(path_out, sql_memba)
