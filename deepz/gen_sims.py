@@ -39,7 +39,7 @@ bands = fsps.filters.list_filters()
 
 # Parameters defining the ranges. Based on numbers from Cigal.
 ranges = {\
-'zred': [0, 4.0],
+'zred': [0, 2.1],
 'logzsol': [-0.5, 0.2],
 #'tage': [1, 13.7],
 'gas_logu': [-4., 1.],
@@ -63,6 +63,7 @@ def empty_gen(params):
     import fsps
     pop = fsps.StellarPopulation(zcontinuous=1, add_neb_emission=True, sfh=1, dust_type=2)
     for i, (_, row) in enumerate(params.iterrows()):    
+        print(row)
         # Note, here we have modified fsps to not panick..
         for key in L:
             pop.params[key] = row[key]
@@ -120,20 +121,33 @@ def make_sim(df1, out_path):
 
 Ngal = int(1e6)
 #Ngal = int(3e4)
-out_path = Path('/data/astro/scratch/eriksen/deepz/sims/v12')
+out_path = Path('/data/astro/scratch/eriksen/deepz/sims/v17')
 
 if __name__ == '__main__':
+
+    # Quick test..
+#    df1 = gen_params(100)
+#    flux = empty_gen(df1)
+
+#    print(flux)    
+#    from IPython.core import debugger as ipdb
+#    ipdb.set_trace()
+
+
+
     df1 = gen_params(Ngal)
-
-    from dask_jobqueue import HTCondorCluster
-    cluster = HTCondorCluster(n_workers=200, cores=1, memory='4GB', disk='1GB')
-    client = Client(cluster)
+#    from dask_jobqueue import HTCondorCluster
+#    cluster = HTCondorCluster(n_workers=200, cores=1, memory='4GB', disk='1GB')
+#    client = Client(cluster)
+    from dask.distributed import Client
+#    client = Client("tls://192.168.100.23:42994")
+    client = Client("tcp://192.168.102.4:41502")
     
-    print('Scheduler:')
-    print(cluster.scheduler_address)
+#    print('Scheduler:')
+#    print(cluster.scheduler_address)
 
-    print('\nDashboard:')
-    print(cluster.dashboard_link)
+#    print('\nDashboard:')
+#    print(cluster.dashboard_link)
 
 #    client = Client('tcp://193.109.175.131:44657')
     make_sim(df1, out_path)
