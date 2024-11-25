@@ -87,7 +87,7 @@ def download_cat(path_out, sql, dtype={}):
         df = dd.read_csv(temp_file.name, dtype=dtype).reset_index(drop=True)
         df.to_parquet(path_out)
 
-    print(f'Time downloading {prod_id}:', time.time() - t1)
+    print(f'Time downloading:', time.time() - t1)
 
 def fa_sql(memba_prod):
     """SQL for downloading forced aperture plus calibration."""
