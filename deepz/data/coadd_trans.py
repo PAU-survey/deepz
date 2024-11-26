@@ -40,4 +40,11 @@ def change_format(paus):
 
     return paus_all
 
-# Vanessa was storing the galaxies needing imputation or not separately.
+def remove_minus99(cat):
+    """Remove galaxies containing -99 in the BB magnitudes."""
+
+    # This cut was in 4_Mask&Cuts in Vanessas pipeline.
+    cols = [f'mag_{band}' for band in 'ugriz']
+    cat_out = cat[(cat[cols] > -99).all(axis=1)]
+
+    return cat_out
