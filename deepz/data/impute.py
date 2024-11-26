@@ -65,20 +65,6 @@ def load_paus(d_root, memba_prod):
     return paus
 
 
-def load_specz():
-    """Load the spectroscopic catalogue."""
-    
-    # Files Vanessa sent, coming from David. 
-    spec_cat = pd.read_csv('/data/astro/scratch/idazaper/idazaper_recoverfiles/w1/VIPERS_plus_DES_total.csv')
-    _spec_cat_label = pd.read_csv('/data/astro/scratch/idazaper/idazaper_recoverfiles/w1/W1_validation_sample.csv')
-    
-    # Only adding label from the second file. Rename to be compatible with Vanessas code.
-    spec_cat = spec_cat.merge(_spec_cat_label[['ref_id', 'SOURCE']], on = 'ref_id')
-    spec_cat = spec_cat.rename(columns={'SOURCE': 'catalogue'})
-    
-    return spec_cat
-
-
 def combine_catalogs(cfht, paus, spec_cat):
     """Combine BB, NB and spec-z catalogues."""
 
