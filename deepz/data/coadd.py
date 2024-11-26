@@ -1,7 +1,19 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
+from pathlib import Path
 import pandas as pd
+
+def load_downloaded(d_root, memba_prod):
+    """Load the downloaded catalogue."""
+
+    d_root = Path(d_root)
+    fname_out = f'coadd_memba{memba_prod}.pq'
+    path = d_root / 'download' / fname_out
+
+    cat = pd.read_parquet(path)
+
+    return cat
 
 def duplicate_removal(paus):
     """Remove perceived duplicates from the coadd files. This should not
