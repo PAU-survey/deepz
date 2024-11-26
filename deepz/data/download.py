@@ -58,15 +58,17 @@ def find_psql():
     raise FileNotFoundError('Missing psql binary path')
 
 
-def download_cat(path_out, sql, dtype={}):
+def download_cat(path_out, sql, dtype={}, debug=True):
     """Download and store catalogue as parquet file."""
     
     assert path_out.suffix == '.pq', 'Only storing to parquet files.'
     if path_out.exists():
-        print('Path exists:', path_out)
+        if debug:
+            print('Path exists:', path_out)
         return
     else:
-        print('Downloading:', path_out)
+        if debug:
+            print('Downloading:', path_out)
     
     env = {'PGPASSWORD': get_passwd()}
     psql_path = find_psql()
@@ -77,7 +79,8 @@ def download_cat(path_out, sql, dtype={}):
 
     # Set delete=True to automatically delete temporary files.
     with tempfile.NamedTemporaryFile(dir=path_out.parent, delete=True) as temp_file:
-        print('Tmp file:', temp_file.name)
+        if debug:
+            print('Tmp file:', temp_file.name)
 
         # Dumps the table to a temporary file.
         command = [psql_path, '-Ureadonly', '-hdb.pau.pic.es', 'dm', '-c', sql, '--csv']
@@ -87,7 +90,8 @@ def download_cat(path_out, sql, dtype={}):
         df = dd.read_csv(temp_file.name, dtype=dtype).reset_index(drop=True)
         df.to_parquet(path_out)
 
-    print(f'Time downloading:', time.time() - t1)
+    if debug:
+        print(f'Time downloading:', time.time() - t1)
 
 def fa_sql(memba_prod):
     """SQL for downloading forced aperture plus calibration."""
@@ -120,7 +124,7 @@ def coadd_sql(memba_prod):
     return sql_coadd
 
 
-def download(d_root, memba_prodL=[1012, 1015, 1057]):
+def download(d_root, memba_prodL=[1012, 1015, 1057], debug=True):
     """Download the different catalogs needed."""
 
     # The productions used in the PAUS data release.
@@ -142,14 +146,14 @@ def download(d_root, memba_prodL=[1012, 1015, 1057]):
            'mag_y': 'float64',
            'magerr_y': 'float64'}
     path_out = d_root / 'download' / 'cfhtlens.pq'
-    download_cat(path_out, sql_cfht, dtype=dtype)
+    download_cat(path_out, sql_cfht, dtype=dtype, debug=debug)
 
     # Downloading forced aperture catalogues.
     for prod_id in memba_prodL:
         sql_memba = fa_sql(prod_id)
         fname_out = f'fa_memba{prod_id}.pq'
         path_out = d_root / 'download' / fname_out
-        download_cat(path_out, sql_memba)
+        download_cat(path_out, sql_memba, debug=debug)
 
 
     # Downloading forced aperture catalogues.
@@ -158,4 +162,4 @@ def download(d_root, memba_prodL=[1012, 1015, 1057]):
         fname_out = f'coadd_memba{prod_id}.pq'
         path_out = d_root / 'download' / fname_out
 
-        download_cat(path_out, sql_memba)
+        download_cat(path_out, sql_memba, debug=debug)
