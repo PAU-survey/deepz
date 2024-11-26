@@ -36,18 +36,21 @@ def test_overlap(ref_id_train, ref_id_val, ref_id_test):
     
     assert Nunion == Nsum, 'There are overlaps between train, val and test sets.'
 
-def load_indexes(split_path):
-    """Load the reference IDs in different splits."""
+def load_indexes(split_fmt):
+    """Load the reference IDs in different splits.
+       split_fmt: Path to catalogue containing the split.
+    """
     
-    def get_ref_id(fname):
-        X = pd.read_csv(split_path / fname)
+    def get_ref_id(dset):
+        path_cat = Path(str(split_fmt).format(dset=dset))
+        X = pd.read_csv(path_cat)
         ref_id = X.ref_id.astype(int).values
         
         return ref_id
     
-    ref_id_train = get_ref_id('train_E0_Complemento.csv')
-    ref_id_val = get_ref_id('val_E0_Complemento.csv')
-    ref_id_test = get_ref_id('test_E0_Complemento.csv')
+    ref_id_train = get_ref_id('train')
+    ref_id_val = get_ref_id('val')
+    ref_id_test = get_ref_id('test')
 
     # Should *never* trigger. But at least then we are sure.
     test_overlap(ref_id_train, ref_id_val, ref_id_test)
