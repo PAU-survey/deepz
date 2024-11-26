@@ -73,3 +73,21 @@ def split_by_existing(cat, split_path):
     X_test = subset(ref_id_test)
     
     return X_train, X_val, X_test
+
+def retarded_split(df_train, df_val, df_train_Comple, df_val_Comple, xa, xb):
+    """Reproducing a wrong split in Vanessas catalogue."""
+    
+    # How things are done here is extremely dangerous and ended up going wrong.
+    columns = list(set(df_train.columns) - set(['ra', 'dec', 'zb_bb', 'zb_bcnz', 'catalog']))
+    df_complemento = pd.concat([df_train_Comple[columns], df_val_Comple[columns]])
+    df_E1 = pd.concat([df_train[columns], df_val[columns]])
+    
+    df_E1_NaN = df_complemento[~df_complemento['ref_id'].isin(df_E1.ref_id.values)]
+    df_E1_NaN_train = pd.concat([df_train[columns], df_E1_NaN[columns].iloc[0:xa]])
+    df_E1_NaN_val = pd.concat([df_val[columns], df_E1_NaN[columns].iloc[xa:xb]])
+
+    Strain = set(df_E1_NaN_train.ref_id)
+    Sval = set(df_E1_NaN_val.ref_id)
+    assert not len(Strain & Sval), 'Overlap between training and validation sample.'
+    
+    return df_E1_NaN_train, df_E1_NaN_val
