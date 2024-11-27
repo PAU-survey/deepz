@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
-# ## Match the exact splitting in Vanessas files.
-# 
-# One problem when comparing the results is the random component in the splitting.
-# While the catalogs should statistically be the same, we currently want to compare
-# object by object.
+# TO BE DELETED. ONLY INCLUDED HERE FOR COMPARING WITH VANESSAS RESULTS.
 
 from pathlib import Path
 
@@ -57,11 +53,11 @@ def load_indexes(split_fmt):
     
     return ref_id_train, ref_id_val, ref_id_test
 
-def split_by_existing(cat, split_path):
+def split_by_existing(cat, split_fmt):
     """Split catalogue in the same way as existing catalogues."""
     
     # Loads the existing split.
-    ref_id_train, ref_id_val, ref_id_test = load_indexes(split_path)
+    ref_id_train, ref_id_val, ref_id_test = load_indexes(split_fmt)
     
     cat = cat.set_index('ref_id')
     
