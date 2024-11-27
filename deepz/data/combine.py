@@ -2,13 +2,16 @@
 # encoding: UTF8
 
 from pathlib import Path
+import os
 import numpy as np
 import pandas as pd
 
 from . import coadd
 from . import download
 from . import extlib
+from . import impute
 from . import specz
+from . import split_train_val
 
 def load_cfht(d_root, field):
     """Load the CFHT parent catalogue."""
@@ -53,7 +56,7 @@ def coadd_combine(d_root, memba_prod, field):
     """Combine the coadd, spec-z and parent catalogue."""
     
     # This is fast, so it can be run everytime if silent.
-    download(d_root, debug=False, memba_prodL=[memba_prod])
+    download.download(d_root, debug=False, memba_prodL=[memba_prod])
     paus = coadd.load_downloaded(d_root, memba_prod)
     
     paus = coadd.change_format(paus)
@@ -65,17 +68,38 @@ def coadd_combine(d_root, memba_prod, field):
     return comb
 
 
+def store_coadds(d_root, coadd_label):
+    """Estimate and store the coadds in files."""
 
-#  THE STEPS BELOW NEEDS TO BE MOVED.
-
-#    # Impute missing bands.
-#    impute_bb_fit(comb)
-#
-#    # Merge with the spectroscopic catalogue.
-#    comb_with_zs = comb.merge(specz, on='ref_id')
-#
-#    # And the sample without spectra.
-#    comb_nospecz = comb[~comb.ref_id.isin(comb_with_zs.ref_id.values)]
-#    assert len(comb) == len(comb_nospecz) + len(comb_with_zs), 'Numbers adds up'
-#
-#    return comb_with_zs, comb_nospecz
+    # For separating different tests in directories.
+    d_out = d_root / 'intermed' / coadd_label
+    os.makedirs(d_out, exist_ok=True)
+    
+    # We split into training and validation *before* doing the imputation. If using
+    # an imputation using training, like a KNN, there is a certain risk information
+    # correlated to the test set labels enters into the training through the inputation.
+    # Better safe than sorry.
+    train_hasnan_path = d_out / 'w1_w3_train_hasnan.pq'
+    val_hasnan_path = d_out / 'w1_w3_val_hasnan.pq'
+    
+    #train_hasnan_path = d_out / 'w1_w3_train_hasnan.pq'
+    #val_hasnan_path = d_out / 'w1_w3_val_hasnan.pq'
+    
+    if not (train_hasnan_path.exists() and val_hasnan_path.exists()):
+        print('Before coadd...')
+        coadd_w1 = coadd_combine(d_root, 1015, 'w1')
+        coadd_w3 = coadd_combine(d_root, 1012, 'w3')
+        coadd = pd.concat([coadd_w1, coadd_w3])
+        print('After coadd...')
+        
+        coadd_train_hasnan, coadd_val_hasnan = split_train_val.split_existing(coadd)
+    
+        coadd_train_hasnan.to_parquet(train_hasnan_path)
+        coadd_val_hasnan.to_parquet(val_hasnan_path)
+    
+        # Impute coadd values. Store to file.
+        coadd_train = impute.impute(coadd_train_hasnan)
+        coadd_val = impute.impute(coadd_val_hasnan)
+    
+        coadd_train.to_parquet(d_out / 'w1_w3_train.pq')
+        coadd_val.to_parquet(d_out / 'w1_w3_val.pq')

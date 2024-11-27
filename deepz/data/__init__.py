@@ -1,4 +1,4 @@
-from .download import download
+from . import download
 from . import coadd
 from . import impute
 from . import fmes_trans

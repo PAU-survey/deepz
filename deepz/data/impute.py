@@ -10,12 +10,13 @@ from IPython.core import debugger as ipdb
 import numpy as np
 import pandas as pd
 
-def impute_bb_fit(cat):
+def impute_qfit(cat):
     """Impute narrow bands using a fitting methods developed
        by Enrique Gaztanaga.
     """
-    
-    # Estimate factors.
+
+    # It's easier working with a copy than modifications inplace.
+    cat = cat.copy() 
 
     # convert GRI Broad Band magnitudes into PAU flux units:
     fg = 10**(0.4*(26-cat['mag_g_0']))
@@ -44,62 +45,19 @@ def impute_bb_fit(cat):
         replace_val = A*lmb**2+B*lmb+C
         cat[col] = cat[col].fillna(replace_val)
 
+    return cat
 
-def load_cfht(d_root, field):
-    """Load the CFHT parent catalogue."""
-    
-    # Only load the required field.
-    path_cfht = d_root / 'download' / 'cfhtlens.pq'
-    field = field.upper()
-    cfht = pd.read_parquet(path_cfht, filters=[('xfield', '=', field)])
+def impute_knn(cat):
+    """Imputation using a KNN method."""
 
-    return cfht
-    
-def load_paus(d_root, memba_prod):
-    """Load the PAUS coadd catalogue."""
-    
-    #Catalogue of Vanessa.
-    #vpaus = pd.read_csv('/data/astro/scratch/idazaper/idazaper_recoverfiles/w1/paus_clean_NaN.csv')
-    paus = pd.read_parquet(d_root / 'intermed' / f'paus_clean_NaN_memba{memba_prod}.pq')
+    # Here you would need to implement the KNN method.
+    raise NotImplementedError('To be implemented.')
 
-    return paus
+def impute(cat, method='qfit'):
 
+    fD = {'qfit': impute_qfit, 'knn': impute_knn}
+    assert method in fD, f'No such imputation method: {method}'
 
-def combine_catalogs(cfht, paus, spec_cat):
-    """Combine BB, NB and spec-z catalogues."""
+    res = fD[method](cat)
 
-    # Counts the number of NaNs.
-    bands = [f'NB{x}' for x in 455 + 10*np.arange(40)]
-    paus['nr_nans'] = paus[bands].isnull().sum(axis=1)
-    
-    # Merge the catalogs.
-    comb = paus.merge(cfht, left_on='ref_id', right_on='paudm_id')
-    
-    # Clipping error to a small positive value to avoid dividing by zero.
-    #for band in 'ugriz':
-    #    comb[f'magerr_{band}'] = comb[f'magerr_{band}'].clip(0.001, np.inf)
-        
-    # Remove broad band extinctions in the catalogue.
-    extlib.remove_bb_extcorr(comb)
-    
-    # Impute missing bands.
-    impute_bb_fit(comb)
-    
-    # Merge with the spectroscopic catalogue.
-    comb_with_zs = comb.merge(spec_cat, on='ref_id')
-
-    # And the sample without spectra.
-    comb_nospecz = comb[~comb.ref_id.isin(comb_with_zs.ref_id.values)]
-    assert len(comb) == len(comb_nospecz) + len(comb_with_zs), 'Numbers adds up'
-
-    return comb_with_zs, comb_nospecz
-
-def load_combine(d_root, memba_prod, field):
-    """Load and combine the catalogues."""
-
-    cfht = load_cfht(d_root)
-    paus = load_paus(d_root, memba_prod)
-    spec_cat = load_specz()
-    comb_with_zs, comb_nospecz = combine_catalogs(cfht, paus, spec_cat)
-
-    return comb_with_zs, comb_nospecz
+    return res
