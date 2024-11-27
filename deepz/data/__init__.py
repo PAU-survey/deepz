@@ -1,4 +1,4 @@
-from . import coadd
+from . import coadds
 from . import combine
 from . import download
 from . import extlib

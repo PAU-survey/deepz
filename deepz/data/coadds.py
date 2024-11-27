@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 # encoding: UTF8
 
+import os
 from pathlib import Path
 import pandas as pd
+
+from . import combine
+from . import impute
+from . import split_train_val
 
 def load_downloaded(d_root, memba_prod):
     """Load the downloaded catalogue."""
@@ -60,3 +65,40 @@ def remove_minus99(cat):
     cat_out = cat[(cat[cols] > -99).all(axis=1)]
 
     return cat_out
+
+
+def store_coadds(d_root, coadd_label):
+    """Estimate and store the coadds in files."""
+
+    # For separating different tests in directories.
+    d_out = d_root / 'intermed' / coadd_label
+    os.makedirs(d_out, exist_ok=True)
+
+    # We split into training and validation *before* doing the imputation. If using
+    # an imputation using training, like a KNN, there is a certain risk information
+    # correlated to the test set labels enters into the training through the inputation.
+    # Better safe than sorry.
+    train_hasnan_path = d_out / 'w1_w3_train_hasnan.pq'
+    val_hasnan_path = d_out / 'w1_w3_val_hasnan.pq'
+
+    #train_hasnan_path = d_out / 'w1_w3_train_hasnan.pq'
+    #val_hasnan_path = d_out / 'w1_w3_val_hasnan.pq'
+
+    if not (train_hasnan_path.exists() and val_hasnan_path.exists()):
+        print('Before coadd...')
+        coadd_w1 = combine.coadd_combine(d_root, 1015, 'w1')
+        coadd_w3 = combine.coadd_combine(d_root, 1012, 'w3')
+        coadd = pd.concat([coadd_w1, coadd_w3])
+        print('After coadd...')
+
+        coadd_train_hasnan, coadd_val_hasnan = split_train_val.split_existing(coadd)
+
+        coadd_train_hasnan.to_parquet(train_hasnan_path)
+        coadd_val_hasnan.to_parquet(val_hasnan_path)
+
+        # Impute coadd values. Store to file.
+        coadd_train = impute.impute(coadd_train_hasnan)
+        coadd_val = impute.impute(coadd_val_hasnan)
+
+        coadd_train.to_parquet(d_out / 'w1_w3_train.pq')
+        coadd_val.to_parquet(d_out / 'w1_w3_val.pq')

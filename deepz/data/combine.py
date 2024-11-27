@@ -6,7 +6,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from . import coadd
+from . import coadds
 from . import download
 from . import extlib
 from . import impute
@@ -57,49 +57,12 @@ def coadd_combine(d_root, memba_prod, field):
     
     # This is fast, so it can be run everytime if silent.
     download.download(d_root, debug=False, memba_prodL=[memba_prod])
-    paus = coadd.load_downloaded(d_root, memba_prod)
+    paus = coadds.load_downloaded(d_root, memba_prod)
     
-    paus = coadd.change_format(paus)
+    paus = coadds.change_format(paus)
     specz_cat = specz.specz(field)
     cfht = load_cfht(d_root, field)
     
     comb = combine_catalogs(cfht=cfht, paus=paus, specz=specz_cat)
     
     return comb
-
-
-def store_coadds(d_root, coadd_label):
-    """Estimate and store the coadds in files."""
-
-    # For separating different tests in directories.
-    d_out = d_root / 'intermed' / coadd_label
-    os.makedirs(d_out, exist_ok=True)
-    
-    # We split into training and validation *before* doing the imputation. If using
-    # an imputation using training, like a KNN, there is a certain risk information
-    # correlated to the test set labels enters into the training through the inputation.
-    # Better safe than sorry.
-    train_hasnan_path = d_out / 'w1_w3_train_hasnan.pq'
-    val_hasnan_path = d_out / 'w1_w3_val_hasnan.pq'
-    
-    #train_hasnan_path = d_out / 'w1_w3_train_hasnan.pq'
-    #val_hasnan_path = d_out / 'w1_w3_val_hasnan.pq'
-    
-    if not (train_hasnan_path.exists() and val_hasnan_path.exists()):
-        print('Before coadd...')
-        coadd_w1 = coadd_combine(d_root, 1015, 'w1')
-        coadd_w3 = coadd_combine(d_root, 1012, 'w3')
-        coadd = pd.concat([coadd_w1, coadd_w3])
-        print('After coadd...')
-        
-        coadd_train_hasnan, coadd_val_hasnan = split_train_val.split_existing(coadd)
-    
-        coadd_train_hasnan.to_parquet(train_hasnan_path)
-        coadd_val_hasnan.to_parquet(val_hasnan_path)
-    
-        # Impute coadd values. Store to file.
-        coadd_train = impute.impute(coadd_train_hasnan)
-        coadd_val = impute.impute(coadd_val_hasnan)
-    
-        coadd_train.to_parquet(d_out / 'w1_w3_train.pq')
-        coadd_val.to_parquet(d_out / 'w1_w3_val.pq')
