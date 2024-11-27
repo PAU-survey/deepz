@@ -22,10 +22,12 @@ def calibrate(df):
     df['flux_error'] = np.sqrt(v1*v2 + v1*e2**2 + v2*e1**2)
 
 
-def transform(memba_prod):
+def store_indexp_memba(d_root, coadd_label, memba_prod):
     """Calibrate and add the exposure number."""
 
-    path_out = Path(f'/data/aai/common/eriksen/reprod/tmp/indexp_calib_memba{memba_prod}.pq')
+    d_root = Path(d_root)
+    path_out = d_root / 'intermed' / coadd_label / f'indexp_calib_memba{memba_prod}.pq'
+
     if path_out.exists():
         print('Already transformed:', memba_prod)
         return
@@ -35,7 +37,7 @@ def transform(memba_prod):
     # The P2P method caused an error. Sticking with the task based scheduling for now.
     dask.config.set({"dataframe.shuffle.method": "tasks"})
  
-    df = dd.read_parquet(f'/data/aai/common/eriksen/reprod/download/fa_memba{memba_prod}.pq')
+    df = dd.read_parquet(d_root / 'download' / f'fa_memba{memba_prod}.pq')
     
     # Zero-point calibration.
     calibrate(df)
@@ -46,3 +48,6 @@ def transform(memba_prod):
     
     df.to_parquet(path_out)
 
+def store_indexp(d_root, coadd_label):
+    for memba_prod in [1012, 1015]:
+        store_indexp_memba(d_root, coadd_label, memba_prod) 
