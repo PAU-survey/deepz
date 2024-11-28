@@ -5,8 +5,11 @@
 
 from pathlib import Path
 import numpy as np
+import pandas as pd
 import dask
 import dask.dataframe as dd
+
+from IPython.core import debugger as ipdb
 
 def calibrate(df):
     """Calibrate the individual fluxes."""
@@ -30,7 +33,7 @@ def store_indexp_memba(d_root, coadd_label, memba_prod):
 
     if path_out.exists():
         print('Already transformed:', memba_prod)
-        return
+        return path_out
     else:
         print('Transforming:', memba_prod)
        
@@ -48,6 +51,34 @@ def store_indexp_memba(d_root, coadd_label, memba_prod):
     
     df.to_parquet(path_out)
 
+    return path_out
+
+def to_xarray(df_fa):
+    """Convert to xarray."""
+    df_fa = df_fa.set_index('ref_id')
+
+    # Way less than 1% exposures missed.
+    df_fa = df_fa[df_fa.nr < 10]
+
+    # This operation if faster going through xarrays..
+    df_fa = df_fa.reset_index().set_index(['ref_id', 'band', 'nr'])
+    X = df_fa.to_xarray()
+
+    return X
+
+def convert_to_netcdf(path_in):
+    """Convert output to xarray datastructure and store as a netcdf file.."""
+   
+    path_out = path_in.with_suffix('.nc')
+    if path_out.exists():
+        return
+
+    print('Storing as netcdf')
+    df_fa = pd.read_parquet(path_in)    
+    X = to_xarray(df_fa)
+    X.to_netcdf(path_out) 
+
 def store_indexp(d_root, coadd_label):
     for memba_prod in [1012, 1015]:
-        store_indexp_memba(d_root, coadd_label, memba_prod) 
+        path_out = store_indexp_memba(d_root, coadd_label, memba_prod) 
+        convert_to_netcdf(path_out)
