@@ -6,6 +6,7 @@
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import xarray as xr
 import dask
 import dask.dataframe as dd
 
@@ -53,8 +54,10 @@ def store_indexp_memba(d_root, coadd_label, memba_prod):
 
     return path_out
 
+
 def to_xarray(df_fa):
     """Convert to xarray."""
+
     df_fa = df_fa.set_index('ref_id')
 
     # Way less than 1% exposures missed.
@@ -66,19 +69,39 @@ def to_xarray(df_fa):
 
     return X
 
-def convert_to_netcdf(path_in):
+def convert_to_netcdf(path_pq):
     """Convert output to xarray datastructure and store as a netcdf file.."""
    
-    path_out = path_in.with_suffix('.nc')
-    if path_out.exists():
-        return
+    path_nc = path_pq.with_suffix('.nc')
+    if not path_nc.exists():
+        print('Storing as netcdf')
+        df_fa = pd.read_parquet(path_nc)
+        X = to_xarray(df_fa)
+        X.to_netcdf(path_nc) 
 
-    print('Storing as netcdf')
-    df_fa = pd.read_parquet(path_in)    
-    X = to_xarray(df_fa)
-    X.to_netcdf(path_out) 
+    return path_nc
+
+def store_combined_arrays(d_root, coadd_label, pathsL):
+    """Store the combined individual exposures."""
+
+    path_nc_comb = d_root / 'intermed' / coadd_label / f'indexp_calib_w1_w3.nc'
+    if not path_nc_comb.exists():
+        K = [xr.open_dataset(x) for x in pathsL]
+        X = xr.concat(K, dim='ref_id')
+        X.to_netcdf(path_nc_comb)
+
 
 def store_indexp(d_root, coadd_label):
+    """Store the individual exposures."""
+
+    # Converting to netcdf field by field. It is less resource
+    # demanding concatinating two of these arrays.
+    pathsL = []
     for memba_prod in [1012, 1015]:
-        path_out = store_indexp_memba(d_root, coadd_label, memba_prod) 
-        convert_to_netcdf(path_out)
+        path_pq = store_indexp_memba(d_root, coadd_label, memba_prod) 
+        path_nc = convert_to_netcdf(path_pq)
+        pathsL.append(path_nc)
+
+
+    # Combine the fields in a single file.
+    path_comb_out = store_combined_arrays(d_root, coadd_label, pathsL)
