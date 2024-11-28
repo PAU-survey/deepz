@@ -35,7 +35,7 @@ from torch import optim, nn
 from torch.utils.data import TensorDataset, DataLoader
 from matplotlib import pyplot as plt
 
-from . import paus_data
+from . import data
 from . import networks
 from . import trainer
 from . import utils
