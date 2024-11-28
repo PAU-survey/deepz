@@ -64,5 +64,6 @@ def coadd_combine(d_root, memba_prod, field):
     cfht = load_cfht(d_root, field)
     
     comb = combine_catalogs(cfht=cfht, paus=paus, specz=specz_cat)
-    
+    comb['field'] = field
+ 
     return comb
