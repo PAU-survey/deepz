@@ -224,7 +224,7 @@ def photoz_all(model_dir, pretrain_label, model_label, bb, inds_path, catnr=0, p
     # Indices determining the splitting in folds. We could be generating these on the
     # fly if not being specified by the user.
     inds_split = np.loadtxt(inds_path)[config['catnr']]
-    data = paus_data.paus(bb)
+    data = paus.paus_data(bb)
 
     train_all(data, inds_split, **config)
     pz = make_catalogue(data, inds_split, catnr, model_dir, model_label, bb)
