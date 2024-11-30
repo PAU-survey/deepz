@@ -96,16 +96,24 @@ def replace(bb, f, t):
 
     return [(t if x == f else x) for x in bb]
 
-def paus_data(bb, d_data, field, apply_cuts=True, norm_band='flux_i'):
+def paus_data(bb, field, d_data=None, path_galcat=None, path_indexp=None, apply_cuts=True, norm_band='flux_i'):
     """The PAUS data.
        :param bb: {list} List of the broad bands.
        :param apply_cuts: {bool} If applying the cuts.
        :param norm_band: {str} Band used for the normalization.
     """
 
+
     field = field.lower()
     assert field in ['cosmos', 'w1_w3']
     NB = ['NB{}'.format(x) for x in 455+10*np.arange(40)]
+
+    if d_data:
+        d_data = Path(d_data)
+        path_galcat = d_data / f'{field}_train.pq'
+        path_indexp = d_data / f'indexp_calib_{field}.nc'
+    else:
+        assert path_galcat and path_indexp, 'Either specify d_data or path_galcat and path_indexp.'
 
     # There are always some exceptions to handle.
     BB = replace(bb, 'subaru_b', 'subaru_B')
@@ -114,7 +122,7 @@ def paus_data(bb, d_data, field, apply_cuts=True, norm_band='flux_i'):
 
 
     if field == 'w1_w3':
-        galcat = pd.read_parquet(d_data / 'w1_w3_train.pq')
+        galcat = pd.read_parquet(path_galcat)
 
         # Not quite sure why Vanessa avoided this galaxy, but
         # doing the same.
@@ -161,8 +169,7 @@ def paus_data(bb, d_data, field, apply_cuts=True, norm_band='flux_i'):
     flux_err = torch.Tensor(flux_err / norm[:, None])
 
     # The individual exposures.
-    indexp_path = d_data / 'indexp_calib_w1_w3.nc'
-    fmes, emes = get_indexp(touse, NB, indexp_path)
+    fmes, emes = get_indexp(touse, NB, path_indexp)
     fmes = torch.Tensor(fmes / norm[:,None,None])
     emes = torch.Tensor(emes / norm[:,None,None])
     
