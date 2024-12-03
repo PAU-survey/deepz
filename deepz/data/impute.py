@@ -4,7 +4,7 @@
 # Flux imputation and joining tables, including spec-z.
 
 from pathlib import Path
-import extlib
+from . import extlib
 from IPython.core import debugger as ipdb
 
 import numpy as np
