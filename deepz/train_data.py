@@ -26,7 +26,6 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from itertools import chain
-from IPython.core import debugger
 
 import torch
 
@@ -88,7 +87,7 @@ def train(data, inds_split, ifold, **config):
 
     if config['pretrain']:
         print('Loading pretrain:', path_pretrain)
-        assert path_pretrain.exists()
+        assert path_pretrain.exists(), f'Missing model: {path_pretrain}'
         net.load_state_dict(torch.load(path_pretrain))
 
     train_dl, test_dl, _ = get_loaders(data, ifold, inds)
@@ -203,8 +202,9 @@ def make_catalogue(data, inds_split, catnr, model_dir, model_label, bb):
     return df
 
 
-def photoz_all(model_dir, pretrain_label, model_label, bb, inds_path, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
+def photoz_all(d_data, model_dir, pretrain_label, model_label, bb, inds_path, catnr=0, pretrain=True, alpha=0.8, keep_last=True):
     """Train the networks and return the catalogs.
+       :param d_data: {path} Directory with input data.
        :param model_dir: {str} Directory to store models.
        :param pretrain_label: {str} Label to describe the pretrained model.
        :param model_label: {str} Label to describe the final model.
@@ -216,6 +216,9 @@ def photoz_all(model_dir, pretrain_label, model_label, bb, inds_path, catnr=0, p
        :param keep_last: {bool} Keeping at least one measurement per band.
     """
 
+    # Should be passed!
+    field = 'w1_w3'
+
     bb = utils.broad_bands(bb)
     config = {'model_dir': model_dir, 'pretrain_label': pretrain_label, 'model_label': model_label,
               'bb': bb, 'catnr': catnr, 'pretrain': pretrain, 'alpha': alpha, 'keep_last': keep_last}
@@ -224,10 +227,11 @@ def photoz_all(model_dir, pretrain_label, model_label, bb, inds_path, catnr=0, p
     # Indices determining the splitting in folds. We could be generating these on the
     # fly if not being specified by the user.
     inds_split = np.loadtxt(inds_path)[config['catnr']]
-    data = paus.paus_data(bb)
+    
+    gal_data = data.paus.paus_data(bb, d_data=d_data, field=field)
 
-    train_all(data, inds_split, **config)
-    pz = make_catalogue(data, inds_split, catnr, model_dir, model_label, bb)
+    train_all(gal_data, inds_split, **config)
+    pz = make_catalogue(gal_data, inds_split, catnr, model_dir, model_label, bb)
     pz['dx'] = (pz.zb - pz.zs) / (1 + pz.zs)
 
     sig68 = 0.5*(pz.dx.quantile(0.84) - pz.dx.quantile(0.16))
