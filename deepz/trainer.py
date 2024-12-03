@@ -186,7 +186,9 @@ def train(optimizer, N, net, train_dl, test_dl, alpha, keep_last):
         t2 = time.time()
         for Bflux, Bfmes, Bvinv, Bisnan, Bzs in test_dl:
             
-            Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=1)
+            #Bcoadd, touse = get_coadd(Bflux, Bfmes, Bvinv, Bisnan, alpha=1)
+            # Vanessa used the coadds here..
+            Bcoadd = Bflux
             pred,_,loss = net.pred_recon_loss(Bcoadd, Bcoadd, Bzs)
                 
             L.append(loss.item())
