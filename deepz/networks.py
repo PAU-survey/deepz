@@ -197,7 +197,7 @@ class Decoder(nn.Module):
 class Deepz(nn.Module):
     """The Deepz network."""
 
-    def __init__(self, Nbands, Nfeat=10, Nl=10):
+    def __init__(self, Nbands, Nfeat=10, Nl=20):
         """Initialize network
            :param Nbands: {int} Number of input bands.
            :param Nl: {int} Number of layers in encoder/decoder.
